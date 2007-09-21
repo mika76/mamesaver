@@ -4,19 +4,18 @@
  */
 
 using System;
-using System.Collections.Generic;
 using System.Collections;
-using System.Text;
-using System.Windows.Forms;
+using System.Collections.Generic;
+using System.Configuration;
 using System.Diagnostics;
+using System.IO;
+using System.Runtime.InteropServices;
+using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Serialization;
-using System.IO;
-using System.Configuration;
 using gma.System.Windows;
-using System.Threading;
-using System.Runtime.InteropServices;
 
 namespace Mamesaver
 {
@@ -78,26 +77,29 @@ namespace Mamesaver
                 List<SelectableGame> gameListFull = LoadGameList();
                 List<Game> gameList = new List<Game>();
 
-                if (gameListFull.Count == 0) return;
+                if ( gameListFull.Count == 0 ) return;
 
                 foreach (SelectableGame game in gameListFull)
                     if (game.Selected) gameList.Add(game);
 
+                // Exit run method if there were no selected games
+                if ( gameList.Count == 0 ) return;
+
                 // Set up the timer
                 int minutes = Properties.Settings.Default.minutes;
                 timer = new GameTimer(minutes * 60000, gameList);
-                timer.Tick += new EventHandler(timer_Tick);
+                timer.Tick += timer_Tick;
 
                 // Set up the background form
                 Cursor.Hide();
                 frmBackground = new BackgroundForm();
                 frmBackground.Capture = true;
-                frmBackground.Load += new EventHandler(frmBackground_Load);
+                frmBackground.Load += frmBackground_Load;
 
                 // Set up the global hooks
                 actHook = new UserActivityHook();
-                actHook.OnMouseActivity += new MouseEventHandler(actHook_OnMouseActivity);
-                actHook.KeyDown += new KeyEventHandler(actHook_KeyDown);
+                actHook.OnMouseActivity += actHook_OnMouseActivity;
+                actHook.KeyDown += actHook_KeyDown;
 
                 // Run the application
                 Application.EnableVisualStyles();
@@ -131,7 +133,7 @@ namespace Mamesaver
         /// <summary>
         /// Load the selectable game list from an XML file. Return an empty array if no file found.
         /// </summary>
-        /// <returns><see cref="List"/> of <see cref="SelectableGame"/>s</returns>
+        /// <returns><see cref="List{T}"/> of <see cref="SelectableGame"/>s</returns>
         public List<SelectableGame> LoadGameList()
         {
             Configuration c = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal);
@@ -150,11 +152,11 @@ namespace Mamesaver
         }
 
         /// <summary>
-        /// Returns a <see cref="List"/> of <see cref="SelectableGame"/>s which are read from
+        /// Returns a <see cref="List{T}"/> of <see cref="SelectableGame"/>s which are read from
         /// the full list and then merged with the verified rom's list. The games which are returned
         /// all have a "good" status on their drivers. This check also eliminates BIOS ROMS.
         /// </summary>
-        /// <returns>Returns a <see cref="List"/> of <see cref="SelectableGame"/>s</returns>
+        /// <returns>Returns a <see cref="List{T}"/> of <see cref="SelectableGame"/>s</returns>
         public List<SelectableGame> GetGameList()
         {
             Hashtable verifiedGames = GetVerifiedSets();
@@ -219,7 +221,7 @@ namespace Mamesaver
 
         /// <summary>
         /// Gets a random number and then runs <see cref="RunGame"/> using the game in the
-        /// <see cref="List"/>.
+        /// <see cref="List{T}"/>.
         /// </summary>
         /// <param name="gameList"></param>
         /// <returns>The <see cref="Process"/> running the game</returns>
@@ -242,8 +244,10 @@ namespace Mamesaver
         {
             // Set the game name and details on the background form
             frmBackground.lblData1.Text = game.Description;
-            frmBackground.lblData2.Text = game.Year.ToString() + " " + game.Manufacturer;
+            frmBackground.lblData2.Text = game.Year + " " + game.Manufacturer;
             SetWinFullScreen(frmBackground.Handle);
+
+            Program.Log("Running game " + game.Description + " " + game.Year + " " + game.Manufacturer);
 
             // Show the form for a couple of seconds
             DateTime end = DateTime.Now.AddSeconds(Properties.Settings.Default.backgroundSeconds);
@@ -284,11 +288,11 @@ namespace Mamesaver
         }
 
         /// <summary>
-        /// Returns a <see cref="HashTable"/> filled with the names of games which are
+        /// Returns a <see cref="Hashtable"/> filled with the names of games which are
         /// verified to work. Only the ones marked as good are returned. The clone names
         /// are returned in the value of the hashtable while the name is used as the key.
         /// </summary>
-        /// <returns><see cref="HashTable"/></returns>
+        /// <returns><see cref="Hashtable"/></returns>
         private Hashtable GetVerifiedSets()
         {
             string execPath = Properties.Settings.Default.execPath;
