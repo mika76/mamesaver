@@ -36,13 +36,13 @@ namespace Mamesaver
         private void configForm_Load(object sender, EventArgs e)
         {
             //load list
-            List<SelectableGame> gameList = saver.LoadGameList();
+            List<SelectableGame> gameList = Settings.LoadGameList();
             LoadList(gameList);
 
             //load config
-            txtExec.Text = Properties.Settings.Default.execPath;
-            txtCommandLineOptions.Text = Properties.Settings.Default.cmdOptions;
-            txtMinutes.Value = Properties.Settings.Default.minutes;
+            txtExec.Text = Settings.ExecutablePath;
+            txtCommandLineOptions.Text = Settings.CommandLineOptions;
+            txtMinutes.Value = Settings.Minutes;
 
             //other
             lvwColumnSorter = new ListViewSorter();
@@ -181,14 +181,12 @@ namespace Mamesaver
 
         private void SaveSettings(bool saveGameList, List<SelectableGame> gameList)
         {
-            if ( saveGameList ) saver.SaveGameList(gameList);
+            if ( saveGameList ) Settings.SaveGameList(gameList);
 
             Configuration c = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-            Properties.Settings.Default.execPath = txtExec.Text;
-            Properties.Settings.Default.cmdOptions = txtCommandLineOptions.Text;
-            Properties.Settings.Default.minutes = Convert.ToInt32(txtMinutes.Value);
-
-            Properties.Settings.Default.Save();
+            Settings.ExecutablePath = txtExec.Text;
+            Settings.CommandLineOptions = txtCommandLineOptions.Text;
+            Settings.Minutes = Convert.ToInt32(txtMinutes.Value);
         }
 
         /**
