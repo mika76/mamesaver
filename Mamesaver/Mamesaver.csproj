@@ -81,11 +81,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="SelectableGame.cs" />
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>Settings.settings</DependentUpon>
-    </Compile>
+    <Compile Include="Settings.cs" />
     <Compile Include="UserActivityHook.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -107,13 +103,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="key.snk" />
     <None Include="Resources\otheroptions.ico" />
   </ItemGroup>
@@ -130,7 +119,6 @@
   -->
   <PropertyGroup>
     <PostBuildEvent>copy Mamesaver.exe Mamesaver.scr
-copy Mamesaver.exe.config Mamesaver.scr.config
 </PostBuildEvent>
   </PropertyGroup>
 </Project>

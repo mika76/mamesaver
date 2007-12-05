@@ -74,7 +74,7 @@ namespace Mamesaver
             try
             {
                 // Load list and get only selected games from it
-                List<SelectableGame> gameListFull = LoadGameList();
+                List<SelectableGame> gameListFull = Settings.LoadGameList();
                 List<Game> gameList = new List<Game>();
 
                 if ( gameListFull.Count == 0 ) return;
@@ -86,7 +86,7 @@ namespace Mamesaver
                 if ( gameList.Count == 0 ) return;
 
                 // Set up the timer
-                int minutes = Properties.Settings.Default.minutes;
+                int minutes = Settings.Minutes;
                 timer = new GameTimer(minutes * 60000, gameList);
                 timer.Tick += timer_Tick;
 
@@ -112,44 +112,6 @@ namespace Mamesaver
         }
 
 
-        /// <summary>
-        /// Save the selectable game list to an XML file.
-        /// </summary>
-        /// <param name="gameList"></param>
-        public void SaveGameList(List<SelectableGame> gameList)
-        {
-            Configuration c = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal);
-            DirectoryInfo configPath  = Directory.GetParent(c.FilePath);
-            string filename = Path.Combine(configPath.ToString(), "gamelist.xml");
-            if (!configPath.Exists) configPath.Create();
-
-            XmlSerializer serializer = new XmlSerializer(typeof(List<SelectableGame>));
-            FileStream fileList = new FileStream(filename, FileMode.Create);
-            XmlTextWriter writer = new XmlTextWriter(fileList, UTF8Encoding.UTF8);
-            serializer.Serialize(writer, gameList);
-            writer.Close();
-        }
-
-        /// <summary>
-        /// Load the selectable game list from an XML file. Return an empty array if no file found.
-        /// </summary>
-        /// <returns><see cref="List{T}"/> of <see cref="SelectableGame"/>s</returns>
-        public List<SelectableGame> LoadGameList()
-        {
-            Configuration c = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal);
-            DirectoryInfo configPath = Directory.GetParent(c.FilePath);
-            string filename = Path.Combine(configPath.ToString(), "gamelist.xml");
-
-            if (!File.Exists(filename)) return new List<SelectableGame>();
-
-            XmlSerializer serializer = new XmlSerializer(typeof(List<SelectableGame>));
-            FileStream fileList = new FileStream(filename, FileMode.Open);
-            XmlTextReader reader = new XmlTextReader(fileList);
-            List<SelectableGame> gameList = serializer.Deserialize(reader) as List<SelectableGame>;
-            reader.Close();
-
-            return gameList;
-        }
 
         /// <summary>
         /// Returns a <see cref="List{T}"/> of <see cref="SelectableGame"/>s which are read from
@@ -247,10 +209,12 @@ namespace Mamesaver
             frmBackground.lblData2.Text = game.Year + " " + game.Manufacturer;
             SetWinFullScreen(frmBackground.Handle);
 
-            Program.Log("Running game " + game.Description + " " + game.Year + " " + game.Manufacturer);
+#if DEBUG
+            Program.Log("Running game " + game.Description + " " + game.Year + " " + game.Manufacturer);            
+#endif
 
             // Show the form for a couple of seconds
-            DateTime end = DateTime.Now.AddSeconds(Properties.Settings.Default.backgroundSeconds);
+            DateTime end = DateTime.Now.AddSeconds(Settings.BackgroundSeconds);
             while (DateTime.Now < end)
             {
                 if (cancelled) return null;
@@ -258,9 +222,9 @@ namespace Mamesaver
             }
 
             // Set up the process
-            string execPath = Properties.Settings.Default.execPath;
+            string execPath = Settings.ExecutablePath;
             ProcessStartInfo psi = new ProcessStartInfo(execPath);
-            psi.Arguments = game.Name + " " + Properties.Settings.Default.cmdOptions; ;
+            psi.Arguments = game.Name + " " + Settings.CommandLineOptions; ;
             psi.WorkingDirectory = Directory.GetParent(execPath).ToString();
 
             // Start the timer and the process
@@ -274,7 +238,7 @@ namespace Mamesaver
         /// <returns><see cref="String"/> holding the Mame XML</returns>
         private string GetFullGameList()
         {
-            string execPath = Properties.Settings.Default.execPath;
+            string execPath = Settings.ExecutablePath;
             ProcessStartInfo psi = new ProcessStartInfo(execPath);
             psi.Arguments = "-listxml";
             psi.WorkingDirectory = Directory.GetParent(execPath).ToString();
@@ -295,7 +259,7 @@ namespace Mamesaver
         /// <returns><see cref="Hashtable"/></returns>
         private Hashtable GetVerifiedSets()
         {
-            string execPath = Properties.Settings.Default.execPath;
+            string execPath = Settings.ExecutablePath;
             ProcessStartInfo psi = new ProcessStartInfo(execPath);
             psi.Arguments = "-verifyroms";
             psi.WorkingDirectory = Directory.GetParent(execPath).ToString();
