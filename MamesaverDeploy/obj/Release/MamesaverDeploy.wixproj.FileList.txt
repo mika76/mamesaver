@@ -1,0 +1,10 @@
+C:\mamesaver 1.1 Beta - copia\MamesaverDeploy\bin\Release\Mamesaver.wixpdb
+C:\mamesaver 1.1 Beta\MamesaverDeploy\bin\Release\Mamesaver.wixpdb
+obj\Release\MamesaverDeploy.wixobj
+C:\mamesaver 1.1 Beta VS2012\MamesaverDeploy\bin\Release\Mamesaver.msi
+C:\mamesaver 1.1 Beta VS2012\MamesaverDeploy\bin\Release\Mamesaver.wixpdb
+obj\Release\MamesaverDeploy.wixproj.BindContentsFileListnull.txt
+obj\Release\MamesaverDeploy.wixproj.BindOutputsFileListnull.txt
+obj\Release\MamesaverDeploy.wixproj.BindBuiltOutputsFileListnull.txt
+C:\Users\usuario\Documents\backup_mamesaver\mamesaver 1.1 Beta VS2012\MamesaverDeploy\bin\Release\Mamesaver.msi
+C:\Users\usuario\Documents\backup_mamesaver\mamesaver 1.1 Beta VS2012\MamesaverDeploy\bin\Release\Mamesaver.wixpdb

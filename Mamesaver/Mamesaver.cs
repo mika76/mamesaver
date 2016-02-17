@@ -128,9 +128,9 @@ namespace Mamesaver
 
             foreach (string key in verifiedGames.Keys)
             {
-                XmlNode xmlGame = doc.SelectSingleNode(string.Format("mame/game[@name='{0}']", key));
+                XmlNode xmlGame = doc.SelectSingleNode(string.Format("mame/machine[@name='{0}']", key));
 
-                if ( xmlGame != null && xmlGame["driver"] != null && xmlGame["driver"].Attributes["status"].Value == "good" )
+                if (xmlGame != null && xmlGame.Attributes["isbios"].Value != "yes" && xmlGame["driver"] != null && xmlGame["driver"].Attributes["status"].Value == "good")
                     games.Add(new SelectableGame(xmlGame.Attributes["name"].Value, xmlGame["description"].InnerText, xmlGame["year"] != null ? xmlGame["year"].InnerText : "", xmlGame["manufacturer"] != null ? xmlGame["manufacturer"].InnerText : "", false));
             }
 
@@ -178,9 +178,8 @@ namespace Mamesaver
             timer.Stop();
             cancelled = true;
             if (timer.Process != null && !timer.Process.HasExited) timer.Process.CloseMainWindow();
-            frmBackground.Close();
+            Environment.Exit(0);
         }
-
         /// <summary>
         /// Gets a random number and then runs <see cref="RunGame"/> using the game in the
         /// <see cref="List{T}"/>.
@@ -226,7 +225,7 @@ namespace Mamesaver
             ProcessStartInfo psi = new ProcessStartInfo(execPath);
             psi.Arguments = game.Name + " " + Settings.CommandLineOptions; ;
             psi.WorkingDirectory = Directory.GetParent(execPath).ToString();
-
+            psi.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
             // Start the timer and the process
             timer.Start();
             return Process.Start(psi);

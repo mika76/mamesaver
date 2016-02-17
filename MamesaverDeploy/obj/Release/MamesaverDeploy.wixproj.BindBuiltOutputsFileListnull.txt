@@ -1,0 +1,2 @@
+C:\Users\usuario\Documents\backup_mamesaver\mamesaver 1.1 Beta VS2012\MamesaverDeploy\bin\Release\Mamesaver.msi
+C:\Users\usuario\Documents\backup_mamesaver\mamesaver 1.1 Beta VS2012\MamesaverDeploy\bin\Release\Mamesaver.wixpdb

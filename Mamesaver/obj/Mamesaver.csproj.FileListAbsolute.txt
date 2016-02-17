@@ -1,0 +1,46 @@
+C:\mamesaver-code-6-trunk\Mamesaver\bin\Debug\Mamesaver.exe
+C:\mamesaver-code-6-trunk\Mamesaver\bin\Debug\Mamesaver.pdb
+C:\mamesaver-code-6-trunk\Mamesaver\obj\Debug\ResolveAssemblyReference.cache
+C:\mamesaver-code-6-trunk\Mamesaver\obj\Debug\Mamesaver.BackgroundForm.resources
+C:\mamesaver-code-6-trunk\Mamesaver\obj\Debug\Mamesaver.ConfigForm.resources
+C:\mamesaver-code-6-trunk\Mamesaver\obj\Debug\Mamesaver.Properties.Resources.resources
+C:\mamesaver-code-6-trunk\Mamesaver\obj\Debug\Mamesaver.csproj.GenerateResource.Cache
+C:\mamesaver-code-6-trunk\Mamesaver\obj\Debug\Mamesaver.exe
+C:\mamesaver-code-6-trunk\Mamesaver\obj\Debug\Mamesaver.pdb
+C:\mamesaver-code-6-trunk\Mamesaver\bin\Release\Mamesaver.exe
+C:\mamesaver-code-6-trunk\Mamesaver\bin\Release\Mamesaver.pdb
+C:\mamesaver-code-6-trunk\Mamesaver\obj\Release\ResolveAssemblyReference.cache
+C:\mamesaver-code-6-trunk\Mamesaver\obj\Release\Mamesaver.BackgroundForm.resources
+C:\mamesaver-code-6-trunk\Mamesaver\obj\Release\Mamesaver.ConfigForm.resources
+C:\mamesaver-code-6-trunk\Mamesaver\obj\Release\Mamesaver.Properties.Resources.resources
+C:\mamesaver-code-6-trunk\Mamesaver\obj\Release\Mamesaver.csproj.GenerateResource.Cache
+C:\mamesaver-code-6-trunk\Mamesaver\obj\Release\Mamesaver.exe
+C:\mamesaver-code-6-trunk\Mamesaver\obj\Release\Mamesaver.pdb
+C:\mamesaver 1.1 Beta - copia\Mamesaver\bin\x64\Release\Mamesaver.exe
+C:\mamesaver 1.1 Beta - copia\Mamesaver\bin\x64\Release\Mamesaver.pdb
+C:\mamesaver 1.1 Beta - copia\Mamesaver\obj\x64\Release\ResolveAssemblyReference.cache
+C:\mamesaver 1.1 Beta - copia\Mamesaver\obj\x64\Release\Mamesaver.BackgroundForm.resources
+C:\mamesaver 1.1 Beta - copia\Mamesaver\obj\x64\Release\Mamesaver.ConfigForm.resources
+C:\mamesaver 1.1 Beta - copia\Mamesaver\obj\x64\Release\Mamesaver.Properties.Resources.resources
+C:\mamesaver 1.1 Beta - copia\Mamesaver\obj\x64\Release\Mamesaver.csproj.GenerateResource.Cache
+C:\mamesaver 1.1 Beta - copia\Mamesaver\obj\x64\Release\Mamesaver.exe
+C:\mamesaver 1.1 Beta - copia\Mamesaver\obj\x64\Release\Mamesaver.pdb
+C:\mamesaver 1.1 Beta - copia\Mamesaver\bin\Release\Mamesaver.exe
+C:\mamesaver 1.1 Beta - copia\Mamesaver\bin\Release\Mamesaver.pdb
+C:\mamesaver 1.1 Beta - copia\Mamesaver\obj\Release\ResolveAssemblyReference.cache
+C:\mamesaver 1.1 Beta - copia\Mamesaver\obj\Release\Mamesaver.BackgroundForm.resources
+C:\mamesaver 1.1 Beta - copia\Mamesaver\obj\Release\Mamesaver.ConfigForm.resources
+C:\mamesaver 1.1 Beta - copia\Mamesaver\obj\Release\Mamesaver.Properties.Resources.resources
+C:\mamesaver 1.1 Beta - copia\Mamesaver\obj\Release\Mamesaver.csproj.GenerateResource.Cache
+C:\mamesaver 1.1 Beta - copia\Mamesaver\obj\Release\Mamesaver.exe
+C:\mamesaver 1.1 Beta - copia\Mamesaver\obj\Release\Mamesaver.pdb
+C:\mamesaver 1.1 Beta\Mamesaver\bin\Release\Mamesaver.exe
+C:\mamesaver 1.1 Beta\Mamesaver\bin\Release\Mamesaver.pdb
+C:\mamesaver 1.1 Beta\Mamesaver\obj\Release\ResolveAssemblyReference.cache
+C:\mamesaver 1.1 Beta\Mamesaver\obj\Release\Mamesaver.Resources.PressStart2P.ttf
+C:\mamesaver 1.1 Beta\Mamesaver\obj\Release\Mamesaver.BackgroundForm.resources
+C:\mamesaver 1.1 Beta\Mamesaver\obj\Release\Mamesaver.ConfigForm.resources
+C:\mamesaver 1.1 Beta\Mamesaver\obj\Release\Mamesaver.Properties.Resources.resources
+C:\mamesaver 1.1 Beta\Mamesaver\obj\Release\Mamesaver.csproj.GenerateResource.Cache
+C:\mamesaver 1.1 Beta\Mamesaver\obj\Release\Mamesaver.exe
+C:\mamesaver 1.1 Beta\Mamesaver\obj\Release\Mamesaver.pdb

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <Product Id="9ba27e17-63e0-4204-a7b9-5bc5231386e5" Name="Mamesaver" Language="1033" Version="1.0.0.0" Manufacturer="Mladen Mihajlovic" UpgradeCode="ffa9f413-26d4-4376-821f-57bcd6141175">
+  <Product Id="9ba27e17-63e0-4204-a7b9-5bc5231386e5" Name="Mamesaver" Language="1033" Version="1.1.0.0" Manufacturer="Mladen Mihajlovic" UpgradeCode="ffa9f413-26d4-4376-821f-57bcd6141175">
     <Package InstallerVersion="200" Compressed="yes" />
 
     <Media Id="1" Cabinet="Mamesaver.cab" EmbedCab="yes" CompressionLevel="high" />
@@ -8,12 +8,12 @@
     <Condition Message='This application only runs on Windows NT 4.0+.'>
       VersionNT
     </Condition>
-
+    
     <Directory Id="TARGETDIR" Name="SourceDir">
       <Directory Id="SystemFolder">
 
         <Component Id="ProductComponent" Guid="e7ac086a-a6bc-4115-af4c-0a7f1aa2bd0f">
-          <File Id="Mamesaver" Name="Mamesaver.scr" Source="..\..\..\Mamesaver\bin\Release\Mamesaver.scr" />
+          <File Id="Mamesaver" Name="Mamesaver.scr" Source="..\..\..\Mamesaver\bin\x86\Release\Mamesaver.scr" />
         </Component>
 
       </Directory>
