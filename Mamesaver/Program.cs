@@ -55,8 +55,8 @@ namespace Mamesaver
         static void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
         {
             Log(e.Exception);
-            MessageBox.Show("There was an error running Mamesaver. Please see your error log for more details", "Mamesaver error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            Application.Exit();
+            MessageBox.Show("There was an error running Mamesaver. Please check settings, and path to mame executable.", "Mamesaver error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            Environment.Exit(0);
         }
 
         /// <summary>

@@ -39,7 +39,7 @@ namespace Mamesaver
         {
             get 
             { 
-                return rKey.GetValue("ExecutableName", "C:\\MAME\\MAME32.EXE").ToString();
+                return rKey.GetValue("ExecutableName", "C:\\MAME\\MAME.EXE").ToString();
             }
             set 
             {
@@ -54,7 +54,7 @@ namespace Mamesaver
         {
             get 
             { 
-                return rKey.GetValue("CommandLineOptions", "-skip_gameinfo -nowindow -noswitchres -sleep -triplebuffer -nosound").ToString();
+                return rKey.GetValue("CommandLineOptions", "-skip_gameinfo -sound none").ToString();
             }
             set 
             {
