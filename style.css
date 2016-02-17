@@ -1,0 +1,223 @@
+/*******************************************************
+TITLE: Summer Holiday v1.0
+DATE: 20060424
+AUTHOR: rayk web design - http://www.raykdesign.net
+*******************************************************/
+
+body {
+margin:.5em;
+padding:0;
+height:100%;
+background-color:#ffffff;
+background-image:url(img/body-bg.jpg);
+background-position:top;
+background-repeat:repeat-x;
+color:#000000;  
+text-align:center;
+font-family:Arial, Helvetica, sans-serif;
+font-size:.9em;
+}
+
+a {
+color:#547699;
+text-decoration:underline;
+}
+
+a:hover {
+color:#999999;
+text-decoration:none;
+}
+
+img {
+border:none;
+}
+
+img.left {
+float:left;
+margin:0 .5em 0 .2em;
+padding:.2em;
+border:1px solid #eeeeee;
+}
+
+img.right {
+float:right;
+margin:0 .2em 0 .5em;
+padding:.2em;
+border:1px solid #eeeeee;
+}
+
+blockquote.warning {
+margin:1em;
+padding:.5em;
+padding-left:5em;
+background-color:#ffffff;
+background-image:url(img/blockquote-bg-warning.jpg);
+background-position:left top;
+background-repeat:no-repeat;
+border-top:1px solid #eeeeee;
+}
+
+blockquote.question {
+margin:1em;
+padding:.5em;
+padding-left:5em;
+background-color:#ffffff;
+background-image:url(img/blockquote-bg-question.jpg);
+background-position:left top;
+background-repeat:no-repeat;
+border-top:1px solid #eeeeee;
+}
+
+blockquote p {
+font-size:.8em;
+margin:.2em;
+color:#616161;
+}
+
+#centerColumn { 	
+margin:0 auto;
+padding:1em;
+width:38em;
+text-align:left;
+vertical-align: middle;	
+background-color:#ffffff;
+border:1px solid #BBD1E2;
+}
+
+#centerColumn h2 {
+margin:0 0 -.5em 0;
+padding:.75em 0 0 0;
+font-size:1em;
+letter-spacing:.1em;
+color:#DA8619;
+}
+
+#header {
+margin:0 0 0 0;
+padding:0 0 0 0;
+height:10em;
+background-color:#ffffff;
+background-image:url(img/header-bg.jpg);
+background-position:bottom right;
+background-repeat:no-repeat;
+border:1px solid #EBCD48;
+}
+
+#header h1 {
+margin:0 0 -.6em 0;
+padding:1em 0 0 1em;
+font-size:1.5em;
+letter-spacing:.1em;
+color:#ffffff;
+}
+
+#header h2 {
+margin:0 0 0 0;
+padding:1em 0 0 1.75em;
+font-size:.9em;
+font-weight:300;
+letter-spacing:.1em;
+color:#000000;
+}
+
+#navtabs {
+margin:0 0 0 0;
+float:left;
+width:100%;
+height:6em;
+font-size:93%;
+line-height:normal;
+}
+
+#navtabs ul {
+margin:0;
+padding:4.1em 0 0 .2em;
+list-style:none;
+}
+
+#navtabs li {
+display:inline;
+margin:0;
+padding:0;
+}
+
+#navtabs a {
+float:left;
+background-image:url(img/tableftB.gif);
+background-position:left top;
+background-repeat:no-repeat;
+margin:0;
+padding:0 0 0 4px;
+text-decoration:none;
+}
+
+#navtabs a span {
+float:left;
+display:block;
+background-image:url(img/tabrightB.gif);
+background-position:right top;
+background-repeat:no-repeat;
+padding:5px 15px 4px 6px;
+color:#9E8100;
+}
+
+/* Commented Backslash Hack hides rule from IE5-Mac \*/
+#navtabs a span {float:none;}
+
+/* End IE5-Mac hack */
+#navtabs a:hover span {
+color:#000;
+}
+
+#navtabs a:hover {
+background-position:0% -42px;
+}
+
+#navtabs a:hover span {
+background-position:100% -42px;
+color:#000000;
+}
+
+#fauxRightColumn {
+position:relative;
+float:right;
+margin:.5em 0 0 .5em;
+padding:0 .7em .7em .7em;
+width:11em;
+font-size:.9em;
+background-color:#ffffff;
+background-image:url(img/fauxrightcolumn-bg.jpg);
+background-position:top;
+background-repeat:repeat-x;
+border-bottom:1px solid #eeeeee;
+}
+
+#fauxRightColumn h2 {
+margin-bottom:-1em;
+font-size:.9em;
+color:#DA8619;
+}
+
+#fauxRightColumn a {
+font-size:.9em;
+text-decoration:none;
+color:#559449;
+}
+
+#fauxRightColumn a:hover{
+text-decoration:none;
+color:#cccccc;
+}
+
+#footer {
+position:relative;
+bottom:0;
+margin:5em 0 0 0;
+padding:0;
+height:4em;
+line-height:4em;
+text-align:center;
+font-size:.7em;
+background-color:#ffffff;
+border-top:1px solid #eeeeee;
+}
