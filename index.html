@@ -13,7 +13,7 @@
     google.load("feeds", "1");
  
     function initialize() {
-      var feed = new google.feeds.Feed("http://sourceforge.net/export/rss2_projnews.php?group_id=194940&rss_fulltext=1");
+      var feed = new google.feeds.Feed("https://github.com/mika76/mamesaver/releases.atom");
       feed.load(function(result) {
         if (!result.error) {
           var container = document.getElementById("feed");
