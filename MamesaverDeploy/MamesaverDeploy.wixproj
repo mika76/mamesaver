@@ -1,4 +1,5 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <ProductVersion>3.0</ProductVersion>
@@ -6,8 +7,8 @@
     <SchemaVersion>2.0</SchemaVersion>
     <OutputName>Mamesaver</OutputName>
     <OutputType>Package</OutputType>
-    <WixToolPath>C:\Program Files\Windows Installer XML v3\bin\</WixToolPath>
-  </PropertyGroup>
+    <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' AND '$(MSBuildExtensionsPath32)' != '' ">$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
+    <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' ">$(MSBuildExtensionsPath)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <OutputPath>bin\Debug\</OutputPath>
     <IntermediateOutputPath>obj\Debug\</IntermediateOutputPath>
@@ -20,5 +21,5 @@
   <ItemGroup>
     <Compile Include="MamesaverDeploy.wxs" />
   </ItemGroup>
-  <Import Project="$(MSBuildExtensionsPath)\Microsoft\WiX\v3.0\Wix.targets" />
+  <Import Project="$(WixTargetsPath)" />
 </Project>
