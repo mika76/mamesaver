@@ -9,6 +9,9 @@ Licensed under The MIT License
 
 Mamesaver is a Windows screen saver that runs MAME with a random game for specified intervals of time.
 
+![General Settings](http://sourceforge.net/dbimage.php?id=121992) ![Game List](http://sourceforge.net/dbimage.php?id=121994)
+
+
 ### REQUIREMENTS
 
 * A working installation of MAME. I used 0.114u3 but I'm sure older versions will work too.
@@ -37,5 +40,4 @@ Other than those main settings, you can also set the interval at which the game 
 * The game list will only contain games which have passed the Mame ROM audit and have drivers with a status of good. This means that games, which might be partially working but maybe have no sound or some other part of the driver is not working, will not be displayed in this list. The main reason for this is that MAME shows a dialog which expects user input at the beginning of the game, which is the exact opposite of what you would want a screen saver to do.
 
 ### OPEN SOURCE
-The source code if provided as-is under the MIT Licence. If you have any suggestions and comments, please feel free to leave them on the forum at http://mamesaver.sourceforge.org/.
-
+The source code if provided as-is under the MIT Licence. If you have any suggestions and comments, please feel free to create issues here on github.
