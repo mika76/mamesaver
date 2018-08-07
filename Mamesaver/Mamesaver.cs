@@ -128,7 +128,7 @@ namespace Mamesaver
 
             foreach (string key in verifiedGames.Keys)
             {
-                XmlNode xmlGame = doc.SelectSingleNode(string.Format("mame/game[@name='{0}']", key));
+                XmlNode xmlGame = doc.SelectSingleNode(string.Format("//machine[@name='{0}']", key));
 
                 if ( xmlGame != null && xmlGame["driver"] != null && xmlGame["driver"].Attributes["status"].Value == "good" )
                     games.Add(new SelectableGame(xmlGame.Attributes["name"].Value, xmlGame["description"].InnerText, xmlGame["year"] != null ? xmlGame["year"].InnerText : "", xmlGame["manufacturer"] != null ? xmlGame["manufacturer"].InnerText : "", false));
