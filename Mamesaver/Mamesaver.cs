@@ -224,8 +224,10 @@ namespace Mamesaver
             // Set up the process
             string execPath = Settings.ExecutablePath;
             ProcessStartInfo psi = new ProcessStartInfo(execPath);
-            psi.Arguments = game.Name + " " + Settings.CommandLineOptions; ;
+            psi.Arguments = game.Name + " " + Settings.CommandLineOptions;
             psi.WorkingDirectory = Directory.GetParent(execPath).ToString();
+            psi.CreateNoWindow = true;
+            psi.WindowStyle = ProcessWindowStyle.Hidden;
 
             // Start the timer and the process
             timer.Start();
@@ -244,6 +246,8 @@ namespace Mamesaver
             psi.WorkingDirectory = Directory.GetParent(execPath).ToString();
             psi.RedirectStandardOutput = true;
             psi.UseShellExecute = false;
+            psi.CreateNoWindow = true;
+            psi.WindowStyle = ProcessWindowStyle.Hidden;
             Process p = Process.Start(psi);
             string output = p.StandardOutput.ReadToEnd();
             p.WaitForExit();
@@ -265,6 +269,8 @@ namespace Mamesaver
             psi.WorkingDirectory = Directory.GetParent(execPath).ToString();
             psi.RedirectStandardOutput = true;
             psi.UseShellExecute = false;
+            psi.CreateNoWindow = true;
+            psi.WindowStyle = ProcessWindowStyle.Hidden;
             Process p = Process.Start(psi);
             string output = p.StandardOutput.ReadToEnd();
             p.WaitForExit();
