@@ -139,24 +139,24 @@ namespace Mamesaver
                     while(reader.Read() && reader.Name == "machine")
                     { 
                         // Read game metadata
-                        var element = (XElement) XNode.ReadFrom(reader);
+                        var machine = (XElement) XNode.ReadFrom(reader);
 
-                        var name = element.Attribute("name")?.Value;
+                        var name = machine.Attribute("name")?.Value;
                         if (name == null) continue;
                         
                         // Skip games which aren't verified
                         if (!verifiedGames.Contains(name)) continue;
 
-                        var driver = element.Element("driver");
+                        var driver = machine.Element("driver");
                         if (driver == null) continue;
 
                         // Skip games which aren't fully emulated
                         var status = driver.Attribute("status")?.Value;
                         if (status != "good") continue;
 
-                        var year = element.Element("year")?.Value ?? "";
-                        var manufacturer = element.Element("manufacturer")?.Value ?? "";
-                        var description = element.Element("description")?.Value ?? "";
+                        var year = machine.Element("year")?.Value ?? "";
+                        var manufacturer = machine.Element("manufacturer")?.Value ?? "";
+                        var description = machine.Element("description")?.Value ?? "";
 
                         games.Add(new SelectableGame(name, description, year, manufacturer, false));
                     } 
