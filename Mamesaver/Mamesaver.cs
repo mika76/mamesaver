@@ -4,18 +4,11 @@
  */
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using System.Xml;
-using System.Xml.Linq;
-using System.Xml.Serialization;
 using gma.System.Windows;
 
 namespace Mamesaver
@@ -112,59 +105,6 @@ namespace Mamesaver
             }
         }
 
-
-
-        /// <summary>
-        /// Returns a <see cref="List{T}"/> of <see cref="SelectableGame"/>s which are read from
-        /// the full list and then merged with the verified rom's list. The games which are returned
-        /// all have a "good" status on their drivers. This check also eliminates BIOS ROMS.
-        /// </summary>
-        /// <returns>Returns a <see cref="List{T}"/> of <see cref="SelectableGame"/>s</returns>
-        public List<SelectableGame> GetGameList()
-        {
-            // Retrieve identifiers of verified games
-            var verifiedGames = GetVerifiedSets();
-
-            var games = new List<SelectableGame>();
-
-            // Enrich game metadata
-            using (var stream = GetFullGameList())
-            {
-                var readerSettings = new XmlReaderSettings { DtdProcessing = DtdProcessing.Parse };
-                using (var reader = XmlReader.Create(stream, readerSettings))
-                {
-                    reader.ReadStartElement("mame");
-
-                    // Read each machine, enriching metadata for verified sets
-                    while(reader.Read() && reader.Name == "machine")
-                    { 
-                        // Read game metadata
-                        var machine = (XElement) XNode.ReadFrom(reader);
-
-                        var name = machine.Attribute("name")?.Value;
-                        if (name == null) continue;
-                        
-                        // Skip games which aren't verified
-                        if (!verifiedGames.Contains(name)) continue;
-
-                        var driver = machine.Element("driver");
-                        if (driver == null) continue;
-
-                        // Skip games which aren't fully emulated
-                        var status = driver.Attribute("status")?.Value;
-                        if (status != "good") continue;
-
-                        var year = machine.Element("year")?.Value ?? "";
-                        var manufacturer = machine.Element("manufacturer")?.Value ?? "";
-                        var description = machine.Element("description")?.Value ?? "";
-
-                        games.Add(new SelectableGame(name, description, year, manufacturer, false));
-                    } 
-                }
-            }
-
-            return games;
-        }
         #endregion
 
         #region Event Hanlders
@@ -250,71 +190,11 @@ namespace Mamesaver
                 Application.DoEvents();
             }
 
-            // Set up the process
-            string execPath = Settings.ExecutablePath;
-            ProcessStartInfo psi = new ProcessStartInfo(execPath);
-            psi.Arguments = game.Name + " " + Settings.CommandLineOptions;
-            psi.WorkingDirectory = Directory.GetParent(execPath).ToString();
-            psi.CreateNoWindow = true;
-            psi.WindowStyle = ProcessWindowStyle.Hidden;
-
             // Start the timer and the process
             timer.Start();
-            return Process.Start(psi);
+            return MameInvoker.Run(game.Name, Settings.CommandLineOptions);
         }
 
-        /// <summary>
-        /// Gets the full XML game list from <a href="http://www.mame.org/">Mame</a>.
-        /// </summary>
-        /// <returns><see cref="String"/> holding the Mame XML</returns>
-        private StreamReader GetFullGameList()
-        {
-            string execPath = Settings.ExecutablePath;
-            ProcessStartInfo psi = new ProcessStartInfo(execPath);
-            psi.Arguments = "-listxml";
-            psi.WorkingDirectory = Directory.GetParent(execPath).ToString();
-            psi.RedirectStandardOutput = true;
-            psi.UseShellExecute = false;
-            psi.CreateNoWindow = true;
-            psi.WindowStyle = ProcessWindowStyle.Hidden;
-            Process p = Process.Start(psi);
-
-            return p.StandardOutput;
-
-        }
-
-        /// <summary>
-        /// Returns a <see cref="Hashtable"/> filled with the names of games which are
-        /// verified to work. Only the ones marked as good are returned. The clone names
-        /// are returned in the value of the hashtable while the name is used as the key.
-        /// </summary>
-        /// <returns><see cref="Hashtable"/></returns>
-        private Hashtable GetVerifiedSets()
-        {
-            string execPath = Settings.ExecutablePath;
-            ProcessStartInfo psi = new ProcessStartInfo(execPath);
-            psi.Arguments = "-verifyroms";
-            psi.WorkingDirectory = Directory.GetParent(execPath).ToString();
-            psi.RedirectStandardOutput = true;
-            psi.UseShellExecute = false;
-            psi.CreateNoWindow = true;
-            psi.WindowStyle = ProcessWindowStyle.Hidden;
-            Process p = Process.Start(psi);
-            string output = p.StandardOutput.ReadToEnd();
-            p.WaitForExit();
-
-
-            Regex r = new Regex(@"romset (\w*)(?:\s\[(\w*)\])? is good"); //only accept the "good" ROMS
-            MatchCollection matches = r.Matches(output);
-            Hashtable verifiedGames = new Hashtable();
-
-            foreach (Match m in matches)
-            {
-                verifiedGames.Add(m.Groups[1].Value, m.Groups[2].Value);
-            }
-
-            return verifiedGames;
-        }
-        #endregion
+       #endregion
     }
 }
