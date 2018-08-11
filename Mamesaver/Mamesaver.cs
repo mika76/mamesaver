@@ -14,6 +14,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml;
+using System.Xml.Linq;
 using System.Xml.Serialization;
 using gma.System.Windows;
 
@@ -121,17 +122,45 @@ namespace Mamesaver
         /// <returns>Returns a <see cref="List{T}"/> of <see cref="SelectableGame"/>s</returns>
         public List<SelectableGame> GetGameList()
         {
-            Hashtable verifiedGames = GetVerifiedSets();
-            XmlDocument doc = new XmlDocument();
-            doc.LoadXml(GetFullGameList());
-            List<SelectableGame> games = new List<SelectableGame>();
+            // Retrieve identifiers of verified games
+            var verifiedGames = GetVerifiedSets();
 
-            foreach (string key in verifiedGames.Keys)
+            var games = new List<SelectableGame>();
+
+            // Enrich game metadata
+            using (var stream = GetFullGameList())
             {
-                XmlNode xmlGame = doc.SelectSingleNode(string.Format("//machine[@name='{0}']", key));
+                var readerSettings = new XmlReaderSettings { DtdProcessing = DtdProcessing.Parse };
+                using (var reader = XmlReader.Create(stream, readerSettings))
+                {
+                    reader.ReadStartElement("mame");
 
-                if ( xmlGame != null && xmlGame["driver"] != null && xmlGame["driver"].Attributes["status"].Value == "good" )
-                    games.Add(new SelectableGame(xmlGame.Attributes["name"].Value, xmlGame["description"].InnerText, xmlGame["year"] != null ? xmlGame["year"].InnerText : "", xmlGame["manufacturer"] != null ? xmlGame["manufacturer"].InnerText : "", false));
+                    // Read each machine, enriching metadata for verified sets
+                    while(reader.Read() && reader.Name == "machine")
+                    { 
+                        // Read game metadata
+                        var element = (XElement) XNode.ReadFrom(reader);
+
+                        var name = element.Attribute("name")?.Value;
+                        if (name == null) continue;
+                        
+                        // Skip games which aren't verified
+                        if (!verifiedGames.Contains(name)) continue;
+
+                        var driver = element.Element("driver");
+                        if (driver == null) continue;
+
+                        // Skip games which aren't fully emulated
+                        var status = driver.Attribute("status")?.Value;
+                        if (status != "good") continue;
+
+                        var year = element.Element("year")?.Value ?? "";
+                        var manufacturer = element.Element("manufacturer")?.Value ?? "";
+                        var description = element.Element("description")?.Value ?? "";
+
+                        games.Add(new SelectableGame(name, description, year, manufacturer, false));
+                    } 
+                }
             }
 
             return games;
@@ -238,7 +267,7 @@ namespace Mamesaver
         /// Gets the full XML game list from <a href="http://www.mame.org/">Mame</a>.
         /// </summary>
         /// <returns><see cref="String"/> holding the Mame XML</returns>
-        private string GetFullGameList()
+        private StreamReader GetFullGameList()
         {
             string execPath = Settings.ExecutablePath;
             ProcessStartInfo psi = new ProcessStartInfo(execPath);
@@ -249,10 +278,9 @@ namespace Mamesaver
             psi.CreateNoWindow = true;
             psi.WindowStyle = ProcessWindowStyle.Hidden;
             Process p = Process.Start(psi);
-            string output = p.StandardOutput.ReadToEnd();
-            p.WaitForExit();
 
-            return output;
+            return p.StandardOutput;
+
         }
 
         /// <summary>
