@@ -54,7 +54,7 @@ namespace Mamesaver
         {
             get 
             { 
-                return rKey.GetValue("CommandLineOptions", "-skip_gameinfo -nowindow -noswitchres -sleep -triplebuffer -nosound").ToString();
+                return rKey.GetValue("CommandLineOptions", "-skip_gameinfo -nowindow -noswitchres -sleep -triplebuffer -sound none").ToString();
             }
             set 
             {
