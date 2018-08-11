@@ -132,7 +132,7 @@ namespace Mamesaver
 
         private void ListBuilder_DoWork(object sender, DoWorkEventArgs e)
         {
-            List<SelectableGame> gamesList = saver.GetGameList();
+            List<SelectableGame> gamesList = GameListBuilder.GetGameList();
             //TODO: Merge with existing list, if any
             e.Result = gamesList;
             
