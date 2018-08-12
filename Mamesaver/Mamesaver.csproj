@@ -72,10 +72,9 @@
       <DependentUpon>ConfigForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Game.cs" />
-    <Compile Include="GameTimer.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="ListViewSorter.cs" />
+    <Compile Include="MameScreen.cs" />
+    <Compile Include="MultiFormApplicationContext.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Mamesaver.cs">
