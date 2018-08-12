@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -11,11 +10,6 @@ namespace Mamesaver
 {
     internal static class GameListBuilder
     {
-        private static readonly ParallelOptions ParallelOptions = new ParallelOptions
-        {
-            MaxDegreeOfParallelism = Environment.ProcessorCount
-        };
-
         /// <summary>
         /// Returns a <see cref="List{T}"/> of <see cref="SelectableGame"/>s which are read from
         /// the full list and then merged with the verified rom's list. The games which are returned
@@ -27,42 +21,40 @@ namespace Mamesaver
             var games = new List<SelectableGame>();
 
             // Enrich game metadata for each verified game
-            Parallel.ForEach(GetVerifiedSets(), ParallelOptions, game =>
+            foreach (var game in GetVerifiedSets())
             {
+                using (var stream = GetGameDetails(game.Key))
                 {
-                    using (var stream = GetGameDetails(game.Key))
+                    var readerSettings = new XmlReaderSettings { DtdProcessing = DtdProcessing.Parse };
+                    using (var reader = XmlReader.Create(stream, readerSettings))
                     {
-                        var readerSettings = new XmlReaderSettings { DtdProcessing = DtdProcessing.Parse };
-                        using (var reader = XmlReader.Create(stream, readerSettings))
+                        reader.ReadStartElement("mame");
+
+                        // Read each machine, enriching metadata for verified sets
+                        while (reader.Read() && reader.Name == "machine")
                         {
-                            reader.ReadStartElement("mame");
+                            // Read game metadata
+                            var element = (XElement) XNode.ReadFrom(reader);
 
-                            // Read each machine, enriching metadata for verified sets
-                            while (reader.Read() && reader.Name == "machine")
-                            {
-                                // Read game metadata
-                                var element = (XElement) XNode.ReadFrom(reader);
+                            var name = element.Attribute("name")?.Value;
+                            if (name == null) continue;
 
-                                var name = element.Attribute("name")?.Value;
-                                if (name == null) continue;
+                            var driver = element.Element("driver");
+                            if (driver == null) continue;
 
-                                var driver = element.Element("driver");
-                                if (driver == null) continue;
+                            // Skip games which aren't fully emulated
+                            var status = driver.Attribute("status")?.Value;
+                            if (status != "good") continue;
 
-                                // Skip games which aren't fully emulated
-                                var status = driver.Attribute("status")?.Value;
-                                if (status != "good") continue;
+                            var year = element.Element("year")?.Value ?? "";
+                            var manufacturer = element.Element("manufacturer")?.Value ?? "";
+                            var description = element.Element("description")?.Value ?? "";
 
-                                var year = element.Element("year")?.Value ?? "";
-                                var manufacturer = element.Element("manufacturer")?.Value ?? "";
-                                var description = element.Element("description")?.Value ?? "";
-
-                                games.Add(new SelectableGame(name, description, year, manufacturer, false));
-                            }
+                            games.Add(new SelectableGame(name, description, year, manufacturer, false));
                         }
                     }
                 }
-            });
+            }
 
             return games;
         }
@@ -78,18 +70,18 @@ namespace Mamesaver
             var regex = new Regex(@"romset (\w*)(?:\s\[(\w*)\])? is good"); //only accept the "good" ROMS
 
             // Verify each rom in directory
-            Parallel.ForEach(GetRomFiles(), ParallelOptions, rom =>
+            foreach (var rom in GetRomFiles())
             {
                 // Retrieve state per rom
                 using (var stream = MameInvoker.GetOutput("-verifyroms", rom))
                 {
                     var output = stream.ReadToEnd();
-                    if (!regex.IsMatch(output)) return;
+                    if (!regex.IsMatch(output)) continue;
 
                     var matches = regex.Match(output);
                     verifiedRoms[matches.Groups[1].Value] = matches.Groups[2].Value;
                 }
-            });
+            }
 
             return verifiedRoms;
         }
