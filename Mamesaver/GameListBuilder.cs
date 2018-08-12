@@ -65,7 +65,7 @@ namespace Mamesaver
         /// <summary>
         ///     Returns a <see cref="IDictionary{TKey,TValue}" /> filled with the names of games which are
         ///     verified to work. Only the ones marked as good are returned. The clone names
-        ///     are returned in the value of the hashtable while the name is used as the key.
+        ///     are returned in the value of the dictionary while the name is used as the key.
         /// </summary>
         private static IDictionary<string, string> GetVerifiedSets()
         {
@@ -133,14 +133,14 @@ namespace Mamesaver
                     var absolutePaths = new List<string>();
                     foreach (var path in paths.Select(p => p.Trim()))
                     {
-                        // If path is absolute, return raw path
+                        // If path is absolute, add raw path
                         if (Path.IsPathRooted(path))
                         {
                             absolutePaths.Add(path);
                         }
                         else
                         {
-                            // If path is relative, return path relative to Mame executable
+                            // If path is relative, construct absolute path relative to Mame executable
                             var execPath = Settings.ExecutablePath;
                             var workingDirectory = Directory.GetParent(execPath).ToString();
 
