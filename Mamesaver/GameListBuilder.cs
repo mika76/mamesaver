@@ -40,15 +40,24 @@ namespace Mamesaver
             List<string> romsToProcess;
             while ((romsToProcess = verifiedGames.Skip(index).Take(RomsPerBatch).ToList()).Any())
             {
-                using (var stream = GetGameDetails(romsToProcess)) GetRomDetails(stream, games);
+                using (var stream = GetGameDetails(romsToProcess))
+                {
+                    games.AddRange(GetRomDetails(stream));
+                }
+
                 index += RomsPerBatch;
             }
 
             return games;
         }
 
-        private static void GetRomDetails(StreamReader stream, List<SelectableGame> games)
+        /// <summary>
+        ///     Extracts rom metadata for display from a XML stream from Mame
+        /// </summary>
+        private static List<SelectableGame> GetRomDetails(StreamReader stream)
         {
+            var games = new List<SelectableGame>();
+
             using (var reader = XmlReader.Create(stream, ReaderSettings))
             {
                 reader.ReadStartElement("mame");
@@ -76,6 +85,8 @@ namespace Mamesaver
                     games.Add(new SelectableGame(name, description, year, manufacturer, false));
                 }
             }
+
+            return games;
         }
 
         /// <summary>
