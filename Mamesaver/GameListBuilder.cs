@@ -20,7 +20,7 @@ namespace Mamesaver
         {
             var games = new List<SelectableGame>();
 
-            // Enrich game metadata
+            // Enrich game metadata for each verified game
             foreach (var game in GetVerifiedSets())
             {
                 using (var stream = GetGameDetails(game.Key))
