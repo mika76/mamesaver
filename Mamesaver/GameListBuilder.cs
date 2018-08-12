@@ -11,6 +11,17 @@ namespace Mamesaver
     internal static class GameListBuilder
     {
         /// <summary>
+        ///     Number of roms to process per batch. Rom files are batched when passing as arguments to Mame as a precaution
+        ///     in case we have a very large number of roms and end up with command line length limit issues.
+        /// </summary>
+        private const int RomsPerBatch = 50;
+
+        /// <summary>
+        ///     Settings for parsing Mame's listxml output
+        /// </summary>
+        private static readonly XmlReaderSettings ReaderSettings = new XmlReaderSettings { DtdProcessing = DtdProcessing.Parse };
+
+        /// <summary>
         /// Returns a <see cref="List{T}"/> of <see cref="SelectableGame"/>s which are read from
         /// the full list and then merged with the verified rom's list. The games which are returned
         /// all have a "good" status on their drivers. This check also eliminates BIOS ROMS.
@@ -21,42 +32,49 @@ namespace Mamesaver
             var games = new List<SelectableGame>();
 
             // Enrich game metadata for each verified game
-            foreach (var game in GetVerifiedSets())
+            var verifiedGames = GetVerifiedSets().Keys;
+
+            // Get details for each verified rom
+            var index = 0;
+            List<string> romsToProcess;
+            while ((romsToProcess = verifiedGames.Skip(index).Take(RomsPerBatch).ToList()).Any())
             {
-                using (var stream = GetGameDetails(game.Key))
-                {
-                    var readerSettings = new XmlReaderSettings { DtdProcessing = DtdProcessing.Parse };
-                    using (var reader = XmlReader.Create(stream, readerSettings))
-                    {
-                        reader.ReadStartElement("mame");
-
-                        // Read each machine, enriching metadata for verified sets
-                        while (reader.Read() && reader.Name == "machine")
-                        {
-                            // Read game metadata
-                            var element = (XElement) XNode.ReadFrom(reader);
-
-                            var name = element.Attribute("name")?.Value;
-                            if (name == null) continue;
-
-                            var driver = element.Element("driver");
-                            if (driver == null) continue;
-
-                            // Skip games which aren't fully emulated
-                            var status = driver.Attribute("status")?.Value;
-                            if (status != "good") continue;
-
-                            var year = element.Element("year")?.Value ?? "";
-                            var manufacturer = element.Element("manufacturer")?.Value ?? "";
-                            var description = element.Element("description")?.Value ?? "";
-
-                            games.Add(new SelectableGame(name, description, year, manufacturer, false));
-                        }
-                    }
-                }
+                using (var stream = GetGameDetails(romsToProcess)) GetRomDetails(stream, games);
+                index += RomsPerBatch;
             }
 
             return games;
+        }
+
+        private static void GetRomDetails(StreamReader stream, List<SelectableGame> games)
+        {
+            using (var reader = XmlReader.Create(stream, ReaderSettings))
+            {
+                reader.ReadStartElement("mame");
+
+                // Read each machine, enriching metadata for verified sets
+                while (reader.Read() && reader.Name == "machine")
+                {
+                    // Read game metadata
+                    var element = (XElement)XNode.ReadFrom(reader);
+
+                    var name = element.Attribute("name")?.Value;
+                    if (name == null) continue;
+
+                    var driver = element.Element("driver");
+                    if (driver == null) continue;
+
+                    // Skip games which aren't fully emulated
+                    var status = driver.Attribute("status")?.Value;
+                    if (status != "good") continue;
+
+                    var year = element.Element("year")?.Value ?? "";
+                    var manufacturer = element.Element("manufacturer")?.Value ?? "";
+                    var description = element.Element("description")?.Value ?? "";
+
+                    games.Add(new SelectableGame(name, description, year, manufacturer, false));
+                }
+            }
         }
 
         /// <summary>
@@ -69,18 +87,27 @@ namespace Mamesaver
             var verifiedRoms = new Dictionary<string, string>();
             var regex = new Regex(@"romset (\w*)(?:\s\[(\w*)\])? is good"); //only accept the "good" ROMS
 
+            var romFiles = GetRomFiles();
+
             // Verify each rom in directory
-            foreach (var rom in GetRomFiles())
+            var index = 0;
+            List<string> filesToVerify;
+            while ((filesToVerify = romFiles.Skip(index).Take(RomsPerBatch).ToList()).Any())
             {
-                // Retrieve state per rom
-                using (var stream = MameInvoker.GetOutput("-verifyroms", rom))
+                var arguments = new List<string> { "-verifyroms" }.Concat(filesToVerify).ToArray();
+                using (var stream = MameInvoker.GetOutput(arguments))
                 {
                     var output = stream.ReadToEnd();
-                    if (!regex.IsMatch(output)) continue;
 
-                    var matches = regex.Match(output);
-                    verifiedRoms[matches.Groups[1].Value] = matches.Groups[2].Value;
+                    var matches = regex.Matches(output);
+                    for (var i = 0; i < matches.Count; i++)
+                    {
+                        var match = matches[i];
+                        verifiedRoms[match.Groups[1].Value] = match.Groups[2].Value;
+                    }
                 }
+
+                index += RomsPerBatch;
             }
 
             return verifiedRoms;
@@ -92,7 +119,7 @@ namespace Mamesaver
         /// <remarks>
         ///     It is assumed that roms are zipped.
         /// </remarks>
-        private static IEnumerable<string> GetRomFiles()
+        private static List<string> GetRomFiles()
         {
             var roms = new List<string>();
 
@@ -153,13 +180,13 @@ namespace Mamesaver
         }
 
         /// <summary>
-        ///     Gets the full XML game list from <a href="http://www.mame.org/">Mame</a>.
+        ///     Gets XML details for a list of games from <a href="http://www.mame.org/">Mame</a>.
         /// </summary>
-        /// <param name="game">game to retrieve details for</param>
+        /// <param name="games">games to retrieve details for</param>
         /// <returns><see cref="StreamReader" /> containing stream of Mame XML</returns>
-        private static StreamReader GetGameDetails(string game)
+        private static StreamReader GetGameDetails(List<string> games)
         {
-            return MameInvoker.GetOutput("-listxml", game);
+            return MameInvoker.GetOutput(new List<string> { "-listxml" }.Concat(games).ToArray());
         }
     }
 }
