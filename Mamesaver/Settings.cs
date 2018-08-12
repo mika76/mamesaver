@@ -84,7 +84,7 @@ namespace Mamesaver
         {
             get 
             { 
-                return int.Parse(rKey.GetValue("BackgroundSeconds", 10).ToString());
+                return int.Parse(rKey.GetValue("BackgroundSeconds", 3).ToString());
             }
             set 
             {
