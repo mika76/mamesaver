@@ -18,43 +18,40 @@ namespace Mamesaver
         /// <returns>Returns a <see cref="List{T}"/> of <see cref="SelectableGame"/>s</returns>
         public static List<SelectableGame> GetGameList()
         {
-            // Retrieve identifiers of verified games
-            var verifiedGames = GetVerifiedSets();
-
             var games = new List<SelectableGame>();
 
-            // Enrich game metadata
-            using (var stream = GetFullGameList())
+            // Enrich game metadata for each verified game
+            foreach (var game in GetVerifiedSets())
             {
-                var readerSettings = new XmlReaderSettings { DtdProcessing = DtdProcessing.Parse };
-                using (var reader = XmlReader.Create(stream, readerSettings))
+                using (var stream = GetGameDetails(game.Key))
                 {
-                    reader.ReadStartElement("mame");
-
-                    // Read each machine, enriching metadata for verified sets
-                    while (reader.Read() && reader.Name == "machine")
+                    var readerSettings = new XmlReaderSettings { DtdProcessing = DtdProcessing.Parse };
+                    using (var reader = XmlReader.Create(stream, readerSettings))
                     {
-                        // Read game metadata
-                        var element = (XElement)XNode.ReadFrom(reader);
+                        reader.ReadStartElement("mame");
 
-                        var name = element.Attribute("name")?.Value;
-                        if (name == null) continue;
+                        // Read each machine, enriching metadata for verified sets
+                        while (reader.Read() && reader.Name == "machine")
+                        {
+                            // Read game metadata
+                            var element = (XElement) XNode.ReadFrom(reader);
 
-                        // Skip games which aren't verified
-                        if (!verifiedGames.ContainsKey(name)) continue;
+                            var name = element.Attribute("name")?.Value;
+                            if (name == null) continue;
 
-                        var driver = element.Element("driver");
-                        if (driver == null) continue;
+                            var driver = element.Element("driver");
+                            if (driver == null) continue;
 
-                        // Skip games which aren't fully emulated
-                        var status = driver.Attribute("status")?.Value;
-                        if (status != "good") continue;
+                            // Skip games which aren't fully emulated
+                            var status = driver.Attribute("status")?.Value;
+                            if (status != "good") continue;
 
-                        var year = element.Element("year")?.Value ?? "";
-                        var manufacturer = element.Element("manufacturer")?.Value ?? "";
-                        var description = element.Element("description")?.Value ?? "";
+                            var year = element.Element("year")?.Value ?? "";
+                            var manufacturer = element.Element("manufacturer")?.Value ?? "";
+                            var description = element.Element("description")?.Value ?? "";
 
-                        games.Add(new SelectableGame(name, description, year, manufacturer, false));
+                            games.Add(new SelectableGame(name, description, year, manufacturer, false));
+                        }
                     }
                 }
             }
@@ -158,10 +155,11 @@ namespace Mamesaver
         /// <summary>
         ///     Gets the full XML game list from <a href="http://www.mame.org/">Mame</a>.
         /// </summary>
+        /// <param name="game">game to retrieve details for</param>
         /// <returns><see cref="StreamReader" /> containing stream of Mame XML</returns>
-        private static StreamReader GetFullGameList()
+        private static StreamReader GetGameDetails(string game)
         {
-            return MameInvoker.GetOutput("-listxml");
+            return MameInvoker.GetOutput("-listxml", game);
         }
     }
 }
