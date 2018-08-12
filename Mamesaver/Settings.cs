@@ -39,7 +39,7 @@ namespace Mamesaver
         {
             get 
             { 
-                return rKey.GetValue("ExecutableName", "C:\\MAME\\MAME32.EXE").ToString();
+                return rKey.GetValue("ExecutableName", "C:\\MAME\\MAME64.EXE").ToString();
             }
             set 
             {
