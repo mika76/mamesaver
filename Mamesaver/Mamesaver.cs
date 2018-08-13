@@ -12,11 +12,11 @@ namespace Mamesaver
 {
     public class Mamesaver
     {
-        private readonly List<MameScreen> _mameScreens = new List<MameScreen>();
+        private readonly List<BlankScreen> _mameScreens = new List<BlankScreen>();
 
         public void ShowConfig()
         {
-            ConfigForm frmConfig = new ConfigForm(this);
+            var frmConfig = new ConfigForm(this);
             Application.EnableVisualStyles();
             Application.Run(frmConfig);
         }
@@ -39,11 +39,19 @@ namespace Mamesaver
                 // Exit run method if there were no selected games
                 if (gameList.Count == 0) return;
 
-                foreach (var screen in Screen.AllScreens)
+                var showGameOnAllScreens = false; // disabled for now - this only works with opengl
+
+                var mameScreen = new MameScreen(Screen.PrimaryScreen, gameList, OnScreenClosed, true);
+                _mameScreens.Add(mameScreen);
+                mameScreen.Initialise();
+
+                foreach (var otherScreen in Screen.AllScreens.Where(s => s != Screen.PrimaryScreen))
                 {
-                    var mameScreen = new MameScreen(screen, gameList, OnScreenClosed, true);
-                    _mameScreens.Add(mameScreen);
-                    mameScreen.Initialise();
+                    var blankScreen = showGameOnAllScreens?
+                        new MameScreen(otherScreen, gameList, OnScreenClosed, true) :
+                        new BlankScreen(otherScreen, OnScreenClosed);
+                    _mameScreens.Add(blankScreen);
+                    blankScreen.Initialise();
                 }
 
                 // Run the application
@@ -57,12 +65,12 @@ namespace Mamesaver
             }
         }
 
-        private void OnScreenClosed(MameScreen mameScreen)
+        private void OnScreenClosed(BlankScreen mameScreen)
         {
             try
             {
                 // one screen has closed so close them all
-                foreach (var screen in new List<MameScreen>(_mameScreens))
+                foreach (var screen in new List<BlankScreen>(_mameScreens))
                 {
                     _mameScreens.Remove(screen);
                     screen.Close();

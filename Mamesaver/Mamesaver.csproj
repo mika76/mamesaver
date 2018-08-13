@@ -65,6 +65,7 @@
     <Compile Include="BackgroundForm.Designer.cs">
       <DependentUpon>BackgroundForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="BlankScreen.cs" />
     <Compile Include="ConfigForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -89,6 +90,7 @@
     <Compile Include="SelectableGame.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="UserActivityHook.cs" />
+    <Compile Include="WindowsInterop.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
