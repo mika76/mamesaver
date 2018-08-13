@@ -77,6 +77,17 @@ namespace Mamesaver
             }
         }
 
+        public static bool CloneScreen
+        {
+            get
+            {
+                return bool.Parse(rKey.GetValue("CloneScreen", true.ToString()).ToString());
+            }
+            set
+            {
+                rKey.SetValue("CloneScreen", value, RegistryValueKind.String);
+            }
+        }
         /// <summary>
         /// The number of seconds that the game intro screen (the screen with the big MAME logo) is shown.
         /// </summary>

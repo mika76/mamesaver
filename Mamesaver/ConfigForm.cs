@@ -6,29 +6,21 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-using System.Xml;
-using System.Xml.Serialization;
 using System.Configuration;
-using System.Media;
 
 namespace Mamesaver
 {
     public partial class ConfigForm : Form
     {
         #region Variables
-        private Mamesaver saver = null;
-        private ListViewSorter lvwColumnSorter = null;
+        private ListViewSorter _lvwColumnSorter;
         #endregion
 
         #region Constructor
-        public ConfigForm(Mamesaver saver)
+        public ConfigForm()
         {
             InitializeComponent();
-            this.saver = saver;
         }
         #endregion
 
@@ -36,22 +28,23 @@ namespace Mamesaver
         private void configForm_Load(object sender, EventArgs e)
         {
             //load list
-            List<SelectableGame> gameList = Settings.LoadGameList();
+            var gameList = Settings.LoadGameList();
             LoadList(gameList);
 
             //load config
             txtExec.Text = Settings.ExecutablePath;
             txtCommandLineOptions.Text = Settings.CommandLineOptions;
             txtMinutes.Value = Settings.Minutes;
+            cloneScreen.Checked = Settings.CloneScreen;
 
             //other
-            lvwColumnSorter = new ListViewSorter();
-            lstGames.ListViewItemSorter = lvwColumnSorter;
+            _lvwColumnSorter = new ListViewSorter();
+            lstGames.ListViewItemSorter = _lvwColumnSorter;
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         /// <summary>
@@ -68,7 +61,7 @@ namespace Mamesaver
             lstGames.BeginUpdate();
             lstGames.Items.Clear();
             lstGames.EndUpdate();
-            lblNoGames.Text = "No Games: 0";
+            lblNoGames.Text = @"No Games: 0";
 
             picBuilding.Visible = true;
 
@@ -127,7 +120,7 @@ namespace Mamesaver
             }
 
             SaveSettings(true, gameList);
-            this.Close();
+            Close();
         }
 
         private void ListBuilder_DoWork(object sender, DoWorkEventArgs e)
@@ -156,17 +149,17 @@ namespace Mamesaver
 
         private void lstGames_ColumnClick(object sender, ColumnClickEventArgs e)
         {
-            if (e.Column == lvwColumnSorter.SortColumn)
+            if (e.Column == _lvwColumnSorter.SortColumn)
             {
-                if (lvwColumnSorter.Order == SortOrder.Ascending)
-                    lvwColumnSorter.Order = SortOrder.Descending;
+                if (_lvwColumnSorter.Order == SortOrder.Ascending)
+                    _lvwColumnSorter.Order = SortOrder.Descending;
                 else
-                    lvwColumnSorter.Order = SortOrder.Ascending;
+                    _lvwColumnSorter.Order = SortOrder.Ascending;
             }
             else
             {
-                lvwColumnSorter.SortColumn = e.Column;
-                lvwColumnSorter.Order = SortOrder.Ascending;
+                _lvwColumnSorter.SortColumn = e.Column;
+                _lvwColumnSorter.Order = SortOrder.Ascending;
             }
 
             lstGames.Sort();
@@ -187,6 +180,7 @@ namespace Mamesaver
             Settings.ExecutablePath = txtExec.Text;
             Settings.CommandLineOptions = txtCommandLineOptions.Text;
             Settings.Minutes = Convert.ToInt32(txtMinutes.Value);
+            Settings.CloneScreen = cloneScreen.Checked;
         }
 
         /**

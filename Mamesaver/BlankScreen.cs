@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
-using gma.System.Windows;
+using Mamesaver.Windows;
 
 namespace Mamesaver
 {

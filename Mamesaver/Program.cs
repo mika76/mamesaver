@@ -34,7 +34,7 @@ namespace Mamesaver
                 {
                     case "/c":
                         //TODO: Catch display properties window handle and set it as parent
-                        saver.ShowConfig();
+                        ShowConfig();
                         break;
 
                     case "/s":
@@ -50,6 +50,13 @@ namespace Mamesaver
             {
                 Log(x);
             }
+        }
+
+        public static void ShowConfig()
+        {
+            var frmConfig = new ConfigForm();
+            Application.EnableVisualStyles();
+            Application.Run(frmConfig);
         }
 
         static void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)

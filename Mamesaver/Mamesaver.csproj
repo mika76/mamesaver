@@ -66,6 +66,8 @@
       <DependentUpon>BackgroundForm.cs</DependentUpon>
     </Compile>
     <Compile Include="BlankScreen.cs" />
+    <Compile Include="CaptureScreen.cs" />
+    <Compile Include="CloneScreen.cs" />
     <Compile Include="ConfigForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -78,6 +80,8 @@
     <Compile Include="GameListBuilder.cs" />
     <Compile Include="MameScreen.cs" />
     <Compile Include="MultiFormApplicationContext.cs" />
+    <Compile Include="Windows\PlatformInvokeGDI32.cs" />
+    <Compile Include="Windows\PlatformInvokeUSER32.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Mamesaver.cs">
@@ -89,8 +93,8 @@
     </Compile>
     <Compile Include="SelectableGame.cs" />
     <Compile Include="Settings.cs" />
-    <Compile Include="UserActivityHook.cs" />
-    <Compile Include="WindowsInterop.cs" />
+    <Compile Include="Windows\UserActivityHook.cs" />
+    <Compile Include="Windows\WindowsInterop.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

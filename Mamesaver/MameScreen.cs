@@ -11,7 +11,6 @@ namespace Mamesaver
         private readonly bool _runGame;
 
         Timer _timer;
-        private Process _gameProcess;
         private readonly object _syncLock = new object();
 
         public MameScreen(Screen screen, List<Game> gameList, Action<BlankScreen> onClosed, bool runGame) : base(screen, onClosed)
@@ -19,6 +18,8 @@ namespace Mamesaver
             _gameList = gameList;
             _runGame = runGame;
         }
+
+        public Process GameProcess { get; set; }
 
         public override void Initialise()
         {
@@ -35,7 +36,7 @@ namespace Mamesaver
         void OnFormBackground_Load(object sender, EventArgs e)
         {
             // Start the first game
-            _gameProcess = RunRandomGame(_gameList);
+            GameProcess = RunRandomGame(_gameList);
         }
 
         private void timer_Tick(object sender, EventArgs e)
@@ -43,10 +44,10 @@ namespace Mamesaver
             _timer.Stop();
 
             // End the currently playing game
-            if (_gameProcess != null && !_gameProcess.HasExited) _gameProcess.CloseMainWindow();
+            if (GameProcess != null && !GameProcess.HasExited) GameProcess.CloseMainWindow();
 
             // Start new game
-            _gameProcess = RunRandomGame(_gameList);
+            GameProcess = RunRandomGame(_gameList);
         }
         
         /// <summary>
@@ -62,7 +63,7 @@ namespace Mamesaver
                     _timer?.Stop();
                     _timer = null;
 
-                    if (_gameProcess != null && !_gameProcess.HasExited) _gameProcess.CloseMainWindow();
+                    if (GameProcess != null && !GameProcess.HasExited) GameProcess.CloseMainWindow();
                 }
                 catch (Exception)
                 {
