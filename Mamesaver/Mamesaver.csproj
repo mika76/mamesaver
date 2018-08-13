@@ -73,6 +73,8 @@
     </Compile>
     <Compile Include="Game.cs" />
     <Compile Include="ListViewSorter.cs" />
+    <Compile Include="MameInvoker.cs" />
+    <Compile Include="GameListBuilder.cs" />
     <Compile Include="MameScreen.cs" />
     <Compile Include="MultiFormApplicationContext.cs" />
     <Compile Include="Program.cs" />

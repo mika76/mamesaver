@@ -35,8 +35,6 @@ Other than those main settings, you can also set the interval at which the game 
 
 ### COMMENTS
 
-* Building the full list of games can take a really long time. Don't think it's frozen.
-
 * The game list will only contain games which have passed the Mame ROM audit and have drivers with a status of good. This means that games, which might be partially working but maybe have no sound or some other part of the driver is not working, will not be displayed in this list. The main reason for this is that MAME shows a dialog which expects user input at the beginning of the game, which is the exact opposite of what you would want a screen saver to do.
 
 ### OPEN SOURCE

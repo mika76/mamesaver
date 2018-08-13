@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using gma.System.Windows;
@@ -31,7 +30,6 @@ namespace Mamesaver
 
         private static readonly IntPtr HwndTop = IntPtr.Zero;
         private const int SwpShowwindow = 64; // 0×0040
-
         
         public static void SetWinFullScreen(IntPtr hwnd, int left, int top, int width, int height)
         {
@@ -152,18 +150,9 @@ namespace Mamesaver
 
             if (!_runGame) return null; // mock
 
-            // Set up the process
-            var execPath = Settings.ExecutablePath;
-            var psi = new ProcessStartInfo(execPath)
-            {
-                Arguments = $"{game.Name} {Settings.CommandLineOptions} -screen \"{_screen.DeviceName}\"",
-                WorkingDirectory = Directory.GetParent(execPath).ToString(),
-                WindowStyle = ProcessWindowStyle.Hidden,
-            };
-            
             // Start the timer and the process
             _timer.Start();
-             return Process.Start(psi);
+            return MameInvoker.Run(game.Name, Settings.CommandLineOptions, $"-screen \"{_screen.DeviceName}\"");
         }
     }
 }
