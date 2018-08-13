@@ -10,6 +10,7 @@ namespace Mamesaver
         private UserActivityHook _actHook;
         private bool _cancelled;
         private readonly object _syncLock = new object();
+        private readonly bool _debugging = false;
 
         public BlankScreen(Screen screen, Action<BlankScreen> onClosed)
         {
@@ -23,21 +24,26 @@ namespace Mamesaver
 
         public virtual void Initialise()
         {
-            Cursor.Hide();
-            FrmBackground = new BackgroundForm { Capture = true };
+            FrmBackground = new BackgroundForm { Capture = !_debugging };
             FrmBackground.Load += FrmBackground_Load;
             FrmBackground.lblData1.Text = string.Empty;
             FrmBackground.lblData2.Text = string.Empty;
 
             // Set up the global hooks
             _actHook = new UserActivityHook();
-            _actHook.OnMouseActivity += actHook_OnMouseActivity;
-            _actHook.KeyDown += actHook_KeyDown;
+            if (!_debugging)
+            {
+                Cursor.Hide();
+
+                _actHook.OnMouseActivity += actHook_OnMouseActivity;
+                _actHook.KeyDown += actHook_KeyDown;
+            }
         }
 
         private void FrmBackground_Load(object sender, EventArgs e)
         {
-            WindowsInterop.SetWinFullScreen(FrmBackground.Handle, Screen.Bounds.Left, Screen.Bounds.Top, Screen.Bounds.Width, Screen.Bounds.Height);
+            if (!_debugging)
+                WindowsInterop.SetWinFullScreen(FrmBackground.Handle, Screen.Bounds.Left, Screen.Bounds.Top, Screen.Bounds.Width, Screen.Bounds.Height);
         }
 
         void actHook_KeyDown(object sender, KeyEventArgs e)
