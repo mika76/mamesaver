@@ -12,7 +12,7 @@ namespace Mamesaver
 {
     public class Mamesaver
     {
-        private List<MameScreen> _mameScreens = new List<MameScreen>();
+        private readonly List<MameScreen> _mameScreens = new List<MameScreen>();
 
         public void ShowConfig()
         {
@@ -32,7 +32,9 @@ namespace Mamesaver
                 if (gameListFull.Count == 0) return;
 
                 foreach (var game in gameListFull)
+                {
                     if (game.Selected) gameList.Add(game);
+                }
 
                 // Exit run method if there were no selected games
                 if (gameList.Count == 0) return;
@@ -51,18 +53,27 @@ namespace Mamesaver
             }
             catch(Exception x)
             {
-                MessageBox.Show(x.Message, "Error",  MessageBoxButtons.OK , MessageBoxIcon.Error);
+                MessageBox.Show(x.Message, @"Error",  MessageBoxButtons.OK , MessageBoxIcon.Error);
             }
         }
 
         private void OnScreenClosed(MameScreen mameScreen)
         {
-            // one screen has closed so close them all
-            foreach (var screen in new List<MameScreen>(_mameScreens))
+            try
             {
-                _mameScreens.Remove(screen);
-                screen.Close();
+                // one screen has closed so close them all
+                foreach (var screen in new List<MameScreen>(_mameScreens))
+                {
+                    _mameScreens.Remove(screen);
+                    screen.Close();
+                }
             }
+            catch (Exception)
+            {
+                // do nothing as we are closing
+            }
+
+            Application.DoEvents();
             Application.Exit();
         }
     }

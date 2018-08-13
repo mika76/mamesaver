@@ -96,22 +96,25 @@ namespace Mamesaver
         /// </summary>
         public void Close()
         {
-            if (_cancelled) return;
-            try
+            lock (this)
             {
-                Cursor.Show();
-                _timer.Stop();
-                _cancelled = true;
-                if (_gameProcess != null && !_gameProcess.HasExited) _gameProcess.CloseMainWindow();
+                if (_cancelled) return;
+                try
+                {
+                    Cursor.Show();
+                    _timer.Stop();
+                    _cancelled = true;
+                    if (_gameProcess != null && !_gameProcess.HasExited) _gameProcess.CloseMainWindow();
+                }
+                catch (Exception)
+                {
+                    // do nothing
+                }
+
+                FrmBackground.Close();
+                FrmBackground = null;
+                _onClosed(this);
             }
-            catch (Exception)
-            {
-                // do nothing
-            }
-            
-            FrmBackground.Close();
-            FrmBackground = null;
-            _onClosed(this);
         }
 
         /// <summary>
