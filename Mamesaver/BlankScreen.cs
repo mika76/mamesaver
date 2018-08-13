@@ -37,7 +37,7 @@ namespace Mamesaver
 
         private void FrmBackground_Load(object sender, EventArgs e)
         {
-            WindowsInterop.SetWinFullScreen(FrmBackground.Handle, Screen.WorkingArea.Left, Screen.WorkingArea.Top, Screen.WorkingArea.Width, Screen.WorkingArea.Height);
+            WindowsInterop.SetWinFullScreen(FrmBackground.Handle, Screen.Bounds.Left, Screen.Bounds.Top, Screen.Bounds.Width, Screen.Bounds.Height);
         }
 
         void actHook_KeyDown(object sender, KeyEventArgs e)
