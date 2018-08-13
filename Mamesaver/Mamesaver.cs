@@ -13,6 +13,7 @@ namespace Mamesaver
     public class Mamesaver
     {
         private readonly List<BlankScreen> _mameScreens = new List<BlankScreen>();
+        private ScreenCloner _screenCloner;
 
         public void Run()
         {
@@ -32,21 +33,18 @@ namespace Mamesaver
                 // Exit run method if there were no selected games
                 if (gameList.Count == 0) return;
 
-                var showGameOnAllScreens = true; // disabled for now - this only works with opengl
-
                 var mameScreen = new MameScreen(Screen.PrimaryScreen, gameList, OnScreenClosed, true);
                 _mameScreens.Add(mameScreen);
                 mameScreen.Initialise();
 
                 foreach (var otherScreen in Screen.AllScreens.Where(s => s != Screen.PrimaryScreen))
                 {
-                    var blankScreen = showGameOnAllScreens?
-                        new CloneScreen(otherScreen, mameScreen, OnScreenClosed) : 
-                        new BlankScreen(otherScreen, OnScreenClosed);
+                    var blankScreen = new BlankScreen(otherScreen, OnScreenClosed);
                     _mameScreens.Add(blankScreen);
                     blankScreen.Initialise();
-
                 }
+
+                if (Settings.CloneScreen) _screenCloner = new ScreenCloner(_mameScreens);
 
                 // Run the application
                 Application.EnableVisualStyles();
@@ -63,6 +61,8 @@ namespace Mamesaver
         {
             try
             {
+                _screenCloner?.Stop();
+
                 // one screen has closed so close them all
                 foreach (var screen in new List<BlankScreen>(_mameScreens))
                 {

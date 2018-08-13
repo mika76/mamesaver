@@ -67,7 +67,7 @@
     </Compile>
     <Compile Include="BlankScreen.cs" />
     <Compile Include="CaptureScreen.cs" />
-    <Compile Include="CloneScreen.cs" />
+    <Compile Include="ScreenCloner.cs" />
     <Compile Include="ConfigForm.cs">
       <SubType>Form</SubType>
     </Compile>
