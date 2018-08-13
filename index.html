@@ -2,36 +2,21 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-73902047-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-73902047-1');
+  </script>
   <meta http-equiv="content-type" content="text/html; charset=utf-8" />
   <meta name="description" content="Mamesaver: A MAME screen saver" />
   <meta name="keywords" content="mame, screensaver, screen saver, game, games, gaming, emulation, emulator, rom, roms" />
   <meta name="author" content="Mladen Mihajlovic" />
   <link rel="stylesheet" type="text/css" href="style.css" media="screen, print" />
   <title>Mamesaver</title>
-  <script type="text/javascript" src="http://www.google.com/jsapi?key=ABQIAAAACo7E4SK_lK0MnDL8-s-eoxSOIKrB9_pyBwBoDAYzXUvcwJnDghSohM9oDOq_i5F27PrYIh1gJPYrKg"></script>
-  <script type="text/javascript">
-    google.load("feeds", "1");
- 
-    function initialize() {
-      var feed = new google.feeds.Feed("https://github.com/mika76/mamesaver/releases.atom");
-      feed.load(function(result) {
-        if (!result.error) {
-          var container = document.getElementById("feed");
-          for (var i = 0; i < result.feed.entries.length; i++) {
-            var entry = result.feed.entries[i];
-            
-            var link = document.createElement("a");
-            link.href = entry.link;
-            link.innerHTML = "&#8250;&#8250; " + entry.title;
-            container.appendChild(link);
-            container.appendChild(document.createElement("br"));
-          }
-        }
-      });
-    }
-    google.setOnLoadCallback(initialize);
- 
-    </script>
 </head>
 <body>
 <div id="centerColumn">
@@ -61,9 +46,6 @@
       <a href="http://www.mameworld.net/" title="Mame World">&#8250;&#8250; MAME World</a><br />
       <a href="http://www.mamedev.com/" title="MameDev">&#8250;&#8250; MAMEDEV
       Links</a></p>
-    
-    <h2>News</h2>
-    <p id="feed"></p>
   </div>
   <!--//end #fauxRightColumn//-->
   
