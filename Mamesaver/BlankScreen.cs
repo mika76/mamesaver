@@ -55,12 +55,19 @@ namespace Mamesaver
         {
             lock (_syncLock)
             {
-                if (_cancelled) return;
+                try
+                {
+                    if (_cancelled) return;
 
-                _cancelled = true;
-                Cursor.Show();
-                FrmBackground?.Close();
-                FrmBackground = null;
+                    _cancelled = true;
+                    Cursor.Show();
+                    FrmBackground?.Close();
+                    FrmBackground = null;
+                }
+                catch (Exception)
+                {
+                    // do nothing
+                }
             }
 
             _onClosed(this);
