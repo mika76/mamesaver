@@ -40,7 +40,7 @@ Other than those main settings, you can also set the interval at which the game 
 ### CONTRIBUTORS
 ![](https://avatars2.githubusercontent.com/u/229311?s=44&v=4) Mladen Mihajlovic
 
-![](https://avatars2.githubusercontent.com/u/1732347?s=44&v=4) Matthew Painter
+![](https://avatars2.githubusercontent.com/u/1732347?s=44&v=4) Matt Painter
 
 ### OPEN SOURCE
 The source code if provided as-is under the MIT Licence. If you have any suggestions and comments, please feel free to create issues here on github.
