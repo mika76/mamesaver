@@ -4,43 +4,56 @@ using Mamesaver.Windows;
 
 namespace Mamesaver
 {
-    public class CaptureScreen
+    public class CaptureScreen : IDisposable
     {
-        public struct SIZE
+        private readonly IntPtr _sourceHwnd;
+        private readonly int _width;
+        private readonly int _height;
+        private readonly IntPtr _hDeviceContext;
+        private readonly IntPtr _hMemoryContext;
+        private readonly IntPtr _hBitmap;
+
+        public CaptureScreen() : this(
+            PlatformInvokeUser32.GetDesktopWindow(),
+            PlatformInvokeUser32.GetSystemMetrics(PlatformInvokeUser32.SM_CXSCREEN),
+            PlatformInvokeUser32.GetSystemMetrics(PlatformInvokeUser32.SM_CYSCREEN))
         {
-            public int cx;
-            public int cy;
         }
 
-        public static Bitmap GetDesktopImage()
+        public CaptureScreen(IntPtr sourceHwnd, int width, int height)
         {
-            return Capture(PlatformInvokeUser32.GetDesktopWindow(),
-                PlatformInvokeUser32.GetSystemMetrics(PlatformInvokeUser32.SM_CXSCREEN),
-                PlatformInvokeUser32.GetSystemMetrics(PlatformInvokeUser32.SM_CYSCREEN));
+            _sourceHwnd = sourceHwnd;
+            _width = width;
+            _height = height;
+
+            _hDeviceContext = PlatformInvokeUser32.GetDC(_sourceHwnd);
+            _hMemoryContext = PlatformInvokeGdi32.CreateCompatibleDC(_hDeviceContext);
+            _hBitmap = PlatformInvokeGdi32.CreateCompatibleBitmap(_hDeviceContext, _width, _height);
+            PlatformInvokeGdi32.SelectObject(_hMemoryContext, _hBitmap);
         }
 
-        public static Bitmap Capture(IntPtr hwnd, int width, int height)
+        public void Dispose()
         {
-            var hDeviceContext = PlatformInvokeUser32.GetDC(hwnd);
-            var hMemoryContext = PlatformInvokeGdi32.CreateCompatibleDC(hDeviceContext);
+            ReleaseUnmanagedResources();
+            GC.SuppressFinalize(this);
+        }
 
-            SIZE size;
-            size.cx = width;
-            size.cy = height;
+        ~CaptureScreen()
+        {
+            ReleaseUnmanagedResources();
+        }
 
-            var hBitmap = PlatformInvokeGdi32.CreateCompatibleBitmap(hDeviceContext, size.cx, size.cy);
-            if (hBitmap == IntPtr.Zero) return null;
+        private void ReleaseUnmanagedResources()
+        {
+            PlatformInvokeGdi32.DeleteObject(_hBitmap);
+            PlatformInvokeGdi32.DeleteDC(_hMemoryContext);
+            PlatformInvokeUser32.ReleaseDC(_sourceHwnd, _hDeviceContext);
+        }
 
-            var hOld = PlatformInvokeGdi32.SelectObject(hMemoryContext, hBitmap);
-            PlatformInvokeGdi32.BitBlt(hMemoryContext, 0, 0, size.cx, size.cy, hDeviceContext, 0, 0, PlatformInvokeGdi32.SRCOPY);
-            PlatformInvokeGdi32.SelectObject(hMemoryContext, hOld);
-            PlatformInvokeGdi32.DeleteDC(hMemoryContext);
-            PlatformInvokeUser32.ReleaseDC(hwnd, hDeviceContext);
-
-            var bitmap = Image.FromHbitmap(hBitmap);
-            PlatformInvokeGdi32.DeleteObject(hBitmap);
-            GC.Collect();
-
+        public Bitmap Capture()
+        {
+            PlatformInvokeGdi32.BitBlt(_hMemoryContext, 0, 0, _width, _height, _hDeviceContext, 0, 0, PlatformInvokeGdi32.SRCOPY);
+            var bitmap = Image.FromHbitmap(_hBitmap);
             return bitmap;
         }
     }

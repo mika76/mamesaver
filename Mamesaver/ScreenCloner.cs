@@ -10,6 +10,7 @@ namespace Mamesaver
         private readonly List<BlankScreen> _blankScreens;
         private readonly MameScreen _sourceScreen;
         private readonly Timer _refreshTimer;
+        private CaptureScreen _captureScreen;
 
         public ScreenCloner(List<BlankScreen> allScreens)
         {
@@ -30,6 +31,7 @@ namespace Mamesaver
         public void Stop()
         {
             _refreshTimer?.Stop();
+            _captureScreen?.Dispose();
         }
 
         private void _refreshTimer_Tick(object sender, EventArgs e)
@@ -38,13 +40,16 @@ namespace Mamesaver
 
             try
             {
-                // todo test different size monitors
-                //PlatformInvokeUser32.RECT rect;
-                //PlatformInvokeUser32.GetWindowRect(_sourceScreen.GameProcess.MainWindowHandle, out rect);
-                //var bitMap = CaptureScreen.Capture(_sourceScreen.GameProcess.MainWindowHandle, rect.Right - rect.Left, rect.Top - rect.Bottom);
-                var bitMap = CaptureScreen.GetDesktopImage();
+                if (_captureScreen == null) _captureScreen = new CaptureScreen();
 
-                _blankScreens.ForEach(screen => screen.FrmBackground.BackgroundImage = bitMap);
+                // todo test different size monitors
+                var bitMap = _captureScreen.Capture();
+
+                _blankScreens.ForEach(screen =>
+                {
+                    screen.FrmBackground.BackgroundImage?.Dispose();
+                    screen.FrmBackground.BackgroundImage = bitMap;
+                });
             }
             catch (Exception)
             {
