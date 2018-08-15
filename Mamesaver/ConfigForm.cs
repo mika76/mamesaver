@@ -181,16 +181,16 @@ namespace Mamesaver
 
         private void SaveSettings(bool saveGameList, List<SelectableGame> gameList)
         {
-            if ( saveGameList ) Settings.SaveGameList(gameList);
+            if (saveGameList) Settings.SaveGameList(gameList);
 
-            Configuration c = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             Settings.ExecutablePath = txtExec.Text;
             Settings.CommandLineOptions = txtCommandLineOptions.Text;
             Settings.Minutes = Convert.ToInt32(txtMinutes.Value);
         }
 
         /**
-         * Loads an actuial list into the listview
+         * Loads an actual list into the listview
          */
         private void LoadList(List<SelectableGame> gamesList)
         {
