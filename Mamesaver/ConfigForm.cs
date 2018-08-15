@@ -13,6 +13,7 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Serialization;
 using System.Configuration;
+using System.Linq;
 using System.Media;
 
 namespace Mamesaver
@@ -22,6 +23,7 @@ namespace Mamesaver
         #region Variables
         private Mamesaver saver = null;
         private ListViewSorter lvwColumnSorter = null;
+        private List<SelectableGame> selectedGames;
         #endregion
 
         #region Constructor
@@ -62,6 +64,9 @@ namespace Mamesaver
         /// <param name="e"></param>
         private void btnRebuild_Click(object sender, EventArgs e)
         {
+            // Identity games which are selected so we can reapply selections after rebuild
+            selectedGames = GetSelectedGames();
+
             btnOk.Enabled = tabControl1.Enabled = false;
             this.Cursor = Cursors.WaitCursor;
 
@@ -134,6 +139,9 @@ namespace Mamesaver
             if (e.Error == null)
             {
                 List<SelectableGame> gamesList = e.Result as List<SelectableGame>;
+
+                // Select games based on any previous form selection and repopulate form
+                ApplySelectionState(gamesList);
                 LoadList(gamesList);
             }
             else
@@ -165,6 +173,17 @@ namespace Mamesaver
         #endregion
 
         #region Private Methods
+
+        /// <summary>
+        ///     Selects games based on current user selection. This method preserves previous selections
+        ///     after a rebuild.
+        /// </summary>
+        /// <param name="availableGames">all available games</param>
+        private void ApplySelectionState(List<SelectableGame> availableGames)
+        {
+            availableGames.ForEach(game => game.Selected = selectedGames.Any(selectedGame => selectedGame.Name == game.Name));
+        }
+
         /// <summary>
         ///     Constructs a list of <see cref="SelectableGame"/>s based on the form's game list and selection state.
         /// </summary>
@@ -181,6 +200,15 @@ namespace Mamesaver
 
             return games;
         }
+
+        /// <summary>
+        ///     Returns a list of selected games.
+        /// </summary>
+        private List<SelectableGame> GetSelectedGames()
+        {
+            return BuildGamesList().Where(game => game.Selected).ToList();
+        }
+
         private void SaveSettings()
         {
             SaveSettings(false, null);
