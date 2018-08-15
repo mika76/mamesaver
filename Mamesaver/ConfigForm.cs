@@ -118,14 +118,7 @@ namespace Mamesaver
 
         private void btnOk_Click(object sender, EventArgs e)
         {
-            List<SelectableGame> gameList = new List<SelectableGame>();
-            foreach (ListViewItem item in lstGames.Items)
-            {
-                SelectableGame game = item.Tag as SelectableGame;
-                game.Selected = item.Checked;
-                gameList.Add(game);
-            }
-
+            List<SelectableGame> gameList = BuildGamesList();
             SaveSettings(true, gameList);
             this.Close();
         }
@@ -174,6 +167,22 @@ namespace Mamesaver
         #endregion
 
         #region Private Methods
+        /// <summary>
+        ///     Constructs a list of <see cref="SelectableGame"/>s based on the form's game list and selection state.
+        /// </summary>
+        private List<SelectableGame> BuildGamesList()
+        {
+            var games = new List<SelectableGame>();
+
+            foreach (ListViewItem item in lstGames.Items)
+            {
+                var game = (SelectableGame)item.Tag;
+                game.Selected = item.Checked;
+                games.Add(game);
+            }
+
+            return games;
+        }
         private void SaveSettings()
         {
             SaveSettings(false, null);
