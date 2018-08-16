@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 using Mamesaver.Windows;
 
 namespace Mamesaver
 {
-    public class BlankScreen
+    public class BlankScreen : IDisposable  
     {
         private readonly Action<BlankScreen> _onClosed;
         private UserActivityHook _actHook;
@@ -17,8 +18,10 @@ namespace Mamesaver
             Screen = screen;
             _onClosed = onClosed;
         }
-
+        
         public Screen Screen { get; }
+        public Graphics Graphics { get; private set; }
+        public IntPtr HandleDeviceContext { get; private set; } = IntPtr.Zero;
 
         public BackgroundForm FrmBackground { get; private set; }
 
@@ -28,6 +31,9 @@ namespace Mamesaver
             FrmBackground.Load += FrmBackground_Load;
             FrmBackground.lblData1.Text = string.Empty;
             FrmBackground.lblData2.Text = string.Empty;
+
+            Graphics = FrmBackground.CreateGraphics();
+            HandleDeviceContext = Graphics.GetHdc();
 
             // Set up the global hooks
             _actHook = new UserActivityHook();
@@ -50,8 +56,7 @@ namespace Mamesaver
         {
             Close();
         }
-
-
+        
         void actHook_OnMouseActivity(object sender, MouseEventArgs e)
         {
             Close();
@@ -77,6 +82,32 @@ namespace Mamesaver
             }
 
             _onClosed(this);
+        }
+
+        private void Dispose(bool disposing)
+        {
+            ReleaseUnmanagedResources();
+            if (disposing)
+            {
+                Graphics?.Dispose();
+                FrmBackground?.Dispose();
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        ~BlankScreen()
+        {
+            Dispose(false);
+        }
+
+        private void ReleaseUnmanagedResources()
+        {
+            if (HandleDeviceContext != IntPtr.Zero) Graphics?.ReleaseHdc(HandleDeviceContext);
         }
     }
 }

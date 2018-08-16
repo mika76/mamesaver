@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace Mamesaver
 {
-    public class Mamesaver
+    public class Mamesaver : IDisposable
     {
         private readonly List<BlankScreen> _mameScreens = new List<BlankScreen>();
         private ScreenCloner _screenCloner;
@@ -37,14 +37,14 @@ namespace Mamesaver
                 _mameScreens.Add(mameScreen);
                 mameScreen.Initialise();
 
-                foreach (var otherScreen in Screen.AllScreens.Where(s => s != Screen.PrimaryScreen))
+                foreach (var otherScreen in Screen.AllScreens.Where(s => !Equals(s, Screen.PrimaryScreen)))
                 {
                     var blankScreen = new BlankScreen(otherScreen, OnScreenClosed);
                     _mameScreens.Add(blankScreen);
                     blankScreen.Initialise();
                 }
 
-                if (Settings.CloneScreen) _screenCloner = new ScreenCloner(_mameScreens);
+                if (Settings.CloneScreen) _screenCloner = new ScreenCloner(mameScreen, _mameScreens.Where(s => s != mameScreen).ToList());
 
                 // Run the application
                 Application.EnableVisualStyles();
@@ -77,6 +77,11 @@ namespace Mamesaver
 
             Application.DoEvents();
             Application.Exit();
+        }
+
+        public void Dispose()
+        {
+            _screenCloner?.Dispose();
         }
     }
 }

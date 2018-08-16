@@ -15,11 +15,11 @@ namespace Mamesaver
         [STAThread]
         static void Main(string[] args)
         {
-            Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Application_ThreadException);
+            Application.ThreadException += Application_ThreadException;
 
             try
             {
-                string[] arguments = new string[] {"/c"};
+                string[] arguments = {"/c"};
 
                 if (args.Length != 0) //default to config if no options passed
                     arguments = args;
@@ -28,7 +28,7 @@ namespace Mamesaver
                 Log("Mamesaver started with args " + string.Join(",", args));
 #endif
 
-                Mamesaver saver = new Mamesaver();
+                var saver = new Mamesaver();
 
                 switch (arguments[0].Trim().Substring(0, 2).ToLower())
                 {
@@ -45,6 +45,8 @@ namespace Mamesaver
                         // do nothing
                         break;
                 }
+
+                saver.Dispose();
             }
             catch(Exception x)
             {
