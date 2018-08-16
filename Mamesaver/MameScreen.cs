@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
+using Mamesaver.Windows;
 
 namespace Mamesaver
 {
@@ -63,7 +64,11 @@ namespace Mamesaver
                     _timer?.Stop();
                     _timer = null;
 
-                    if (GameProcess != null && !GameProcess.HasExited) GameProcess.CloseMainWindow();
+                    if (GameProcess != null && !GameProcess.HasExited)
+                    {
+                        if (GameProcess.MainWindowHandle != IntPtr.Zero) WindowsInterop.MinimizeWindow(GameProcess.MainWindowHandle);
+                        GameProcess.CloseMainWindow();
+                    }
                 }
                 catch (Exception)
                 {

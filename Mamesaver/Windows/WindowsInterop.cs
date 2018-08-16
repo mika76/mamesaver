@@ -11,5 +11,10 @@ namespace Mamesaver.Windows
         {
             PlatformInvokeUser32.SetWindowPos(hwnd, HwndTop, left, top, width, height, SwpShowwindow);
         }
+
+        public static void MinimizeWindow(IntPtr hwnd)
+        {
+            PlatformInvokeUser32.ShowWindow(hwnd, PlatformInvokeUser32.SW_MINIMIZE);
+        }
     }
 }
