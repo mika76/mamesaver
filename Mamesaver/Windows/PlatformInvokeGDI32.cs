@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+// ReSharper disable InconsistentNaming
 
 namespace Mamesaver.Windows
 {
-    // This class contains the GDI32 APIs used...
     public class PlatformInvokeGdi32
     {
         public const int SRCOPY = 13369376;
@@ -15,7 +15,7 @@ namespace Mamesaver.Windows
         public static extern IntPtr DeleteObject(IntPtr hDc);
 
         [DllImport("gdi32.dll", EntryPoint = "BitBlt")]
-        public static extern bool BitBlt(IntPtr hdcDest, int xDest, int yDest, int wDest, int hDest, IntPtr hdcSource, int xSrc, int ySrc, int RasterOp);
+        public static extern bool BitBlt(IntPtr hdcDest, int xDest, int yDest, int wDest, int hDest, IntPtr hdcSource, int xSrc, int ySrc, int rasterOp);
 
         [DllImport("gdi32.dll", EntryPoint = "StretchBlt")]
         public static extern bool StretchBlt(IntPtr hdcDest, int xDest, int yDest, int wDest, int hDest, IntPtr hdcSource, int xSrc, int ySrc, int wSrc, int hSrc, int RasterOp);

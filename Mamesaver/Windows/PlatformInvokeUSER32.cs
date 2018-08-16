@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+// ReSharper disable InconsistentNaming
 
 namespace Mamesaver.Windows
 {
-    //This class contains all the User32 APIs used...
     public class PlatformInvokeUser32
     {
         public const int SM_CXSCREEN = 0;
