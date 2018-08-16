@@ -17,6 +17,9 @@ namespace Mamesaver.Windows
         [DllImport("gdi32.dll", EntryPoint = "BitBlt")]
         public static extern bool BitBlt(IntPtr hdcDest, int xDest, int yDest, int wDest, int hDest, IntPtr hdcSource, int xSrc, int ySrc, int RasterOp);
 
+        [DllImport("gdi32.dll", EntryPoint = "StretchBlt")]
+        public static extern bool StretchBlt(IntPtr hdcDest, int xDest, int yDest, int wDest, int hDest, IntPtr hdcSource, int xSrc, int ySrc, int wSrc, int hSrc, int RasterOp);
+
         [DllImport("gdi32.dll")]
         public static extern IntPtr CreateCompatibleDC(IntPtr hdc);
 
