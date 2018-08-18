@@ -40,6 +40,7 @@ namespace Mamesaver
             // 
             // lblData2
             // 
+            this.lblData2.BackColor = System.Drawing.Color.Transparent;
             this.lblData2.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.lblData2.Font = new System.Drawing.Font("Arial", 20.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblData2.ForeColor = System.Drawing.Color.White;
@@ -52,6 +53,7 @@ namespace Mamesaver
             // 
             // lblData1
             // 
+            this.lblData1.BackColor = System.Drawing.Color.Transparent;
             this.lblData1.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.lblData1.Font = new System.Drawing.Font("Arial", 20.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblData1.ForeColor = System.Drawing.Color.White;
