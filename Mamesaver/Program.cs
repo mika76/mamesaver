@@ -56,8 +56,9 @@ namespace Mamesaver
         {
             Log.Logger = new LoggerConfiguration()
                 .WriteTo.File(Path.Combine(Path.GetTempPath(), "MameSaver-.txt"),
-                    rollingInterval: RollingInterval.Hour,
-                    fileSizeLimitBytes: 100000)
+                    rollingInterval: RollingInterval.Day,
+                    fileSizeLimitBytes: 100000,
+                    retainedFileCountLimit: 5)
                 .CreateLogger();
         }
 
