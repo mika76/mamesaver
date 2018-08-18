@@ -3,9 +3,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
 using Mamesaver.Windows;
+using Serilog;
 
 namespace Mamesaver
 {
+    /// <summary>
+    /// A screen that will launch Mame and a random game from the list
+    /// </summary>
     public class MameScreen : BlankScreen
     {
         private readonly List<Game> _gameList;
@@ -42,15 +46,22 @@ namespace Mamesaver
 
         private void timer_Tick(object sender, EventArgs e)
         {
-            _timer.Stop();
+            try
+            {
+                _timer.Stop();
 
-            // End the currently playing game
-            if (GameProcess != null && !GameProcess.HasExited) GameProcess.CloseMainWindow();
+                // End the currently playing game
+                if (GameProcess != null && !GameProcess.HasExited) GameProcess.CloseMainWindow();
 
-            // Start new game
-            GameProcess = RunRandomGame(_gameList);
+                // Start new game
+                GameProcess = RunRandomGame(_gameList);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "MameScreen tick");
+            }
         }
-        
+
         /// <summary>
         /// Stop the timer, set cancelled flag, close any current process and close the background form. 
         /// Once this has all been done, the application should end.
@@ -66,13 +77,14 @@ namespace Mamesaver
 
                     if (GameProcess != null && !GameProcess.HasExited)
                     {
+                        // Minimise and then exit. Minimising it makes it disappear instantly
                         if (GameProcess.MainWindowHandle != IntPtr.Zero) WindowsInterop.MinimizeWindow(GameProcess.MainWindowHandle);
                         GameProcess.CloseMainWindow();
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    // do nothing
+                    Log.Error("Close", ex);
                 }
 
                 base.Close();
@@ -102,16 +114,13 @@ namespace Mamesaver
         private Process RunGame(Game game)
         {
             // Set the game name and details on the background form
-            FrmBackground.lblData1.Text = game.Description;
-            FrmBackground.lblData2.Text = $@"{game.Year} {game.Manufacturer}";
+            FrmBackground.SetGameText(game.Description, $@"{game.Year} {game.Manufacturer}");
             
-#if DEBUG
-            //FrmBackground.lblData2.Text += $@" {_screen.DeviceName}";
-            Program.Log("Running game " + game.Description + " " + game.Year + " " + game.Manufacturer);
-#endif
+            Log.Information($"Running game {game.Description} {game.Year} {game.Manufacturer} on display {Screen.DeviceName}");
+
             Application.DoEvents();
 
-            if (!_runGame) return null; // mock
+            if (!_runGame) return null;
 
             // Start the timer and the process
             _timer.Start();

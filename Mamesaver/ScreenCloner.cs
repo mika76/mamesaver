@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using Serilog;
 
 namespace Mamesaver
 {
@@ -18,7 +19,14 @@ namespace Mamesaver
             _blankScreens = blankScreens;
 
             // is there anything to clone?
-            if (_sourceScreen != null && !_blankScreens.Any()) return;
+            if (_sourceScreen == null || !_blankScreens.Any())
+            {
+                Log.Information("No source or destinations screens to clone");
+                return;
+            }
+
+            Log.Information($"Source Mame screen found {_sourceScreen.Screen.DeviceName} {_sourceScreen.Screen.Bounds}");
+            _blankScreens.ForEach(screen => Log.Information($"Destination screen found {screen.Screen.DeviceName} {screen.Screen.Bounds}"));
 
             _refreshTimer = new Timer
             {
@@ -51,12 +59,13 @@ namespace Mamesaver
 
                 _blankScreens.ForEach(screen =>
                 {
+                    Log.Debug($"Cloning to screen {screen.Screen.DeviceName}");
                     _captureScreen.CloneTo(screen.HandleDeviceContext, screen.Screen.Bounds);
                 });
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // bugger - no point logging in a tight loop
+                Log.Error(ex, "Error cloning screens on timer");
             }
         }
     }

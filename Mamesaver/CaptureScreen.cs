@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using Mamesaver.Windows;
+using Serilog;
 
 namespace Mamesaver
 {
@@ -60,6 +61,8 @@ namespace Mamesaver
 
         public void CloneTo(IntPtr destinationDeviceContext, Rectangle destinationRect)
         {
+            Log.Debug($"Cloning screen {_width}x{_height} to {destinationRect}");
+
             PlatformInvokeGdi32.StretchBlt(destinationDeviceContext, 0, 0, destinationRect.Width, destinationRect.Height,
                 _hDeviceContext, 0, 0, _width, _height, PlatformInvokeGdi32.SRCOPY);
         }
