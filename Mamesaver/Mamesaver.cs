@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using Serilog;
 
 namespace Mamesaver
 {
@@ -68,11 +69,13 @@ namespace Mamesaver
                 {
                     _mameScreens.Remove(screen);
                     screen.Close();
+                    screen.Dispose();
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 // do nothing as we are closing
+                Log.Error(ex, "Error closing screens");
             }
 
             Application.DoEvents();

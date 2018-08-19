@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 using Mamesaver.Windows;
+using Serilog;
 
 namespace Mamesaver
 {
@@ -34,13 +35,13 @@ namespace Mamesaver
 
             Graphics = FrmBackground.CreateGraphics();
             HandleDeviceContext = Graphics.GetHdc();
-
-            // Set up the global hooks
-            _actHook = new UserActivityHook();
+            
             if (!_debugging)
             {
                 Cursor.Hide();
 
+                // Set up the global hooks
+                _actHook = new UserActivityHook();
                 _actHook.OnMouseActivity += actHook_OnMouseActivity;
                 _actHook.KeyDown += actHook_KeyDown;
             }
@@ -71,13 +72,14 @@ namespace Mamesaver
                     if (_cancelled) return;
 
                     _cancelled = true;
+                    _actHook?.Stop();
                     Cursor.Show();
                     FrmBackground?.Close();
                     FrmBackground = null;
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    // do nothing
+                    Log.Error(ex, "Error closing");
                 }
             }
 
@@ -107,7 +109,11 @@ namespace Mamesaver
 
         private void ReleaseUnmanagedResources()
         {
-            if (HandleDeviceContext != IntPtr.Zero) Graphics?.ReleaseHdc(HandleDeviceContext);
+            if (HandleDeviceContext != IntPtr.Zero)
+            {
+                Graphics?.ReleaseHdc(HandleDeviceContext);
+                HandleDeviceContext = IntPtr.Zero;
+            }
         }
     }
 }

@@ -10,7 +10,7 @@ namespace Mamesaver
         private readonly IntPtr _sourceHwnd;
         private readonly int _width;
         private readonly int _height;
-        private readonly IntPtr _hDeviceContext;
+        private IntPtr _hDeviceContext;
         private IntPtr _hMemoryContext = IntPtr.Zero;
         private IntPtr _hBitmap = IntPtr.Zero;
 
@@ -43,9 +43,23 @@ namespace Mamesaver
 
         private void ReleaseUnmanagedResources()
         {
-            if (_hBitmap != IntPtr.Zero) PlatformInvokeGdi32.DeleteObject(_hBitmap);
-            if (_hMemoryContext != IntPtr.Zero) PlatformInvokeGdi32.DeleteDC(_hMemoryContext);
-            if (_hDeviceContext != IntPtr.Zero) PlatformInvokeUser32.ReleaseDC(_sourceHwnd, _hDeviceContext);
+            if (_hBitmap != IntPtr.Zero)
+            {
+                PlatformInvokeGdi32.DeleteObject(_hBitmap);
+                _hBitmap = IntPtr.Zero;
+            }
+
+            if (_hMemoryContext != IntPtr.Zero)
+            {
+                PlatformInvokeGdi32.DeleteDC(_hMemoryContext);
+                _hMemoryContext = IntPtr.Zero;
+            }
+
+            if (_hDeviceContext != IntPtr.Zero)
+            {
+                PlatformInvokeUser32.ReleaseDC(_sourceHwnd, _hDeviceContext);
+                _hDeviceContext = IntPtr.Zero;
+            }
         }
 
         public Bitmap Capture()
