@@ -1,0 +1,9 @@
+version: 1.0.{build}
+image: Visual Studio 2017
+environment:
+  EnableNuGetPackageRestore: true
+before_build:
+- cmd: >-
+    nuget restore
+build:
+  verbosity: minimal
