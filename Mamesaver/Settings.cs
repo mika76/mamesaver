@@ -78,21 +78,6 @@ namespace Mamesaver
         }
 
         /// <summary>
-        /// The number of seconds that the game intro screen (the screen with the big MAME logo) is shown.
-        /// </summary>
-        public static int BackgroundSeconds
-        {
-            get 
-            { 
-                return int.Parse(rKey.GetValue("BackgroundSeconds", 10).ToString());
-            }
-            set 
-            {
-                rKey.SetValue("BackgroundSeconds", value, RegistryValueKind.DWord);
-            }
-        }
-
-        /// <summary>
         /// Save the selectable game list to an XML file.
         /// </summary>
         /// <param name="gameList"></param>
