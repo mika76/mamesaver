@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2042
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{45991C83-871A-4411-BA15-2A850C9EA855}"
 	ProjectSection(SolutionItems) = preProject
@@ -12,6 +12,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mamesaver", "Mamesaver\Mamesaver.csproj", "{720F7E49-8C21-43F8-8946-8D16D68BF839}"
 EndProject
 Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "MamesaverDeploy", "MamesaverDeploy\MamesaverDeploy.wixproj", "{896ED757-66C2-4C7E-9323-FC5D9CC7B7D2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mamesaver.Test", "Mamesaver.Test\Mamesaver.Test.csproj", "{98F0D731-FC1C-4659-8EEB-7489331621D6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -26,8 +28,15 @@ Global
 		{896ED757-66C2-4C7E-9323-FC5D9CC7B7D2}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{896ED757-66C2-4C7E-9323-FC5D9CC7B7D2}.Release|Any CPU.ActiveCfg = Release|x86
 		{896ED757-66C2-4C7E-9323-FC5D9CC7B7D2}.Release|Any CPU.Build.0 = Release|x86
+		{98F0D731-FC1C-4659-8EEB-7489331621D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{98F0D731-FC1C-4659-8EEB-7489331621D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{98F0D731-FC1C-4659-8EEB-7489331621D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{98F0D731-FC1C-4659-8EEB-7489331621D6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F1BAA9BF-BAF0-43DE-8918-5F6AC93D0DBC}
 	EndGlobalSection
 EndGlobal
