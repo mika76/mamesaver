@@ -80,8 +80,9 @@ namespace Mamesaver
                     var year = element.Element("year")?.Value ?? "";
                     var manufacturer = element.Element("manufacturer")?.Value ?? "";
                     var description = element.Element("description")?.Value ?? "";
+                    var rotation = element.Element("display")?.Attribute("rotate")?.Value ?? "";
 
-                    games.Add(new SelectableGame(name, description, year, manufacturer, false));
+                    games.Add(new SelectableGame(name, description, year, manufacturer, rotation, false));
                 }
             }
 
