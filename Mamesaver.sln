@@ -13,8 +13,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mamesaver", "Mamesaver\Mame
 EndProject
 Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "MamesaverDeploy", "MamesaverDeploy\MamesaverDeploy.wixproj", "{896ED757-66C2-4C7E-9323-FC5D9CC7B7D2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mamesaver.Test", "Mamesaver.Test\Mamesaver.Test.csproj", "{98F0D731-FC1C-4659-8EEB-7489331621D6}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -28,10 +26,6 @@ Global
 		{896ED757-66C2-4C7E-9323-FC5D9CC7B7D2}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{896ED757-66C2-4C7E-9323-FC5D9CC7B7D2}.Release|Any CPU.ActiveCfg = Release|x86
 		{896ED757-66C2-4C7E-9323-FC5D9CC7B7D2}.Release|Any CPU.Build.0 = Release|x86
-		{98F0D731-FC1C-4659-8EEB-7489331621D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{98F0D731-FC1C-4659-8EEB-7489331621D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{98F0D731-FC1C-4659-8EEB-7489331621D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{98F0D731-FC1C-4659-8EEB-7489331621D6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
