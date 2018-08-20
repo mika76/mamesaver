@@ -43,6 +43,7 @@ namespace Mamesaver.Layout
                 Element = new Element { Name = "bezel", Image = new Image { File = LayoutConstants.TitleImage } },
                 View = new View
                 {
+                    Name = "Mamesaver",
                     Screen = new Screen
                     {
                         Index = 0,

@@ -9,5 +9,8 @@ namespace Mamesaver.Layout.Models
 
         [XmlElement("bezel")]
         public Bezel Bezel { get; set; }
+
+        [XmlAttribute("name")]
+        public string Name { get; set; }
     }
 }

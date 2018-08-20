@@ -2,7 +2,7 @@
 
 namespace Mamesaver.Layout.Models
 {
-    [XmlRoot("MameLayout")]
+    [XmlRoot("mamelayout")]
     public class MameLayout
     {
         [XmlAttribute("version")]
