@@ -94,7 +94,6 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
-    <None Include="Resources\mame_marquee_banner.jpg" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="BackgroundForm.resx">

@@ -173,22 +173,11 @@ namespace Mamesaver
         /// <returns>The <see cref="Process"/> running the game</returns>
         private Process RunGame(Game game)
         {
-            // Set the game name and details on the background form
-            frmBackground.lblData1.Text = game.Description;
-            frmBackground.lblData2.Text = game.Year + " " + game.Manufacturer;
             SetWinFullScreen(frmBackground.Handle);
 
 #if DEBUG
             Program.Log("Running game " + game.Description + " " + game.Year + " " + game.Manufacturer);            
 #endif
-
-            // Show the form for a couple of seconds
-            DateTime end = DateTime.Now.AddSeconds(Settings.BackgroundSeconds);
-            while (DateTime.Now < end)
-            {
-                if (cancelled) return null;
-                Application.DoEvents();
-            }
 
             // Start the timer and the process
             timer.Start();
