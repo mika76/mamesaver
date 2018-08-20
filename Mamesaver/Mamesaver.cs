@@ -6,10 +6,12 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using gma.System.Windows;
+using Mamesaver.Layout;
 
 namespace Mamesaver
 {
@@ -20,6 +22,7 @@ namespace Mamesaver
         BackgroundForm frmBackground = null;
         UserActivityHook actHook = null;
         bool cancelled = false;
+        LayoutBuilder layoutBuilder;
         #endregion
 
         #region DLL Imports
@@ -67,43 +70,43 @@ namespace Mamesaver
         {
             try
             {
-                // Load list and get only selected games from it
-                List<SelectableGame> gameListFull = Settings.LoadGameList();
-                List<Game> gameList = new List<Game>();
+                using (layoutBuilder = new LayoutBuilder())
+                {
+                    // Load list and get only selected games from it
+                    List<SelectableGame> gameListFull = Settings.LoadGameList();
 
-                if ( gameListFull.Count == 0 ) return;
+                    if (!gameListFull.Any()) return;
+                    var gameList = gameListFull.Where(game => game.Selected).Cast<Game>().ToList();
 
-                foreach (SelectableGame game in gameListFull)
-                    if (game.Selected) gameList.Add(game);
+                    // Exit run method if there were no selected games
+                    if (gameList.Count == 0) return;
 
-                // Exit run method if there were no selected games
-                if ( gameList.Count == 0 ) return;
+                    // Set up the timer
+                    int minutes = Settings.Minutes;
+                    timer = new GameTimer(minutes * 60000, gameList);
+                    timer.Tick += timer_Tick;
 
-                // Set up the timer
-                int minutes = Settings.Minutes;
-                timer = new GameTimer(minutes * 60000, gameList);
-                timer.Tick += timer_Tick;
+                    // Set up the background form
+                    Cursor.Hide();
+                    frmBackground = new BackgroundForm();
+                    frmBackground.Capture = true;
+                    frmBackground.Load += frmBackground_Load;
 
-                // Set up the background form
-                Cursor.Hide();
-                frmBackground = new BackgroundForm();
-                frmBackground.Capture = true;
-                frmBackground.Load += frmBackground_Load;
+                    // Set up the global hooks
+                    actHook = new UserActivityHook();
+                    actHook.OnMouseActivity += actHook_OnMouseActivity;
+                    actHook.KeyDown += actHook_KeyDown;
 
-                // Set up the global hooks
-                actHook = new UserActivityHook();
-                actHook.OnMouseActivity += actHook_OnMouseActivity;
-                actHook.KeyDown += actHook_KeyDown;
-
-                // Run the application
-                Application.EnableVisualStyles();
-                Application.Run(frmBackground);
+                    // Run the application
+                    Application.EnableVisualStyles();
+                    Application.Run(frmBackground);
+                }
             }
-            catch(Exception x)
+            catch (Exception x)
             {
-                MessageBox.Show(x.Message, "Error",  MessageBoxButtons.OK , MessageBoxIcon.Error);
+                MessageBox.Show(x.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-        }
+       }
 
         #endregion
 
@@ -173,28 +176,21 @@ namespace Mamesaver
         /// <returns>The <see cref="Process"/> running the game</returns>
         private Process RunGame(Game game)
         {
-            // Set the game name and details on the background form
-            frmBackground.lblData1.Text = game.Description;
-            frmBackground.lblData2.Text = game.Year + " " + game.Manufacturer;
             SetWinFullScreen(frmBackground.Handle);
 
 #if DEBUG
             Program.Log("Running game " + game.Description + " " + game.Year + " " + game.Manufacturer);            
 #endif
 
-            // Show the form for a couple of seconds
-            DateTime end = DateTime.Now.AddSeconds(Settings.BackgroundSeconds);
-            while (DateTime.Now < end)
-            {
-                if (cancelled) return null;
-                Application.DoEvents();
-            }
-
             // Start the timer and the process
             timer.Start();
-            return MameInvoker.Run(game.Name, Settings.CommandLineOptions);
+
+          
+            // Create layout and run game
+            var artPath = layoutBuilder.EnsureLayout(game, ScreenX, ScreenY);
+            return MameInvoker.Run(game.Name, Settings.CommandLineOptions, "-artpath", artPath);
         }
 
-       #endregion
+        #endregion
     }
 }

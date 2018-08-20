@@ -4,37 +4,24 @@
  */
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Xml.Serialization;
-using System.Windows.Forms;
-using System.Collections;
 
 namespace Mamesaver
 {
     [Serializable, XmlRoot("SelectableGame")]
     public class SelectableGame : Game
     {
-        private bool selected;
-
         public SelectableGame()
         {
         }
 
-        public SelectableGame(string name, string description, string year, string manufacturer, bool selected)
+        public SelectableGame(string name, string description, string year, string manufacturer, string rotation, bool selected)
+            : base(name, description, year, manufacturer, rotation)
         {
-            this.name = name;
-            this.description = description;
-            this.year = year;
-            this.manufacturer = manufacturer;
-            this.selected = selected;
+            Selected = selected;
         }
 
         [XmlAttribute("selected")]
-        public bool Selected
-        {
-            get { return selected; }
-            set { selected = value; }
-        }
+        public bool Selected { get; set; }
     }
 }

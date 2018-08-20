@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<MameLayout xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2">
+  <element name="bezel">
+    <image file="gameInfo.png" />
+  </element>
+  <view>
+    <screen index="0">
+      <bounds x="578" y="0" width="765" height="1020" />
+    </screen>
+    <bezel element="bezel">
+      <bounds x="0" y="1020" width="1920" height="60" />
+    </bezel>
+  </view>
+</MameLayout>
