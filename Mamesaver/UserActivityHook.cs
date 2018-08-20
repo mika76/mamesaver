@@ -4,13 +4,12 @@
  */
 
 using System;
-using System.Runtime.InteropServices;
-using System.Reflection;
-using System.Threading;
-using System.Windows.Forms;
 using System.ComponentModel;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Windows.Forms;
 
-namespace gma.System.Windows
+namespace Mamesaver
 {
     /// <summary>
     /// This class allows you to tap keyboard and mouse and / or to detect their activity even when an 
