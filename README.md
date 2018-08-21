@@ -42,5 +42,7 @@ Other than those main settings, you can also set the interval at which the game 
 
 ![](https://avatars2.githubusercontent.com/u/1732347?s=44&v=4) Matt Painter
 
+![](https://avatars2.githubusercontent.com/u/1904424?s=44&v=4) Andy van Stokkum
+
 ### OPEN SOURCE
 The source code if provided as-is under the MIT Licence. If you have any suggestions and comments, please feel free to create issues here on github.
