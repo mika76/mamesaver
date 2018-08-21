@@ -75,8 +75,8 @@ namespace Mamesaver
                     if (driver == null) continue;
 
                     //// Skip games which aren't fully emulated
-                    //var status = driver.Attribute("status")?.Value;
-                    //if (status != "good") continue;
+                    var status = driver.Attribute("status")?.Value;
+                    if (status != "good") continue;
 
                     var year = element.Element("year")?.Value ?? "";
                     var manufacturer = element.Element("manufacturer")?.Value ?? "";
