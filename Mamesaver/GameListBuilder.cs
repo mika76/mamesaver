@@ -51,6 +51,19 @@ namespace Mamesaver
         }
 
         /// <summary>
+        ///     Gets the rom details for a single game
+        /// </summary>
+        /// <param name="game"></param>
+        /// <returns></returns>
+        public static SelectableGame GetRomDetails(string game)
+        {
+            using (var stream = GetGameDetails(new List<string> { game }))
+            {
+                return GetRomDetails(stream).First();
+            }
+        }
+
+        /// <summary>
         ///     Extracts rom metadata for display from a XML stream from Mame
         /// </summary>
         private static List<SelectableGame> GetRomDetails(StreamReader stream)
@@ -80,8 +93,9 @@ namespace Mamesaver
                     var year = element.Element("year")?.Value ?? "";
                     var manufacturer = element.Element("manufacturer")?.Value ?? "";
                     var description = element.Element("description")?.Value ?? "";
+                    var rotation = element.Element("display")?.Attribute("rotate")?.Value ?? "";
 
-                    games.Add(new SelectableGame(name, description, year, manufacturer, false));
+                    games.Add(new SelectableGame(name, description, year, manufacturer, rotation, false));
                 }
             }
 
@@ -149,10 +163,26 @@ namespace Mamesaver
         /// <remarks>
         ///     Multiple rom directories can be specified in Mame by separating directories by semicolons.
         /// </remarks>
-        private static IEnumerable<string> GetRomPaths()
+        private static List<string> GetRomPaths()
+        {
+            return GetConfigPaths("rompath");
+        }
+
+        public static List<string> GetArtPaths()
+        {
+            return GetConfigPaths("artpath");
+        }
+
+
+        /// <summary>
+        ///     Returns the value of a path element in the <c>mame.ini</c> file.
+        /// </summary>
+        /// <param name="key">key name</param>
+        /// <returns>list of absolute paths</returns>
+        public static List<string>GetConfigPaths(string key)
         {
             // Configuration in the Mame ini file which indicates path to roms
-            var regex = new Regex(@"rompath\s+(.*)");
+            var regex = new Regex($@"{key}\s+(.*)");
 
             using (var stream = MameInvoker.GetOutput("-showconfig"))
             {
