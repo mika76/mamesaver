@@ -41,6 +41,8 @@ namespace Mamesaver
             //other
             lvwColumnSorter = new ListViewSorter();
             lstGames.ListViewItemSorter = lvwColumnSorter;
+
+            cloneScreen.Checked = Settings.CloneScreen;
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
@@ -214,6 +216,7 @@ namespace Mamesaver
             Settings.ExecutablePath = txtExec.Text;
             Settings.CommandLineOptions = txtCommandLineOptions.Text;
             Settings.Minutes = Convert.ToInt32(txtMinutes.Value);
+            Settings.CloneScreen = cloneScreen.Checked;
         }
 
         /**

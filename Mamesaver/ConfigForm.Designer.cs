@@ -331,7 +331,7 @@ namespace Mamesaver
             this.cloneScreen.Name = "cloneScreen";
             this.cloneScreen.Size = new System.Drawing.Size(121, 17);
             this.cloneScreen.TabIndex = 7;
-            this.cloneScreen.Text = "Clone on all screens";
+            this.cloneScreen.Text = "Clone Mame to all monitors";
             this.cloneScreen.UseVisualStyleBackColor = true;
             // 
             // ConfigForm
