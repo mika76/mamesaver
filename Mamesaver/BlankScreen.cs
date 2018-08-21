@@ -30,8 +30,6 @@ namespace Mamesaver
             FrmBackground.Load += FrmBackground_Load;
             FrmBackground.lblData1.Text = string.Empty;
             FrmBackground.lblData2.Text = string.Empty;
-
-            HandleDeviceContext = PlatformInvokeUser32.GetDC(FrmBackground.Handle);
             
             if (!_debugging)
             {
@@ -47,7 +45,10 @@ namespace Mamesaver
         private void FrmBackground_Load(object sender, EventArgs e)
         {
             if (!_debugging)
+            {
                 WindowsInterop.SetWinFullScreen(FrmBackground.Handle, Screen.Bounds.Left, Screen.Bounds.Top, Screen.Bounds.Width, Screen.Bounds.Height);
+            }
+            HandleDeviceContext = PlatformInvokeUser32.GetDC(FrmBackground.Handle);
         }
 
         void actHook_KeyDown(object sender, KeyEventArgs e)
