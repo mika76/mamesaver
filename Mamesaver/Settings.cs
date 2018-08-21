@@ -85,7 +85,7 @@ namespace Mamesaver
             }
             set
             {
-                rKey.SetValue("CloneScreen", value, RegistryValueKind.String);
+                rKey.SetValue("CloneScreen", value.ToString(), RegistryValueKind.String);
             }
         }
         /// <summary>
