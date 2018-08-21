@@ -43,22 +43,29 @@ namespace Mamesaver
 
         private void ReleaseUnmanagedResources()
         {
-            if (_hBitmap != IntPtr.Zero)
+            try
             {
-                PlatformInvokeGdi32.DeleteObject(_hBitmap);
-                _hBitmap = IntPtr.Zero;
-            }
+                if (_hBitmap != IntPtr.Zero)
+                {
+                    PlatformInvokeGdi32.DeleteObject(_hBitmap);
+                    _hBitmap = IntPtr.Zero;
+                }
 
-            if (_hMemoryContext != IntPtr.Zero)
-            {
-                PlatformInvokeGdi32.DeleteDC(_hMemoryContext);
-                _hMemoryContext = IntPtr.Zero;
-            }
+                if (_hMemoryContext != IntPtr.Zero)
+                {
+                    PlatformInvokeGdi32.DeleteDC(_hMemoryContext);
+                    _hMemoryContext = IntPtr.Zero;
+                }
 
-            if (_hDeviceContext != IntPtr.Zero)
+                if (_hDeviceContext != IntPtr.Zero)
+                {
+                    PlatformInvokeUser32.ReleaseDC(_sourceHwnd, _hDeviceContext);
+                    _hDeviceContext = IntPtr.Zero;
+                }
+            }
+            catch (Exception ex)
             {
-                PlatformInvokeUser32.ReleaseDC(_sourceHwnd, _hDeviceContext);
-                _hDeviceContext = IntPtr.Zero;
+                Log.Error(ex, "Error releasing unmanaged resources");
             }
         }
 

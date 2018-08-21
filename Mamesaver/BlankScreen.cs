@@ -108,10 +108,17 @@ namespace Mamesaver
 
         private void ReleaseUnmanagedResources()
         {
-            if (HandleDeviceContext != IntPtr.Zero)
+            try
             {
-                PlatformInvokeUser32.ReleaseDC(FrmBackground.Handle, HandleDeviceContext);
-                HandleDeviceContext = IntPtr.Zero;
+                if (HandleDeviceContext != IntPtr.Zero)
+                {
+                    PlatformInvokeUser32.ReleaseDC(FrmBackground.Handle, HandleDeviceContext);
+                    HandleDeviceContext = IntPtr.Zero;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error releasing unmanaged resources");
             }
         }
     }
