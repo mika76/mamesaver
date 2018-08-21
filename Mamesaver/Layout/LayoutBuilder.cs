@@ -42,7 +42,7 @@ namespace Mamesaver.Layout
             // Write title image
             using (var stream = new FileStream(Path.Combine(LayoutDirectory(game), LayoutConstants.TitleImage), FileMode.Create))
             {
-                TitleFactory.Render(game, stream, monitorWidth);
+                TitleFactory.Render(game, layout, stream, monitorWidth);
             }
 
             // Add our temporary art path so Mame picks up the temporary layout

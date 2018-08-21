@@ -5,6 +5,7 @@ using System.Drawing.Imaging;
 using System.Drawing.Text;
 using System.IO;
 using System.Windows.Forms;
+using Mamesaver.Layout.Models;
 
 namespace Mamesaver.Layout
 {
@@ -16,7 +17,7 @@ namespace Mamesaver.Layout
         /// <summary>
         ///     Font size in pixels
         /// </summary>
-        private const int FontSize = 20;
+        private const int FontSize = 18;
 
         private const string FontFace = "Arial";
 
@@ -26,13 +27,13 @@ namespace Mamesaver.Layout
         private static readonly Font BoldFont = new Font(FontFace, FontSize, FontStyle.Bold, GraphicsUnit.Pixel);
 
         private static readonly Color BackgroundColour = Color.Black;
-        private static readonly Color TextColour = Color.White;
+        private static readonly Color TextColour = Color.FromArgb(255, 210, 210, 210);
 
         /// <summary>
         ///     Render a layout image for a game. The image's width is determined by <see cref="monitorWidth"/> and height
         ///     by <see cref="TitleHeight"/>.
         /// </summary>
-        public static void Render(Game game, Stream outputStream, int monitorWidth)
+        public static void Render(Game game, MameLayout layout, Stream outputStream, int monitorWidth)
         {
             using (var image = new Bitmap(monitorWidth, TitleHeight, PixelFormat.Format32bppArgb)) 
             using (var graphics = Graphics.FromImage(image))
@@ -43,10 +44,11 @@ namespace Mamesaver.Layout
                 var titleSize = TextRenderer.MeasureText(game.Description, BoldFont);
 
                 // Vertically centre text
-                var offset = (int)Math.Round(TitleHeight / 2.0 - titleSize.Height / 2.0);
+                var yOffset = (int)Math.Round(TitleHeight / 2.0 - titleSize.Height / 2.0);
+                var xOffset = layout.View.Screen.Bounds.X;
 
-                TextRenderer.DrawText(graphics, game.Description, BoldFont, new Point(offset, offset), TextColour);
-                TextRenderer.DrawText(graphics, $"| {game.Manufacturer} {game.Year}", RegularFont, new Point(titleSize.Width, offset), TextColour);
+                TextRenderer.DrawText(graphics, game.Description, BoldFont, new Point(xOffset, yOffset), TextColour);
+                TextRenderer.DrawText(graphics, $"| {game.Manufacturer} {game.Year}", RegularFont, new Point(xOffset + titleSize.Width, yOffset), TextColour);
 
                 graphics.Save();
                 image.Save(outputStream, ImageFormat.Png);
