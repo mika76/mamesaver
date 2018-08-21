@@ -9,7 +9,7 @@ Licensed under The MIT License
 
 Mamesaver is a Windows screen saver that runs MAME with a random game for specified intervals of time.
 
-![General Settings](http://sourceforge.net/dbimage.php?id=121992) ![Game List](http://sourceforge.net/dbimage.php?id=121994)
+![General Settings](Resources/SettingsPanel1.png) ![Game List](Resources/SettingsPanel1.png)
 
 
 ### REQUIREMENTS
@@ -41,6 +41,8 @@ Other than those main settings, you can also set the interval at which the game 
 ![](https://avatars2.githubusercontent.com/u/229311?s=44&v=4) Mladen Mihajlovic
 
 ![](https://avatars2.githubusercontent.com/u/1732347?s=44&v=4) Matt Painter
+
+![](https://avatars2.githubusercontent.com/u/1904424?s=44&v=4) Andy van Stokkum
 
 ### OPEN SOURCE
 The source code if provided as-is under the MIT Licence. If you have any suggestions and comments, please feel free to create issues here on github.
