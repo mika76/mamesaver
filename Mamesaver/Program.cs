@@ -4,6 +4,7 @@
  */
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
 using Serilog;
@@ -15,6 +16,7 @@ namespace Mamesaver
         [STAThread]
         static void Main(string[] args)
         {
+
             ConfigureLogging();
 
             Application.ThreadException += (sender, eventArgs) => Log.Error(eventArgs.Exception, "Thread exception");
@@ -52,7 +54,26 @@ namespace Mamesaver
             }
         }
 
+        /// <summary>
+        /// Release logging to the event log.  If debug logging is configured, then release logging will not be configured
+        /// </summary>
         public static void ConfigureLogging()
+        {
+            ConfigureDebugLogging();
+
+            if (Log.Logger == null)
+            {
+                Log.Logger = new LoggerConfiguration()
+                    .WriteTo.EventLog("Mamesaver")
+                    .CreateLogger();
+            }
+        }
+
+        /// <summary>
+        /// Debug logging will go to a file
+        /// </summary>
+        [Conditional("DEBUG")]
+        public static void ConfigureDebugLogging()
         {
             Log.Logger = new LoggerConfiguration()
                 .WriteTo.File(Path.Combine(Path.GetTempPath(), "MameSaver-.txt"),
