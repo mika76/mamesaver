@@ -6,31 +6,23 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-using System.Xml;
-using System.Xml.Serialization;
 using System.Configuration;
 using System.Linq;
-using System.Media;
 
 namespace Mamesaver
 {
     public partial class ConfigForm : Form
     {
         #region Variables
-        private Mamesaver saver = null;
         private ListViewSorter lvwColumnSorter = null;
         private List<SelectableGame> selectedGames;
         #endregion
 
         #region Constructor
-        public ConfigForm(Mamesaver saver)
+        public ConfigForm()
         {
             InitializeComponent();
-            this.saver = saver;
         }
         #endregion
 
