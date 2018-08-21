@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Drawing;
 using System.Windows.Forms;
 using Mamesaver.Windows;
 using Serilog;
@@ -21,7 +20,6 @@ namespace Mamesaver
         }
         
         public Screen Screen { get; }
-        public Graphics Graphics { get; private set; }
         public IntPtr HandleDeviceContext { get; private set; } = IntPtr.Zero;
 
         public BackgroundForm FrmBackground { get; private set; }
@@ -33,8 +31,7 @@ namespace Mamesaver
             FrmBackground.lblData1.Text = string.Empty;
             FrmBackground.lblData2.Text = string.Empty;
 
-            Graphics = FrmBackground.CreateGraphics();
-            HandleDeviceContext = Graphics.GetHdc();
+            HandleDeviceContext = PlatformInvokeUser32.GetDC(FrmBackground.Handle);
             
             if (!_debugging)
             {
@@ -74,6 +71,8 @@ namespace Mamesaver
                     _cancelled = true;
                     _actHook?.Stop();
                     Cursor.Show();
+
+                    ReleaseUnmanagedResources();
                     FrmBackground?.Close();
                     FrmBackground = null;
                 }
@@ -91,7 +90,6 @@ namespace Mamesaver
             ReleaseUnmanagedResources();
             if (disposing)
             {
-                Graphics?.Dispose();
                 FrmBackground?.Dispose();
             }
         }
@@ -111,7 +109,7 @@ namespace Mamesaver
         {
             if (HandleDeviceContext != IntPtr.Zero)
             {
-                Graphics?.ReleaseHdc(HandleDeviceContext);
+                PlatformInvokeUser32.ReleaseDC(FrmBackground.Handle, HandleDeviceContext);
                 HandleDeviceContext = IntPtr.Zero;
             }
         }
