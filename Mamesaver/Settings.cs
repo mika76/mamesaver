@@ -39,7 +39,7 @@ namespace Mamesaver
         {
             get 
             { 
-                return rKey.GetValue("ExecutableName", "C:\\MAME\\MAME32.EXE").ToString();
+                return rKey.GetValue("ExecutableName", "C:\\MAME\\MAME64.EXE").ToString();
             }
             set 
             {
@@ -74,6 +74,32 @@ namespace Mamesaver
             set
             {
                 rKey.SetValue("Minutes", value, RegistryValueKind.DWord);
+            }
+        }
+
+        public static bool CloneScreen
+        {
+            get
+            {
+                return bool.Parse(rKey.GetValue("CloneScreen", true.ToString()).ToString());
+            }
+            set
+            {
+                rKey.SetValue("CloneScreen", value.ToString(), RegistryValueKind.String);
+            }
+        }
+        /// <summary>
+        /// The number of seconds that the game intro screen (the screen with the big MAME logo) is shown.
+        /// </summary>
+        public static int BackgroundSeconds
+        {
+            get 
+            { 
+                return int.Parse(rKey.GetValue("BackgroundSeconds", 3).ToString());
+            }
+            set 
+            {
+                rKey.SetValue("BackgroundSeconds", value, RegistryValueKind.DWord);
             }
         }
 

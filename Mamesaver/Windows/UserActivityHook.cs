@@ -9,7 +9,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
-namespace Mamesaver
+namespace Mamesaver.Windows
 {
     /// <summary>
     /// This class allows you to tap keyboard and mouse and / or to detect their activity even when an 

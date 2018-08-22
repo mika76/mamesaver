@@ -33,16 +33,15 @@ namespace Mamesaver
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ConfigForm));
             this.label1 = new System.Windows.Forms.Label();
             this.txtExec = new System.Windows.Forms.TextBox();
             this.btnExecBrowse = new System.Windows.Forms.Button();
             this.btnOk = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
             this.lstGames = new System.Windows.Forms.ListView();
-            this.colName = new System.Windows.Forms.ColumnHeader();
-            this.colYear = new System.Windows.Forms.ColumnHeader();
-            this.colManufacturer = new System.Windows.Forms.ColumnHeader();
+            this.colName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.colYear = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.colManufacturer = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.btnRebuild = new System.Windows.Forms.Button();
             this.btnSelNone = new System.Windows.Forms.Button();
             this.btnSelAll = new System.Windows.Forms.Button();
@@ -50,19 +49,20 @@ namespace Mamesaver
             this.dlgOpen = new System.Windows.Forms.OpenFileDialog();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.txtMinutes = new System.Windows.Forms.NumericUpDown();
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.txtCommandLineOptions = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.picBuilding = new System.Windows.Forms.PictureBox();
             this.lblNoGames = new System.Windows.Forms.Label();
-            this.txtMinutes = new System.Windows.Forms.NumericUpDown();
+            this.picBuilding = new System.Windows.Forms.PictureBox();
+            this.cloneScreen = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.txtMinutes)).BeginInit();
             this.tabPage2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picBuilding)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.txtMinutes)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -76,8 +76,8 @@ namespace Mamesaver
             // 
             // txtExec
             // 
-            this.txtExec.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtExec.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtExec.Location = new System.Drawing.Point(9, 33);
             this.txtExec.Name = "txtExec";
             this.txtExec.Size = new System.Drawing.Size(378, 20);
@@ -120,9 +120,9 @@ namespace Mamesaver
             // lstGames
             // 
             this.lstGames.AllowColumnReorder = true;
-            this.lstGames.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.lstGames.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.lstGames.CheckBoxes = true;
             this.lstGames.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.colName,
@@ -200,9 +200,9 @@ namespace Mamesaver
             // 
             // tabControl1
             // 
-            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Location = new System.Drawing.Point(12, 12);
@@ -213,6 +213,7 @@ namespace Mamesaver
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.cloneScreen);
             this.tabPage1.Controls.Add(this.txtMinutes);
             this.tabPage1.Controls.Add(this.label4);
             this.tabPage1.Controls.Add(this.label3);
@@ -228,6 +229,28 @@ namespace Mamesaver
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "General";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // txtMinutes
+            // 
+            this.txtMinutes.Location = new System.Drawing.Point(8, 133);
+            this.txtMinutes.Maximum = new decimal(new int[] {
+            1440,
+            0,
+            0,
+            0});
+            this.txtMinutes.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.txtMinutes.Name = "txtMinutes";
+            this.txtMinutes.Size = new System.Drawing.Size(80, 20);
+            this.txtMinutes.TabIndex = 6;
+            this.txtMinutes.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             // 
             // label4
             // 
@@ -249,8 +272,8 @@ namespace Mamesaver
             // 
             // txtCommandLineOptions
             // 
-            this.txtCommandLineOptions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtCommandLineOptions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtCommandLineOptions.Location = new System.Drawing.Point(9, 83);
             this.txtCommandLineOptions.Name = "txtCommandLineOptions";
             this.txtCommandLineOptions.Size = new System.Drawing.Size(378, 20);
@@ -280,6 +303,15 @@ namespace Mamesaver
             this.tabPage2.Text = "Game List";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
+            // lblNoGames
+            // 
+            this.lblNoGames.AutoSize = true;
+            this.lblNoGames.Location = new System.Drawing.Point(87, 14);
+            this.lblNoGames.Name = "lblNoGames";
+            this.lblNoGames.Size = new System.Drawing.Size(69, 13);
+            this.lblNoGames.TabIndex = 11;
+            this.lblNoGames.Text = "No Games: 0";
+            // 
             // picBuilding
             // 
             this.picBuilding.BackColor = System.Drawing.SystemColors.ButtonFace;
@@ -292,36 +324,15 @@ namespace Mamesaver
             this.picBuilding.TabStop = false;
             this.picBuilding.Visible = false;
             // 
-            // lblNoGames
+            // cloneScreen
             // 
-            this.lblNoGames.AutoSize = true;
-            this.lblNoGames.Location = new System.Drawing.Point(87, 14);
-            this.lblNoGames.Name = "lblNoGames";
-            this.lblNoGames.Size = new System.Drawing.Size(69, 13);
-            this.lblNoGames.TabIndex = 11;
-            this.lblNoGames.Text = "No Games: 0";
-            // 
-            // txtMinutes
-            // 
-            this.txtMinutes.Location = new System.Drawing.Point(8, 133);
-            this.txtMinutes.Maximum = new decimal(new int[] {
-            1440,
-            0,
-            0,
-            0});
-            this.txtMinutes.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.txtMinutes.Name = "txtMinutes";
-            this.txtMinutes.Size = new System.Drawing.Size(80, 20);
-            this.txtMinutes.TabIndex = 6;
-            this.txtMinutes.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
+            this.cloneScreen.AutoSize = true;
+            this.cloneScreen.Location = new System.Drawing.Point(9, 169);
+            this.cloneScreen.Name = "cloneScreen";
+            this.cloneScreen.Size = new System.Drawing.Size(121, 17);
+            this.cloneScreen.TabIndex = 7;
+            this.cloneScreen.Text = "Clone Mame to all monitors";
+            this.cloneScreen.UseVisualStyleBackColor = true;
             // 
             // ConfigForm
             // 
@@ -345,10 +356,10 @@ namespace Mamesaver
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.txtMinutes)).EndInit();
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picBuilding)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.txtMinutes)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -380,5 +391,6 @@ namespace Mamesaver
         private System.Windows.Forms.Label lblNoGames;
         private System.Windows.Forms.PictureBox picBuilding;
         private System.Windows.Forms.NumericUpDown txtMinutes;
+        private System.Windows.Forms.CheckBox cloneScreen;
     }
 }

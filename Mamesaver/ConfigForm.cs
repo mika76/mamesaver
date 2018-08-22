@@ -6,29 +6,23 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-using System.Xml;
-using System.Xml.Serialization;
 using System.Configuration;
-using System.Media;
+using System.Linq;
 
 namespace Mamesaver
 {
     public partial class ConfigForm : Form
     {
         #region Variables
-        private Mamesaver saver = null;
         private ListViewSorter lvwColumnSorter = null;
+        private List<SelectableGame> selectedGames;
         #endregion
 
         #region Constructor
-        public ConfigForm(Mamesaver saver)
+        public ConfigForm()
         {
             InitializeComponent();
-            this.saver = saver;
         }
         #endregion
 
@@ -47,6 +41,8 @@ namespace Mamesaver
             //other
             lvwColumnSorter = new ListViewSorter();
             lstGames.ListViewItemSorter = lvwColumnSorter;
+
+            cloneScreen.Checked = Settings.CloneScreen;
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
@@ -62,6 +58,9 @@ namespace Mamesaver
         /// <param name="e"></param>
         private void btnRebuild_Click(object sender, EventArgs e)
         {
+            // Identity games which are selected so we can reapply selections after rebuild
+            selectedGames = GetSelectedGames();
+
             btnOk.Enabled = tabControl1.Enabled = false;
             this.Cursor = Cursors.WaitCursor;
 
@@ -118,14 +117,7 @@ namespace Mamesaver
 
         private void btnOk_Click(object sender, EventArgs e)
         {
-            List<SelectableGame> gameList = new List<SelectableGame>();
-            foreach (ListViewItem item in lstGames.Items)
-            {
-                SelectableGame game = item.Tag as SelectableGame;
-                game.Selected = item.Checked;
-                gameList.Add(game);
-            }
-
+            List<SelectableGame> gameList = BuildGamesList();
             SaveSettings(true, gameList);
             this.Close();
         }
@@ -133,9 +125,7 @@ namespace Mamesaver
         private void ListBuilder_DoWork(object sender, DoWorkEventArgs e)
         {
             List<SelectableGame> gamesList = GameListBuilder.GetGameList();
-            //TODO: Merge with existing list, if any
             e.Result = gamesList;
-            
         }
 
         private void ListBuilder_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -143,6 +133,9 @@ namespace Mamesaver
             if (e.Error == null)
             {
                 List<SelectableGame> gamesList = e.Result as List<SelectableGame>;
+
+                // Select games based on any previous form selection and repopulate form
+                ApplySelectionState(gamesList);
                 LoadList(gamesList);
             }
             else
@@ -174,6 +167,42 @@ namespace Mamesaver
         #endregion
 
         #region Private Methods
+
+        /// <summary>
+        ///     Selects games based on current user selection. This method preserves previous selections
+        ///     after a rebuild.
+        /// </summary>
+        /// <param name="availableGames">all available games</param>
+        private void ApplySelectionState(List<SelectableGame> availableGames)
+        {
+            availableGames.ForEach(game => game.Selected = selectedGames.Any(selectedGame => selectedGame.Name == game.Name));
+        }
+
+        /// <summary>
+        ///     Constructs a list of <see cref="SelectableGame"/>s based on the form's game list and selection state.
+        /// </summary>
+        private List<SelectableGame> BuildGamesList()
+        {
+            var games = new List<SelectableGame>();
+
+            foreach (ListViewItem item in lstGames.Items)
+            {
+                var game = (SelectableGame)item.Tag;
+                game.Selected = item.Checked;
+                games.Add(game);
+            }
+
+            return games;
+        }
+
+        /// <summary>
+        ///     Returns a list of selected games.
+        /// </summary>
+        private List<SelectableGame> GetSelectedGames()
+        {
+            return BuildGamesList().Where(game => game.Selected).ToList();
+        }
+
         private void SaveSettings()
         {
             SaveSettings(false, null);
@@ -181,16 +210,17 @@ namespace Mamesaver
 
         private void SaveSettings(bool saveGameList, List<SelectableGame> gameList)
         {
-            if ( saveGameList ) Settings.SaveGameList(gameList);
+            if (saveGameList) Settings.SaveGameList(gameList);
 
-            Configuration c = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             Settings.ExecutablePath = txtExec.Text;
             Settings.CommandLineOptions = txtCommandLineOptions.Text;
             Settings.Minutes = Convert.ToInt32(txtMinutes.Value);
+            Settings.CloneScreen = cloneScreen.Checked;
         }
 
         /**
-         * Loads an actuial list into the listview
+         * Loads an actual list into the listview
          */
         private void LoadList(List<SelectableGame> gamesList)
         {

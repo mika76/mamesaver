@@ -3,12 +3,6 @@
  * Redistributions of files must retain the above copyright notice.
  */
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 
 namespace Mamesaver
@@ -18,7 +12,14 @@ namespace Mamesaver
         public BackgroundForm()
         {
             InitializeComponent();
-            this.SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
+            lblData1.Visible = lblData2.Visible = false; // hide on the clone screens
+        }
+
+        public void SetGameText(string heading, string subheading)
+        {
+            lblData1.Visible = lblData2.Visible = true;
+            lblData1.Text = heading;
+            lblData2.Text = subheading;
         }
     }
 }
