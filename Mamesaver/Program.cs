@@ -26,7 +26,7 @@ namespace Mamesaver
                 //default to config if no options passed
                 var arguments = args.Length != 0 ? args : new[] {"/c"};
 
-                Log.Information("Mamesaver started with args " + string.Join(",", args));
+                Log.Information("Mamesaver started with args {arguments}", string.Join(",", args));
 
                 var saver = new Mamesaver();
 

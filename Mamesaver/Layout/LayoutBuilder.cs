@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using Mamesaver.Layout.Models;
+using Serilog;
 
 namespace Mamesaver.Layout
 {
@@ -112,7 +113,7 @@ namespace Mamesaver.Layout
             }
             catch (Exception e)
             {
-                Program.Log(e);
+                Log.Error(e, "Unable to clear temporary layout storage");
             }
 
             _disposed = true;

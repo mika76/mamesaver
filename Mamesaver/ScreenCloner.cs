@@ -25,8 +25,8 @@ namespace Mamesaver
                 return;
             }
 
-            Log.Information($"Source Mame screen found {_sourceScreen.Screen.DeviceName} {_sourceScreen.Screen.Bounds}");
-            _blankScreens.ForEach(screen => Log.Information($"Destination screen found {screen.Screen.DeviceName} {screen.Screen.Bounds}"));
+            Log.Information("Source Mame screen found {device} {bounds}", _sourceScreen.Screen.DeviceName, _sourceScreen.Screen.Bounds);
+            _blankScreens.ForEach(screen => Log.Information("Destination screen found {device} {bounds}", screen.Screen.DeviceName, screen.Screen.Bounds));
 
             _refreshTimer = new Timer
             {

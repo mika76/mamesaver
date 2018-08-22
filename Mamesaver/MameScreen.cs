@@ -84,7 +84,7 @@ namespace Mamesaver
                 }
                 catch (Exception ex)
                 {
-                    Log.Error("Close", ex);
+                    Log.Error(ex, "Error closing screen");
                 }
 
                 base.Close();
@@ -115,8 +115,8 @@ namespace Mamesaver
         {
             // Set the game name and details on the background form
             FrmBackground.SetGameText(game.Description, $@"{game.Year} {game.Manufacturer}");
-            
-            Log.Information($"Running game {game.Description} {game.Year} {game.Manufacturer} on display {Screen.DeviceName}");
+
+            Log.Information("Running game {description} {year} {manufacturer} on display {display}", game.Description, game.Year, game.Manufacturer, Screen.DeviceName);
 
             Application.DoEvents();
 
