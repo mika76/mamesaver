@@ -86,7 +86,7 @@ namespace Mamesaver
             _onClosed(this);
         }
 
-        private void Dispose(bool disposing)
+        public virtual void Dispose(bool disposing)
         {
             ReleaseUnmanagedResources();
             if (disposing)

@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using Serilog;
-using Mamesaver.Layout;
 
 namespace Mamesaver
 {
@@ -21,16 +20,14 @@ namespace Mamesaver
         {
             try
             {
-                using (layoutBuilder = new LayoutBuilder())
-                {
-                    // Load list and get only selected games from it
-                    List<SelectableGame> gameListFull = Settings.LoadGameList();
+                // Load list and get only selected games from it
+                var gameListFull = Settings.LoadGameList();
 
-                    if (!gameListFull.Any()) return;
-                    var gameList = gameListFull.Where(game => game.Selected).Cast<Game>().ToList();
+                if (!gameListFull.Any()) return;
+                var gameList = gameListFull.Where(game => game.Selected).Cast<Game>().ToList();
 
-                    // Exit run method if there were no selected games
-                    if (gameList.Count == 0) return;
+                // Exit run method if there were no selected games
+                if (gameList.Count == 0) return;
 
                 var mameScreen = new MameScreen(Screen.PrimaryScreen, gameList, OnScreenClosed, true);
                 _mameScreens.Add(mameScreen);
@@ -50,9 +47,9 @@ namespace Mamesaver
                 var allForms = _mameScreens.Select(s => s.FrmBackground).OfType<Form>().ToList();
                 Application.Run(new MultiFormApplicationContext(allForms));
             }
-            catch(Exception x)
+            catch (Exception ex)
             {
-                MessageBox.Show(x.Message, @"Error",  MessageBoxButtons.OK , MessageBoxIcon.Error);
+                MessageBox.Show(ex.Message, @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

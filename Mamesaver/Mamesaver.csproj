@@ -78,6 +78,7 @@
     </Compile>
     <Compile Include="BlankScreen.cs" />
     <Compile Include="CaptureScreen.cs" />
+    <Compile Include="LayoutOptions.cs" />
     <Compile Include="ScreenCloner.cs" />
     <Compile Include="ConfigForm.cs">
       <SubType>Form</SubType>
@@ -86,9 +87,6 @@
       <DependentUpon>ConfigForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Game.cs" />
-    <Compile Include="GameTimer.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="Layout\LayoutBuilder.cs" />
     <Compile Include="Layout\LayoutConstants.cs" />
     <Compile Include="Layout\LayoutFactory.cs" />
@@ -105,6 +103,7 @@
     <Compile Include="Layout\Models\View.cs" />
     <Compile Include="MameScreen.cs" />
     <Compile Include="MultiFormApplicationContext.cs" />
+    <Compile Include="SettingsStore.cs" />
     <Compile Include="Windows\PlatformInvokeGDI32.cs" />
     <Compile Include="Windows\PlatformInvokeUSER32.cs" />
     <Compile Include="Program.cs" />

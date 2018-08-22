@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
+using Mamesaver.Layout;
 using Mamesaver.Windows;
 using Serilog;
 
@@ -14,6 +15,7 @@ namespace Mamesaver
     {
         private readonly List<Game> _gameList;
         private readonly bool _runGame;
+        private LayoutBuilder _layoutBuilder;
 
         Timer _timer;
         private readonly object _syncLock = new object();
@@ -29,6 +31,8 @@ namespace Mamesaver
         public override void Initialise()
         {
             base.Initialise();
+
+            _layoutBuilder = new LayoutBuilder();
 
             // Set up the timer
             var minutes = Settings.Minutes;
@@ -124,7 +128,20 @@ namespace Mamesaver
 
             // Start the timer and the process
             _timer.Start();
-            return MameInvoker.Run(game.Name, Settings.CommandLineOptions, $"-screen \"{Screen.DeviceName}\"");
+
+            // Create layout and run game
+            var artPath = _layoutBuilder.EnsureLayout(game, Screen.Bounds.Width, Screen.Bounds.Height);
+            return MameInvoker.Run(game.Name, Settings.CommandLineOptions, "-artpath", artPath, $"-screen \"{Screen.DeviceName}\"");
+        }
+
+        public override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _layoutBuilder?.Dispose();
+            }
+
+            base.Dispose(disposing);
         }
     }
 }
