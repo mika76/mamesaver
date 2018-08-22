@@ -49,6 +49,7 @@ namespace Mamesaver
             }
             catch (Exception ex)
             {
+                Log.Error(ex, "Unhandled error running screensaver");
                 MessageBox.Show(ex.Message, @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
