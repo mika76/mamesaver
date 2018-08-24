@@ -12,7 +12,8 @@ namespace Mamesaver
         /// <param name="arguments">arguments to pass to Mame</param>
         public static Process Run(params string[] arguments)
         {
-            var execPath = Settings.ExecutablePath;
+
+            var execPath = SettingStores.General.Get().ExecutablePath;
             var psi = new ProcessStartInfo(execPath)
             {
                 Arguments = string.Join(" ", arguments),

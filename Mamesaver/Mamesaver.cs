@@ -7,6 +7,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using Mamesaver.Models;
+using Mamesaver.Models.Settings;
 using Serilog;
 
 namespace Mamesaver
@@ -15,13 +17,19 @@ namespace Mamesaver
     {
         private readonly List<BlankScreen> _mameScreens = new List<BlankScreen>();
         private ScreenCloner _screenCloner;
+        private readonly GeneralSettings _settings;
+
+        public Mamesaver()
+        {
+            _settings = SettingStores.General.Get();
+        }
 
         public void Run()
         {
             try
             {
                 // Load list and get only selected games from it
-                var gameListFull = Settings.LoadGameList();
+                var gameListFull = SettingStores.GameList.Get();
 
                 if (!gameListFull.Any()) return;
                 var gameList = gameListFull.Where(game => game.Selected).Cast<Game>().ToList();
@@ -40,7 +48,7 @@ namespace Mamesaver
                     blankScreen.Initialise();
                 }
 
-                if (Settings.CloneScreen) _screenCloner = new ScreenCloner(mameScreen, _mameScreens.Where(s => s != mameScreen).ToList());
+                if (_settings.CloneScreen) _screenCloner = new ScreenCloner(mameScreen, _mameScreens.Where(s => s != mameScreen).ToList());
 
                 // Run the application
                 Application.EnableVisualStyles();
