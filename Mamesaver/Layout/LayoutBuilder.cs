@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using Mamesaver.Layout.Models;
+using Mamesaver.Models;
 using Serilog;
 
 namespace Mamesaver.Layout
@@ -37,7 +38,8 @@ namespace Mamesaver.Layout
             var horizontalGame = rotation == Horizontal;
 
             // Build layout and write to the temporary layout directory
-            var layout = LayoutFactory.Build(monitorWidth, monitorHeight, TitleFactory.TitleHeight, horizontalGame);
+            var titleHeight = TitleFactory.GetBezelHeight(game);
+            var layout = LayoutFactory.Build(monitorWidth, monitorHeight, titleHeight, horizontalGame);
             WriteLayout(game, layout);
 
             // Write title image
@@ -79,7 +81,7 @@ namespace Mamesaver.Layout
         /// <summary>
         ///     Identifies a game's rotation
         /// </summary>
-        /// <param name="game"game to identify rotation for></param>
+        /// <param name="game">game to identify rotation for></param>
         /// <returns>rotation in degrees</returns>
         private static string GetRotation(Game game)
         {

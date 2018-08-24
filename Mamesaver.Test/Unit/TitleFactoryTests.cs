@@ -1,5 +1,7 @@
 ﻿using System.IO;
 using Mamesaver.Layout;
+using Mamesaver.Layout.Models;
+using Mamesaver.Models;
 using NUnit.Framework;
 
 namespace Mamesaver.Test.Unit
@@ -21,7 +23,8 @@ namespace Mamesaver.Test.Unit
                     Year = "1953"
                 };
 
-                TitleFactory.Render(game, stream, 1920);
+                var layout = new MameLayout { View = new View { Screen = new Screen { Bounds = new Bounds { X = 1000 } } } };
+                TitleFactory.Render(game, layout, stream, 1920);
             }
         }
     }

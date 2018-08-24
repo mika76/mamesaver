@@ -6,6 +6,8 @@ using System.Drawing.Text;
 using System.IO;
 using System.Windows.Forms;
 using Mamesaver.Layout.Models;
+using Mamesaver.Models;
+using Mamesaver.Models.Settings;
 
 namespace Mamesaver.Layout
 {
@@ -14,45 +16,72 @@ namespace Mamesaver.Layout
     /// </summary>
     public static class TitleFactory
     {
-        /// <summary>
-        ///     Font size in pixels
-        /// </summary>
-        private const int FontSize = 18;
-
-        private const string FontFace = "Arial";
-
-        public static int TitleHeight { get; } = 30;
-
-        private static readonly Font RegularFont = new Font(FontFace, FontSize, FontStyle.Regular, GraphicsUnit.Pixel);
-        private static readonly Font BoldFont = new Font(FontFace, FontSize, FontStyle.Bold, GraphicsUnit.Pixel);
-
         private static readonly Color BackgroundColour = Color.Black;
         private static readonly Color TextColour = Color.FromArgb(255, 210, 210, 210);
 
+    private class TitleFonts
+    {
+        public Font RegularFont { get; set; }
+        public Font BoldFont { get; set; }
+        }
+
+        private static TitleFonts GetTitleFonts()
+        {
+            var fontSettings = FontSettings();
+
+            return new TitleFonts
+            {
+                RegularFont = new Font(fontSettings.Face, fontSettings.Size, FontStyle.Regular, GraphicsUnit.Point),
+                BoldFont = new Font(fontSettings.Face, fontSettings.Size, FontStyle.Bold, GraphicsUnit.Point)
+            };
+        }
+
+        public static int GetBezelHeight(Game game) => GetBezelHeight(GetTitleSize(game));
+
+        private static int GetBezelHeight(Size titleSize) => (int)Math.Round(titleSize.Height * 1.3f);
+
+        private static Size GetTitleSize(Game game)
+        {
+            var boldFont = GetTitleFonts().BoldFont;
+            return TextRenderer.MeasureText(game.Description, boldFont);
+        }
+
         /// <summary>
         ///     Render a layout image for a game. The image's width is determined by <see cref="monitorWidth"/> and height
-        ///     by <see cref="TitleHeight"/>.
+        ///     relative to the font height.
         /// </summary>
-        public static void Render(Game game, MameLayout layout, Stream outputStream, int monitorWidth)
+        public static int Render(Game game, MameLayout layout, Stream outputStream, int monitorWidth)
         {
-            using (var image = new Bitmap(monitorWidth, TitleHeight, PixelFormat.Format32bppArgb)) 
+            var bezelHeight = GetBezelHeight(game);
+            var titleSize = GetTitleSize(game);
+            var fonts = GetTitleFonts();
+
+            using (var image = new Bitmap(monitorWidth, bezelHeight, PixelFormat.Format32bppArgb))
             using (var graphics = Graphics.FromImage(image))
             {
                 PrepareGraphics(graphics);
 
-                // Render game description, manufacturer and year
-                var titleSize = TextRenderer.MeasureText(game.Description, BoldFont);
-
                 // Vertically centre text
-                var yOffset = (int)Math.Round(TitleHeight / 2.0 - titleSize.Height / 2.0);
+                var yOffset = (int)Math.Round(bezelHeight / 2.0 - titleSize.Height / 2.0);
                 var xOffset = layout.View.Screen.Bounds.X;
 
-                TextRenderer.DrawText(graphics, game.Description, BoldFont, new Point(xOffset, yOffset), TextColour);
-                TextRenderer.DrawText(graphics, $"| {game.Manufacturer} {game.Year}", RegularFont, new Point(xOffset + titleSize.Width, yOffset), TextColour);
+                // Render game description, manufacturer and year
+                TextRenderer.DrawText(graphics, game.Description, fonts.BoldFont, new Point(xOffset, yOffset), TextColour);
+                TextRenderer.DrawText(graphics, $"| {game.Manufacturer} {game.Year}", fonts.RegularFont, new Point(xOffset + titleSize.Width, yOffset), TextColour);
 
                 graphics.Save();
                 image.Save(outputStream, ImageFormat.Png);
             }
+
+            return bezelHeight;
+        }
+
+        private static FontSettings FontSettings()
+        {
+            var settings = SettingStores.General.Get();
+            var layoutSettings = settings.LayoutSettings.InGameTitles;
+            var fontSettings = layoutSettings.FontSettings;
+            return fontSettings;
         }
 
         /// <summary>
