@@ -4,11 +4,9 @@
  */
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Xml.Serialization;
 
-namespace Mamesaver
+namespace Mamesaver.Models
 {
     [Serializable, XmlRoot("game")]
     public class Game

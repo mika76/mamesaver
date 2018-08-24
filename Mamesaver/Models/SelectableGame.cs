@@ -6,7 +6,7 @@
 using System;
 using System.Xml.Serialization;
 
-namespace Mamesaver
+namespace Mamesaver.Models
 {
     [Serializable, XmlRoot("SelectableGame")]
     public class SelectableGame : Game
