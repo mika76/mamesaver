@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 using FluentAssertions;
 using Mamesaver.Layout;
 using NUnit.Framework;
@@ -74,7 +75,9 @@ namespace Mamesaver.Test.Unit
             var reader = new StreamReader(stream);
             var text = reader.ReadToEnd();
 
-            text.Should().Be(Encoding.ASCII.GetString(Resources.horizontal));
+            var target = Encoding.UTF8.GetString(Resources.horizontal);
+            StripControlChars(text).Should().Be(StripControlChars(target));
+ 
         }
 
         [Test]
@@ -88,7 +91,13 @@ namespace Mamesaver.Test.Unit
             var reader = new StreamReader(stream);
             var text = reader.ReadToEnd();
 
-            text.Should().Be(Encoding.ASCII.GetString(Resources.vertical));
+            var target = Encoding.UTF8.GetString(Resources.vertical);
+            StripControlChars(text).Should().Be(StripControlChars(target));
         }
+
+        /// <summary>
+        ///     Removes control characters to prevent test failures for non-structural components
+        /// </summary>
+        private string StripControlChars(string text) => Regex.Replace(text, @"[^\u0009\u000A\u000D\u0020-\u007E]", "");
     }
 }
