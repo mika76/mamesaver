@@ -37,6 +37,11 @@ namespace Mamesaver
 
             // Get details for each verified rom
             var index = 0;
+
+            // The loop to add each game detail is based on the number of verified games, hence
+            // we need to register the unverified games for our total process count.
+            var romsProcessed = romFiles.Count + (romFiles.Count - verifiedGames.Count);
+
             List<string> romsToProcess;
             while ((romsToProcess = verifiedGames.Skip(index).Take(RomsPerBatch).ToList()).Any())
             {
@@ -46,6 +51,10 @@ namespace Mamesaver
                 }
 
                 index += RomsPerBatch;
+                romsProcessed += romsToProcess.Count;
+
+                // There are two distinct phases in the game list builder, so we are halving the processed count
+                Callback(progressCallback, romsProcessed / 2f, romFiles.Count);
             }
 
             return games;
@@ -134,13 +143,26 @@ namespace Mamesaver
                 }
 
                 index += RomsPerBatch;
+                filesProcessed += filesToVerify.Count;
+
+                // There are two distinct phases in the game list builder, so we are halving the processed count
+                Callback(progressCallback, filesProcessed / 2f, romFiles.Count);
             }
 
             return verifiedRoms;
         }
 
         /// <summary>
-        ///     Returns a list of the base name of roms in the Mame rom directories.
+        ///     Invokes the callback with the percentage of game list construction completed.
+        /// </summary>
+        /// <param name="callback">callback to invoke</param>
+        /// <param name="processed">number of ROM files processed</param>
+        /// <param name="romCount">total number of ROM files</param>
+        private void Callback(Action<int> callback, float processed, int romCount)
+        {
+            var percentage = (int) Math.Round(processed / romCount  * 100);
+            callback(percentage);
+        }
         /// </summary>
         /// <remarks>
         ///     It is assumed that roms are zipped.

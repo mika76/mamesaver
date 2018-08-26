@@ -145,8 +145,6 @@
     <None Include="key.snk" />
     <None Include="Resources\otheroptions.ico" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\SEARCH_00.gif" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="ILMergeOrder.txt" />

@@ -41,6 +41,9 @@ namespace Mamesaver
             //other
             lvwColumnSorter = new ListViewSorter();
             lstGames.ListViewItemSorter = lvwColumnSorter;
+            // Progress bar
+            gameListProgress.Left = (gameListProgress.Parent.Width - gameListProgress.Width) / 2;
+            gameListProgress.Top = (gameListProgress.Parent.Height - gameListProgress.Height) / 2;
 
             cloneScreen.Checked = Settings.CloneScreen;
         }
@@ -63,6 +66,8 @@ namespace Mamesaver
 
             btnOk.Enabled = tabControl1.Enabled = false;
             this.Cursor = Cursors.WaitCursor;
+            gameListProgress.Value = 0;
+            gameListProgress.Visible = true;
 
             lstGames.BeginUpdate();
             lstGames.Items.Clear();
@@ -75,6 +80,8 @@ namespace Mamesaver
 
             try
             {
+                ListBuilder.WorkerReportsProgress = true;
+                ListBuilder.ProgressChanged += UpdateProgressBar;
                 ListBuilder.RunWorkerAsync();
 
                 while (ListBuilder.IsBusy)
@@ -88,6 +95,10 @@ namespace Mamesaver
             picBuilding.Visible = false;
             this.Cursor = Cursors.Default;
             btnOk.Enabled = tabControl1.Enabled = true;
+            gameListProgress.Visible = false;
+        private void UpdateProgressBar(object sender, ProgressChangedEventArgs e)
+        {
+            gameListProgress.Value = e.ProgressPercentage;
         }
 
         private void btnSelAll_Click(object sender, EventArgs e)
@@ -126,6 +137,7 @@ namespace Mamesaver
         {
             List<SelectableGame> gamesList = GameListBuilder.GetGameList();
             e.Result = gamesList;
+                var gamesList = _gameListBuilder.GetGameList(percentageComplete => ListBuilder.ReportProgress(percentageComplete));
         }
 
         private void ListBuilder_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
