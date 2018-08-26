@@ -9,17 +9,24 @@ namespace Mamesaver.Test.Unit
 {
     [TestFixture]
     [TestOf(typeof(LayoutFactory))]
-    public class LayoutFactoryTests
+    public class LayoutFactoryTests : MamesaverTests
     {
+        private LayoutFactory _layoutFactory;
         private const int MonitorWidth = 1920;
         private const int MonitorHeight = 1080;
 
         private const int BezelHeight = 60;
 
+        [SetUp]
+        public void SetUp()
+        {
+            _layoutFactory = GetInstance<LayoutFactory>();
+        }
+
         [Test]
         public void BoundsHorizontal()
         {
-            var layout = LayoutFactory.Build(MonitorWidth, MonitorHeight, BezelHeight);
+            var layout = _layoutFactory.Build(MonitorWidth, MonitorHeight, BezelHeight);
             var bounds = layout.View.Screen.Bounds;
 
             bounds.Width.Should().Be(1360);
@@ -31,7 +38,7 @@ namespace Mamesaver.Test.Unit
         [Test]
         public void BoundVertical()
         {
-            var layout = LayoutFactory.Build(MonitorWidth, MonitorHeight, BezelHeight, false);
+            var layout = _layoutFactory.Build(MonitorWidth, MonitorHeight, BezelHeight, false);
             var bounds = layout.View.Screen.Bounds;
 
             bounds.Width.Should().Be(765);
@@ -43,7 +50,7 @@ namespace Mamesaver.Test.Unit
         [Test]
         public void BezelHorizontal()
         {
-            var layout = LayoutFactory.Build(MonitorWidth, MonitorHeight, BezelHeight);
+            var layout = _layoutFactory.Build(MonitorWidth, MonitorHeight, BezelHeight);
             var bounds = layout.View.Bezel.Bounds;
 
             bounds.Width.Should().Be(1920);
@@ -55,7 +62,7 @@ namespace Mamesaver.Test.Unit
         [Test]
         public void BezelVertical()
         {
-            var layout = LayoutFactory.Build(MonitorWidth, MonitorHeight, BezelHeight, false);
+            var layout = _layoutFactory.Build(MonitorWidth, MonitorHeight, BezelHeight, false);
             var bounds = layout.View.Bezel.Bounds;
 
             bounds.Width.Should().Be(1920);
@@ -67,10 +74,10 @@ namespace Mamesaver.Test.Unit
         [Test]
         public void SerializationHorizontal()
         {
-            var layout = LayoutFactory.Build(MonitorWidth, MonitorHeight, BezelHeight);
+            var layout = _layoutFactory.Build(MonitorWidth, MonitorHeight, BezelHeight);
 
             var stream = new MemoryStream();
-            LayoutFactory.Serialize(layout, stream);
+            _layoutFactory.Serialize(layout, stream);
             stream.Position = 0;
             var reader = new StreamReader(stream);
             var text = reader.ReadToEnd();
@@ -83,10 +90,10 @@ namespace Mamesaver.Test.Unit
         [Test]
         public void SerializationVertical()
         {
-            var layout = LayoutFactory.Build(MonitorWidth, MonitorHeight, BezelHeight, false);
+            var layout = _layoutFactory.Build(MonitorWidth, MonitorHeight, BezelHeight, false);
 
             var stream = new MemoryStream();
-            LayoutFactory.Serialize(layout, stream);
+            _layoutFactory.Serialize(layout, stream);
             stream.Position = 0;
             var reader = new StreamReader(stream);
             var text = reader.ReadToEnd();
