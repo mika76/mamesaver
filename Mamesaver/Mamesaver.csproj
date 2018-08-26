@@ -124,7 +124,6 @@
     <None Include="app.config" />
     <None Include="ILMerge.props" />
     <None Include="packages.config" />
-    <None Include="Resources\mame_marquee_banner.jpg" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="BackgroundForm.resx">
@@ -148,6 +147,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ILMergeOrder.txt" />
+    <Content Include="Resources\MAMELogoTM.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
