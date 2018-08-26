@@ -1,7 +1,8 @@
-using System;
 using Mamesaver.Configuration;
 using Mamesaver.Configuration.Models;
+using Mamesaver.Layout;
 using SimpleInjector;
+using SimpleInjector.Lifestyles;
 
 namespace Mamesaver
 {
@@ -17,6 +18,7 @@ namespace Mamesaver
         public static Container NewContainer()
         {
             var container = new Container();
+            container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
 
             // Register setting factories
             container.Register(() => container.GetInstance<GeneralSettingsStore>().Get(), Lifestyle.Singleton);
@@ -24,8 +26,15 @@ namespace Mamesaver
             container.Register(() => container.GetInstance<Settings>().LayoutSettings, Lifestyle.Singleton);
             container.Register(() => container.GetInstance<Settings>().AdvancedSettings, Lifestyle.Singleton);
 
-            // Register screen factory
-            container.Register(() => new Func<BlankScreen>(() => container.GetInstance<BlankScreen>()));
+            // Register components requiring explicit lifestyles
+            container.Register<BackgroundForm>(Lifestyle.Scoped);
+            container.Register<MameScreen>(Lifestyle.Scoped);
+
+            container.Register<GameListBuilder>(Lifestyle.Singleton);
+            container.Register<TitleFactory>(Lifestyle.Singleton);
+            container.Register<LayoutBuilder>(Lifestyle.Singleton);
+            container.Register<LayoutFactory>(Lifestyle.Singleton);
+            container.Register<MameInvoker>(Lifestyle.Singleton);
 
             return container;
         }

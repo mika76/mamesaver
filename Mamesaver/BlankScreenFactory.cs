@@ -1,4 +1,5 @@
 ﻿using System;
+using Mamesaver.Configuration.Models;
 
 namespace Mamesaver
 {
@@ -7,13 +8,16 @@ namespace Mamesaver
     /// </summary>
     internal class BlankScreenFactory
     {
-        private readonly Func<BlankScreen> _factory;
+        private readonly LayoutSettings _layoutSettings;
 
-        public BlankScreenFactory(Func<BlankScreen> factory) => _factory = factory;
+        public BlankScreenFactory(LayoutSettings layoutSettings) => _layoutSettings = layoutSettings;
 
         /// <summary>
         ///     Creates a new <see cref="BlankScreen"/>.
         /// </summary>
-        public BlankScreen Create() => _factory();
+        public BlankScreen Create()
+        {
+            return new BlankScreen(new BackgroundForm(_layoutSettings));
+        }
     }
 }
