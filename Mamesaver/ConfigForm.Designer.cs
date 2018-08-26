@@ -33,6 +33,7 @@ namespace Mamesaver
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ConfigForm));
             this.label1 = new System.Windows.Forms.Label();
             this.txtExec = new System.Windows.Forms.TextBox();
             this.btnExecBrowse = new System.Windows.Forms.Button();
@@ -49,20 +50,45 @@ namespace Mamesaver
             this.dlgOpen = new System.Windows.Forms.OpenFileDialog();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.cloneScreen = new System.Windows.Forms.CheckBox();
             this.txtMinutes = new System.Windows.Forms.NumericUpDown();
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.txtCommandLineOptions = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.gameListProgress = new System.Windows.Forms.ProgressBar();
             this.lblNoGames = new System.Windows.Forms.Label();
-            this.picBuilding = new System.Windows.Forms.PictureBox();
-            this.cloneScreen = new System.Windows.Forms.CheckBox();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.splashScreenOptions = new System.Windows.Forms.Panel();
+            this.label7 = new System.Windows.Forms.Label();
+            this.splashDuration = new System.Windows.Forms.NumericUpDown();
+            this.splashScreenFont = new System.Windows.Forms.ComboBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
+            this.inGameTitleOptions = new System.Windows.Forms.Panel();
+            this.label5 = new System.Windows.Forms.Label();
+            this.inGameFont = new System.Windows.Forms.ComboBox();
+            this.inGameFontSize = new System.Windows.Forms.ComboBox();
+            this.label11 = new System.Windows.Forms.Label();
+            this.label12 = new System.Windows.Forms.Label();
+            this.displaySplash = new System.Windows.Forms.CheckBox();
+            this.label10 = new System.Windows.Forms.Label();
+            this.displayInGameTitles = new System.Windows.Forms.CheckBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.debugLogging = new System.Windows.Forms.CheckBox();
+            this.skipGameValidation = new System.Windows.Forms.CheckBox();
+            this.resetToDefaults = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.txtMinutes)).BeginInit();
             this.tabPage2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picBuilding)).BeginInit();
+            this.tabPage3.SuspendLayout();
+            this.splashScreenOptions.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splashDuration)).BeginInit();
+            this.inGameTitleOptions.SuspendLayout();
+            this.tabPage4.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
@@ -70,9 +96,9 @@ namespace Mamesaver
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(6, 17);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(64, 13);
+            this.label1.Size = new System.Drawing.Size(134, 13);
             this.label1.TabIndex = 0;
-            this.label1.Text = "Mame Path:";
+            this.label1.Text = "Path to MAME executable:";
             // 
             // txtExec
             // 
@@ -97,11 +123,11 @@ namespace Mamesaver
             // btnOk
             // 
             this.btnOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOk.Location = new System.Drawing.Point(385, 381);
+            this.btnOk.Location = new System.Drawing.Point(304, 381);
             this.btnOk.Name = "btnOk";
             this.btnOk.Size = new System.Drawing.Size(75, 23);
             this.btnOk.TabIndex = 3;
-            this.btnOk.Text = "&Ok";
+            this.btnOk.Text = "&OK";
             this.btnOk.UseVisualStyleBackColor = true;
             this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
             // 
@@ -109,7 +135,7 @@ namespace Mamesaver
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(304, 381);
+            this.btnCancel.Location = new System.Drawing.Point(385, 381);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 4;
@@ -205,6 +231,8 @@ namespace Mamesaver
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Controls.Add(this.tabPage3);
+            this.tabControl1.Controls.Add(this.tabPage4);
             this.tabControl1.Location = new System.Drawing.Point(12, 12);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
@@ -229,6 +257,16 @@ namespace Mamesaver
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "General";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // cloneScreen
+            // 
+            this.cloneScreen.AutoSize = true;
+            this.cloneScreen.Location = new System.Drawing.Point(9, 169);
+            this.cloneScreen.Name = "cloneScreen";
+            this.cloneScreen.Size = new System.Drawing.Size(155, 17);
+            this.cloneScreen.TabIndex = 7;
+            this.cloneScreen.Text = "Clone MAME to all monitors";
+            this.cloneScreen.UseVisualStyleBackColor = true;
             // 
             // txtMinutes
             // 
@@ -290,6 +328,7 @@ namespace Mamesaver
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.gameListProgress);
             this.tabPage2.Controls.Add(this.lblNoGames);
             this.tabPage2.Controls.Add(this.lstGames);
             this.tabPage2.Controls.Add(this.btnSelAll);
@@ -303,47 +342,256 @@ namespace Mamesaver
             this.tabPage2.Text = "Game List";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
+            // gameListProgress
+            // 
+            this.gameListProgress.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.gameListProgress.Location = new System.Drawing.Point(113, 164);
+            this.gameListProgress.Name = "gameListProgress";
+            this.gameListProgress.Size = new System.Drawing.Size(220, 23);
+            this.gameListProgress.TabIndex = 12;
+            this.gameListProgress.Visible = false;
+            // 
             // lblNoGames
             // 
             this.lblNoGames.AutoSize = true;
             this.lblNoGames.Location = new System.Drawing.Point(87, 14);
             this.lblNoGames.Name = "lblNoGames";
-            this.lblNoGames.Size = new System.Drawing.Size(69, 13);
+            this.lblNoGames.Size = new System.Drawing.Size(77, 13);
             this.lblNoGames.TabIndex = 11;
-            this.lblNoGames.Text = "No Games: 0";
+            this.lblNoGames.Text = "Num Games: 0";
             // 
-            // picBuilding
+            // tabPage3
             // 
-            this.picBuilding.BackColor = System.Drawing.SystemColors.ButtonFace;
-            this.picBuilding.Image = global::Mamesaver.Properties.Resources.SEARCH_00;
-            this.picBuilding.Location = new System.Drawing.Point(32, 102);
-            this.picBuilding.Name = "picBuilding";
-            this.picBuilding.Size = new System.Drawing.Size(80, 50);
-            this.picBuilding.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-            this.picBuilding.TabIndex = 12;
-            this.picBuilding.TabStop = false;
-            this.picBuilding.Visible = false;
+            this.tabPage3.Controls.Add(this.splashScreenOptions);
+            this.tabPage3.Controls.Add(this.inGameTitleOptions);
+            this.tabPage3.Controls.Add(this.label11);
+            this.tabPage3.Controls.Add(this.label12);
+            this.tabPage3.Controls.Add(this.displaySplash);
+            this.tabPage3.Controls.Add(this.label10);
+            this.tabPage3.Controls.Add(this.displayInGameTitles);
+            this.tabPage3.Controls.Add(this.label9);
+            this.tabPage3.Location = new System.Drawing.Point(4, 22);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage3.Size = new System.Drawing.Size(440, 337);
+            this.tabPage3.TabIndex = 2;
+            this.tabPage3.Text = "Layout";
+            this.tabPage3.UseVisualStyleBackColor = true;
             // 
-            // cloneScreen
+            // splashScreenOptions
             // 
-            this.cloneScreen.AutoSize = true;
-            this.cloneScreen.Location = new System.Drawing.Point(9, 169);
-            this.cloneScreen.Name = "cloneScreen";
-            this.cloneScreen.Size = new System.Drawing.Size(121, 17);
-            this.cloneScreen.TabIndex = 7;
-            this.cloneScreen.Text = "Clone Mame to all monitors";
-            this.cloneScreen.UseVisualStyleBackColor = true;
+            this.splashScreenOptions.Controls.Add(this.label7);
+            this.splashScreenOptions.Controls.Add(this.splashDuration);
+            this.splashScreenOptions.Controls.Add(this.splashScreenFont);
+            this.splashScreenOptions.Controls.Add(this.label6);
+            this.splashScreenOptions.Controls.Add(this.label8);
+            this.splashScreenOptions.Location = new System.Drawing.Point(8, 159);
+            this.splashScreenOptions.Name = "splashScreenOptions";
+            this.splashScreenOptions.Size = new System.Drawing.Size(345, 114);
+            this.splashScreenOptions.TabIndex = 21;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(1, 0);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(50, 13);
+            this.label7.TabIndex = 10;
+            this.label7.Text = "Duration:";
+            // 
+            // splashDuration
+            // 
+            this.splashDuration.Location = new System.Drawing.Point(3, 17);
+            this.splashDuration.Maximum = new decimal(new int[] {
+            30,
+            0,
+            0,
+            0});
+            this.splashDuration.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.splashDuration.Name = "splashDuration";
+            this.splashDuration.Size = new System.Drawing.Size(80, 20);
+            this.splashDuration.TabIndex = 11;
+            this.splashDuration.Value = new decimal(new int[] {
+            3,
+            0,
+            0,
+            0});
+            // 
+            // splashScreenFont
+            // 
+            this.splashScreenFont.FormattingEnabled = true;
+            this.splashScreenFont.Location = new System.Drawing.Point(3, 64);
+            this.splashScreenFont.Name = "splashScreenFont";
+            this.splashScreenFont.Size = new System.Drawing.Size(332, 21);
+            this.splashScreenFont.TabIndex = 9;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(89, 18);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(47, 13);
+            this.label6.TabIndex = 9;
+            this.label6.Text = "seconds";
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(1, 47);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(31, 13);
+            this.label8.TabIndex = 8;
+            this.label8.Text = "Font:";
+            // 
+            // inGameTitleOptions
+            // 
+            this.inGameTitleOptions.Controls.Add(this.label5);
+            this.inGameTitleOptions.Controls.Add(this.inGameFont);
+            this.inGameTitleOptions.Controls.Add(this.inGameFontSize);
+            this.inGameTitleOptions.Location = new System.Drawing.Point(8, 59);
+            this.inGameTitleOptions.Name = "inGameTitleOptions";
+            this.inGameTitleOptions.Size = new System.Drawing.Size(345, 44);
+            this.inGameTitleOptions.TabIndex = 20;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(1, 0);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(31, 13);
+            this.label5.TabIndex = 2;
+            this.label5.Text = "Font:";
+            // 
+            // inGameFont
+            // 
+            this.inGameFont.FormattingEnabled = true;
+            this.inGameFont.Location = new System.Drawing.Point(3, 17);
+            this.inGameFont.Name = "inGameFont";
+            this.inGameFont.Size = new System.Drawing.Size(276, 21);
+            this.inGameFont.TabIndex = 3;
+            // 
+            // inGameFontSize
+            // 
+            this.inGameFontSize.FormattingEnabled = true;
+            this.inGameFontSize.Location = new System.Drawing.Point(285, 17);
+            this.inGameFontSize.Name = "inGameFontSize";
+            this.inGameFontSize.Size = new System.Drawing.Size(50, 21);
+            this.inGameFontSize.TabIndex = 4;
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(6, 120);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(74, 13);
+            this.label11.TabIndex = 19;
+            this.label11.Text = "Splash screen";
+            // 
+            // label12
+            // 
+            this.label12.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.label12.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.label12.Location = new System.Drawing.Point(11, 127);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(400, 6);
+            this.label12.TabIndex = 18;
+            // 
+            // displaySplash
+            // 
+            this.displaySplash.AutoSize = true;
+            this.displaySplash.Location = new System.Drawing.Point(11, 136);
+            this.displaySplash.Name = "displaySplash";
+            this.displaySplash.Size = new System.Drawing.Size(59, 17);
+            this.displaySplash.TabIndex = 5;
+            this.displaySplash.Text = "Enable";
+            this.displaySplash.UseVisualStyleBackColor = true;
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(6, 17);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(69, 13);
+            this.label10.TabIndex = 17;
+            this.label10.Text = "In-game titles";
+            // 
+            // displayInGameTitles
+            // 
+            this.displayInGameTitles.AutoSize = true;
+            this.displayInGameTitles.Checked = true;
+            this.displayInGameTitles.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.displayInGameTitles.Location = new System.Drawing.Point(11, 36);
+            this.displayInGameTitles.Name = "displayInGameTitles";
+            this.displayInGameTitles.Size = new System.Drawing.Size(59, 17);
+            this.displayInGameTitles.TabIndex = 13;
+            this.displayInGameTitles.Text = "Enable";
+            this.displayInGameTitles.UseVisualStyleBackColor = true;
+            // 
+            // label9
+            // 
+            this.label9.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.label9.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.label9.Location = new System.Drawing.Point(11, 24);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(400, 2);
+            this.label9.TabIndex = 16;
+            // 
+            // tabPage4
+            // 
+            this.tabPage4.Controls.Add(this.debugLogging);
+            this.tabPage4.Controls.Add(this.skipGameValidation);
+            this.tabPage4.Location = new System.Drawing.Point(4, 22);
+            this.tabPage4.Name = "tabPage4";
+            this.tabPage4.Size = new System.Drawing.Size(440, 337);
+            this.tabPage4.TabIndex = 3;
+            this.tabPage4.Text = "Advanced";
+            this.tabPage4.UseVisualStyleBackColor = true;
+            // 
+            // debugLogging
+            // 
+            this.debugLogging.AutoSize = true;
+            this.debugLogging.Location = new System.Drawing.Point(9, 40);
+            this.debugLogging.Name = "debugLogging";
+            this.debugLogging.Size = new System.Drawing.Size(95, 17);
+            this.debugLogging.TabIndex = 1;
+            this.debugLogging.Text = "Debug logging";
+            this.debugLogging.UseVisualStyleBackColor = true;
+            // 
+            // skipGameValidation
+            // 
+            this.skipGameValidation.AutoSize = true;
+            this.skipGameValidation.Location = new System.Drawing.Point(9, 17);
+            this.skipGameValidation.Name = "skipGameValidation";
+            this.skipGameValidation.Size = new System.Drawing.Size(124, 17);
+            this.skipGameValidation.TabIndex = 0;
+            this.skipGameValidation.Text = "Skip game validation";
+            this.skipGameValidation.UseVisualStyleBackColor = true;
+            // 
+            // resetToDefaults
+            // 
+            this.resetToDefaults.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.resetToDefaults.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.resetToDefaults.Location = new System.Drawing.Point(12, 381);
+            this.resetToDefaults.Name = "resetToDefaults";
+            this.resetToDefaults.Size = new System.Drawing.Size(119, 23);
+            this.resetToDefaults.TabIndex = 14;
+            this.resetToDefaults.Text = "&Reset to Defaults";
+            this.resetToDefaults.UseVisualStyleBackColor = true;
             // 
             // ConfigForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(472, 416);
-            this.Controls.Add(this.picBuilding);
+            this.Controls.Add(this.resetToDefaults);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnOk);
-            this.Icon = global::Mamesaver.Properties.Resources.otheroptions;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(480, 450);
@@ -359,9 +607,16 @@ namespace Mamesaver
             ((System.ComponentModel.ISupportInitialize)(this.txtMinutes)).EndInit();
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picBuilding)).EndInit();
+            this.tabPage3.ResumeLayout(false);
+            this.tabPage3.PerformLayout();
+            this.splashScreenOptions.ResumeLayout(false);
+            this.splashScreenOptions.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splashDuration)).EndInit();
+            this.inGameTitleOptions.ResumeLayout(false);
+            this.inGameTitleOptions.PerformLayout();
+            this.tabPage4.ResumeLayout(false);
+            this.tabPage4.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -389,8 +644,29 @@ namespace Mamesaver
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label lblNoGames;
-        private System.Windows.Forms.PictureBox picBuilding;
         private System.Windows.Forms.NumericUpDown txtMinutes;
         private System.Windows.Forms.CheckBox cloneScreen;
+        private System.Windows.Forms.TabPage tabPage3;
+        private System.Windows.Forms.ComboBox inGameFontSize;
+        private System.Windows.Forms.ComboBox inGameFont;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.CheckBox displaySplash;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.NumericUpDown splashDuration;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.CheckBox displayInGameTitles;
+        private System.Windows.Forms.ComboBox splashScreenFont;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Button resetToDefaults;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Panel splashScreenOptions;
+        private System.Windows.Forms.Panel inGameTitleOptions;
+        private System.Windows.Forms.ProgressBar gameListProgress;
+        private System.Windows.Forms.TabPage tabPage4;
+        private System.Windows.Forms.CheckBox debugLogging;
+        private System.Windows.Forms.CheckBox skipGameValidation;
     }
 }

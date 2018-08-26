@@ -1,41 +1,56 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
+using Mamesaver.Configuration.Models;
 
 namespace Mamesaver
 {
-    internal static class GameListBuilder
+    internal class GameListBuilder
     {
+        private readonly Settings _settings;
+        private readonly AdvancedSettings _advancedSetings;
+        private readonly MameInvoker _invoker;
+
         /// <summary>
-        ///     Number of roms to process per batch. Rom files are batched when passing as arguments to Mame as a precaution
-        ///     in case we have a very large number of roms and end up with command line length limit issues.
+        ///     Number of ROMs to process per batch. Rom files are batched when passing as arguments to Mame both 
+        ///     to minimise processing time and to allow a visual indicator that games are being processed.
         /// </summary>
         private const int RomsPerBatch = 50;
 
         /// <summary>
-        ///     Settings for parsing Mame's listxml output
+        ///     Settings for parsing MAME's listxml output
         /// </summary>
-        private static readonly XmlReaderSettings ReaderSettings = new XmlReaderSettings { DtdProcessing = DtdProcessing.Parse };
+        private readonly XmlReaderSettings _readerSettings;
+       
+        public GameListBuilder(Settings settings, AdvancedSettings advancedSetings, MameInvoker invoker)
+        {
+            _settings = settings;
+            _advancedSetings = advancedSetings;
+            _invoker = invoker;
+
+            _readerSettings = new XmlReaderSettings { DtdProcessing = DtdProcessing.Parse };
+        }
 
         /// <summary>
-        /// Returns a <see cref="List{T}"/> of <see cref="SelectableGame"/>s which are read from
-        /// the full list and then merged with the verified rom's list. The games which are returned
-        /// all have a "good" status on their drivers. This check also eliminates BIOS ROMS.
+        ///     Returns a <see cref="List{T}" /> of <see cref="SelectableGame" />s which are read from
+        ///     the full list and then merged with the verified ROMs list. The games which are returned
+        ///     all have a "good" status on their drivers. This check also eliminates BIOS ROMS.
         /// </summary>
-        /// <returns>Returns a <see cref="List{T}"/> of <see cref="SelectableGame"/>s</returns>
-        public static List<SelectableGame> GetGameList()
+        /// <param name="progressCallback">Callback invoked with percentage complete</param>
+        /// <returns>Returns a <see cref="List{T}" /> of <see cref="SelectableGame" />s</returns>
+        public List<SelectableGame> GetGameList(Action<int> progressCallback)
         {
             var games = new List<SelectableGame>();
 
             // Enrich game metadata for each verified game
-            var verifiedGames = GetVerifiedSets().Keys;
+            var verifiedGames = GetVerifiedSets(progressCallback).Keys;
+            var romFiles = GetRomFiles();
 
-            // Get details for each verified rom
+            // Get details for each verified ROM
             var index = 0;
 
             // The loop to add each game detail is based on the number of verified games, hence
@@ -61,11 +76,9 @@ namespace Mamesaver
         }
 
         /// <summary>
-        ///     Gets the rom details for a single game
+        ///     Gets the ROM details for a single game.
         /// </summary>
-        /// <param name="game"></param>
-        /// <returns></returns>
-        public static SelectableGame GetRomDetails(string game)
+        public SelectableGame GetRomDetails(string game)
         {
             using (var stream = GetGameDetails(new List<string> { game }))
             {
@@ -74,13 +87,13 @@ namespace Mamesaver
         }
 
         /// <summary>
-        ///     Extracts rom metadata for display from a XML stream from Mame
+        ///     Extracts ROM metadata for display from a XML stream from MAME.
         /// </summary>
-        private static List<SelectableGame> GetRomDetails(StreamReader stream)
+        private List<SelectableGame> GetRomDetails(StreamReader stream)
         {
             var games = new List<SelectableGame>();
 
-            using (var reader = XmlReader.Create(stream, ReaderSettings))
+            using (var reader = XmlReader.Create(stream, _readerSettings))
             {
                 reader.ReadStartElement("mame");
 
@@ -96,16 +109,19 @@ namespace Mamesaver
                     var driver = element.Element("driver");
                     if (driver == null) continue;
 
-                    //// Skip games which aren't fully emulated
-                    var status = driver.Attribute("status")?.Value;
-                    if (status != "good") continue;
+                    // Skip games which aren't fully emulated, unless check disabled in configuration
+                    if (!_advancedSetings.SkipGameValidation)
+                    {
+                        var status = driver.Attribute("status")?.Value;
+                        if (status != "good") continue;
+                    }
 
                     var year = element.Element("year")?.Value ?? "";
                     var manufacturer = element.Element("manufacturer")?.Value ?? "";
                     var description = element.Element("description")?.Value ?? "";
                     var rotation = element.Element("display")?.Attribute("rotate")?.Value ?? "";
 
-                    games.Add(new SelectableGame(name, description, year, manufacturer, rotation, false));
+                    games.Add(new SelectableGame(name, description, year, manufacturer, rotation));
                 }
             }
 
@@ -117,20 +133,22 @@ namespace Mamesaver
         ///     verified to work. Only the ones marked as good are returned. The clone names
         ///     are returned in the value of the dictionary while the name is used as the key.
         /// </summary>
-        private static IDictionary<string, string> GetVerifiedSets()
+        private IDictionary<string, string> GetVerifiedSets(Action<int> progressCallback)
         {
             var verifiedRoms = new Dictionary<string, string>();
             var regex = new Regex(@"romset (\w*)(?:\s\[(\w*)\])? is good"); //only accept the "good" ROMS
 
             var romFiles = GetRomFiles();
 
-            // Verify each rom in directory
+            // Verify each ROM in directory
             var index = 0;
+            var filesProcessed = 0;
+
             List<string> filesToVerify;
             while ((filesToVerify = romFiles.Skip(index).Take(RomsPerBatch).ToList()).Any())
             {
                 var arguments = new List<string> { "-verifyroms" }.Concat(filesToVerify).ToArray();
-                using (var stream = MameInvoker.GetOutput(arguments))
+                using (var stream = _invoker.GetOutput(arguments))
                 {
                     var output = stream.ReadToEnd();
 
@@ -163,11 +181,14 @@ namespace Mamesaver
             var percentage = (int) Math.Round(processed / romCount  * 100);
             callback(percentage);
         }
+
+        /// <summary>
+        ///     Returns a list of the base name of ROMs in the MAME ROM directories.
         /// </summary>
         /// <remarks>
-        ///     It is assumed that roms are zipped.
+        ///     It is assumed that ROMs are zipped.
         /// </remarks>
-        private static List<string> GetRomFiles()
+        public List<string> GetRomFiles()
         {
             var roms = new List<string>();
 
@@ -181,33 +202,32 @@ namespace Mamesaver
         }
 
         /// <summary>
-        ///     Retrieves absolute paths to the rom directories as configured by Mame.
+        ///     Retrieves absolute paths to the ROM directories as configured by MAME.
         /// </summary>
         /// <remarks>
-        ///     Multiple rom directories can be specified in Mame by separating directories by semicolons.
+        ///     Multiple ROM directories can be specified in Mame by separating directories by semicolons.
         /// </remarks>
-        private static List<string> GetRomPaths()
-        {
-            return GetConfigPaths("rompath");
-        }
+        private List<string> GetRomPaths() => GetConfigPaths("rompath");
 
-        public static List<string> GetArtPaths()
-        {
-            return GetConfigPaths("artpath");
-        }
-
+        /// <summary>
+        ///     Retrieves absolute paths to the art path directories as configured by MAME.
+        /// </summary>
+        /// <remarks>
+        ///     Multiple art directories can be specified in MAME by separating directories by semicolons.
+        /// </remarks>
+        public List<string> GetArtPaths() => GetConfigPaths("artpath");
 
         /// <summary>
         ///     Returns the value of a path element in the <c>mame.ini</c> file.
         /// </summary>
         /// <param name="key">key name</param>
         /// <returns>list of absolute paths</returns>
-        public static List<string>GetConfigPaths(string key)
+        public List<string>GetConfigPaths(string key)
         {
-            // Configuration in the Mame ini file which indicates path to roms
+            // Configuration in the MAME ini file which indicates path to ROMs
             var regex = new Regex($@"{key}\s+(.*)");
 
-            using (var stream = MameInvoker.GetOutput("-showconfig"))
+            using (var stream = _invoker.GetOutput("-showconfig"))
             {
                 string line;
                 while ((line = stream.ReadLine()) != null)
@@ -229,7 +249,7 @@ namespace Mamesaver
                         else
                         {
                             // If path is relative, construct absolute path relative to Mame executable
-                            var execPath = Settings.ExecutablePath;
+                            var execPath = _settings.ExecutablePath;
                             var workingDirectory = Directory.GetParent(execPath).ToString();
 
                             absolutePaths.Add(Path.Combine(workingDirectory, path));
@@ -240,17 +260,17 @@ namespace Mamesaver
                 }
             }
 
-            throw new InvalidOperationException("Unable to retrieve rom paths");
+            throw new InvalidOperationException("Unable to retrieve ROM paths");
         }
 
         /// <summary>
-        ///     Gets XML details for a list of games from <a href="http://www.mame.org/">Mame</a>.
+        ///     Gets XML details for a list of games from MAME.
         /// </summary>
         /// <param name="games">games to retrieve details for</param>
         /// <returns><see cref="StreamReader" /> containing stream of Mame XML</returns>
-        private static StreamReader GetGameDetails(List<string> games)
+        private StreamReader GetGameDetails(List<string> games)
         {
-            return MameInvoker.GetOutput(new List<string> { "-listxml" }.Concat(games).ToArray());
+            return _invoker.GetOutput(new List<string> { "-listxml" }.Concat(games).ToArray());
         }
     }
 }

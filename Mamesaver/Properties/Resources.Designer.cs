@@ -63,9 +63,9 @@ namespace Mamesaver.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap mame_marquee_banner {
+        internal static System.Drawing.Bitmap MAMELogoTM {
             get {
-                object obj = ResourceManager.GetObject("mame_marquee_banner", resourceCulture);
+                object obj = ResourceManager.GetObject("MAMELogoTM", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -77,16 +77,6 @@ namespace Mamesaver.Properties {
             get {
                 object obj = ResourceManager.GetObject("otheroptions", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap SEARCH_00 {
-            get {
-                object obj = ResourceManager.GetObject("SEARCH_00", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
             }
         }
     }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
+using Mamesaver.Configuration.Models;
 using Mamesaver.Layout;
 using Mamesaver.Windows;
 using Serilog;
@@ -9,43 +10,63 @@ using Serilog;
 namespace Mamesaver
 {
     /// <summary>
-    /// A screen that will launch Mame and a random game from the list
+    ///     A screen that will launch MAME with a random game from the list.
     /// </summary>
-    public class MameScreen : BlankScreen
+    internal class MameScreen : BlankScreen
     {
-        private readonly List<Game> _gameList;
-        private readonly bool _runGame;
-        private LayoutBuilder _layoutBuilder;
+       private readonly Settings _settings;
+        private readonly GameList _gameList;
+        private readonly LayoutBuilder _layoutBuilder;
+        private readonly MameInvoker _invoker;
 
-        Timer _timer;
+        private Timer _timer;
+        private bool _closed;
+ 
         private readonly object _syncLock = new object();
-
-        public MameScreen(Screen screen, List<Game> gameList, Action<BlankScreen> onClosed, bool runGame) : base(screen, onClosed)
-        {
-            _gameList = gameList;
-            _runGame = runGame;
-        }
 
         public Process GameProcess { get; set; }
 
-        public override void Initialise()
+        public MameScreen(
+            Settings settings,
+            GameList gameList,
+            LayoutBuilder layoutBuilder,
+            MameInvoker invoker,
+            BackgroundForm backgroundForm) : base(backgroundForm)
         {
-            base.Initialise();
-
-            _layoutBuilder = new LayoutBuilder();
-
-            // Set up the timer
-            var minutes = Settings.Minutes;
-            _timer = new Timer{ Interval = minutes * 60000 };
-            _timer.Tick += timer_Tick;
-
-            FrmBackground.Load += OnFormBackground_Load;
+            _settings = settings;
+            _gameList = gameList;
+            _layoutBuilder = layoutBuilder;
+            _invoker = invoker;
         }
 
-        void OnFormBackground_Load(object sender, EventArgs e)
+        public override void Initialise(Screen screen, Action onClosed)
         {
-            // Start the first game
-            GameProcess = RunRandomGame(_gameList);
+            base.Initialise(screen, onClosed);
+
+            // Set up the timer
+            var minutes = _settings.MinutesPerGame;
+            _timer = new Timer { Interval = minutes * 60000 };
+            _timer.Tick += timer_Tick;
+
+            Log.Information("Initialised screen");
+
+            BackgroundForm.Load += OnFormBackground_Load;
+        }
+
+        private void OnFormBackground_Load(object sender, EventArgs e)
+        {
+            try
+            {
+                // Start the first game
+                GameProcess = RunRandomGame(_gameList.SelectedGames);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Unable to start game");
+                Close();
+
+                throw;
+            }
         }
 
         private void timer_Tick(object sender, EventArgs e)
@@ -58,8 +79,9 @@ namespace Mamesaver
                 if (GameProcess != null && !GameProcess.HasExited) GameProcess.CloseMainWindow();
 
                 // Start new game
-                GameProcess = RunRandomGame(_gameList);
-            }
+                Log.Information("New game scheduled for execution");
+                GameProcess = RunRandomGame(_gameList.SelectedGames);
+           }
             catch (Exception ex)
             {
                 Log.Error(ex, "MameScreen tick");
@@ -67,11 +89,12 @@ namespace Mamesaver
         }
 
         /// <summary>
-        /// Stop the timer, set cancelled flag, close any current process and close the background form. 
-        /// Once this has all been done, the application should end.
+        ///     Stop the timer, set cancelled flag, close any current process and close the background form.
+        ///     Once this has all been done, the application should end.
         /// </summary>
         public override void Close()
         {
+            Log.Information("Closing primary MAME screen {screen}", Screen.DeviceName);
             lock (_syncLock)
             {
                 try
@@ -82,9 +105,15 @@ namespace Mamesaver
                     if (GameProcess != null && !GameProcess.HasExited)
                     {
                         // Minimise and then exit. Minimising it makes it disappear instantly
-                        if (GameProcess.MainWindowHandle != IntPtr.Zero) WindowsInterop.MinimizeWindow(GameProcess.MainWindowHandle);
-                        GameProcess.CloseMainWindow();
+                        if (GameProcess.MainWindowHandle != IntPtr.Zero)
+                            WindowsInterop.MinimizeWindow(GameProcess.MainWindowHandle);
+
+                        // Stop the MAME process. Note that we need to call Kill() instead of CloseMainWindow() in case 
+                        // we are terminating MAME before the window has been created.
+                        GameProcess.Kill();
                     }
+
+                    _closed = true;
                 }
                 catch (Exception ex)
                 {
@@ -96,14 +125,14 @@ namespace Mamesaver
         }
 
         /// <summary>
-        /// Gets a random number and then runs <see cref="RunGame"/> using the game in the
-        /// <see cref="List{T}"/>.
+        ///     Gets a random number and then runs <see cref="RunGame" /> using the game in the
+        ///     <see cref="List{T}" />.
         /// </summary>
         /// <param name="gameList"></param>
-        /// <returns>The <see cref="Process"/> running the game</returns>
+        /// <returns>The <see cref="Process" /> running the game</returns>
         private Process RunRandomGame(List<Game> gameList)
         {
-            // get random game
+            // Get random game
             var r = new Random();
             var randomIndex = r.Next(0, gameList.Count - 1);
             var randomGame = gameList[randomIndex];
@@ -111,37 +140,58 @@ namespace Mamesaver
         }
 
         /// <summary>
-        /// Runs the process
+        ///     Runs the process.
         /// </summary>
         /// <param name="game"></param>
-        /// <returns>The <see cref="Process"/> running the game</returns>
+        /// <returns>The <see cref="Process" /> running the game</returns>
         private Process RunGame(Game game)
         {
-            // Set the game name and details on the background form
-            FrmBackground.SetGameText(game.Description, $@"{game.Year} {game.Manufacturer}");
+            // Set the game name and details on the splash screen if requested
+            var splashSettings = _settings.LayoutSettings.SplashScreen;
+            if (splashSettings.Enabled)
+            {
+                BackgroundForm.SetGameText(game.Description, $@"{game.Year} {game.Manufacturer}");
 
-            Log.Information("Running game {description} {year} {manufacturer} on display {display}", game.Description, game.Year, game.Manufacturer, Screen.DeviceName);
+                // Show the splash screen
+                var end = DateTime.Now.AddSeconds(splashSettings.DurationSeconds);
+                while (DateTime.Now < end)
+                {
+                    Application.DoEvents();
+                }
+            }
+            else
+            {
+                Application.DoEvents();
+            }
 
-            Application.DoEvents();
+            // Don't attempt to run a game if the screen has been closed
+            if (_closed) return null;
 
-            if (!_runGame) return null;
+            Log.Information("Running game {description} {year} {manufacturer} on display {display}",
+                game.Description,
+                game.Year, game.Manufacturer, Screen.DeviceName);
 
             // Start the timer and the process
             _timer.Start();
 
             // Create layout and run game
-            var artPath = _layoutBuilder.EnsureLayout(game, Screen.Bounds.Width, Screen.Bounds.Height);
-            return MameInvoker.Run(game.Name, Settings.CommandLineOptions, "-artpath", artPath, $"-screen \"{Screen.DeviceName}\"");
-        }
-
-        public override void Dispose(bool disposing)
-        {
-            if (disposing)
+            var arguments = new List<string>
             {
-                _layoutBuilder?.Dispose();
+                game.Name,
+                _settings.CommandLineOptions,
+                "-screen",
+                $"\"{Screen.DeviceName}\""
+            };
+
+            // Enable in-game titles if required
+            if (_settings.LayoutSettings.InGameTitles.Enabled)
+            {
+                var artPath = _layoutBuilder.EnsureLayout(game, Screen.Bounds.Width, Screen.Bounds.Height);
+                arguments.Add("-artpath");
+                arguments.Add(artPath);
             }
 
-            base.Dispose(disposing);
+            return _invoker.Run(arguments.ToArray());
         }
     }
 }

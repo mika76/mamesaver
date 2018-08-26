@@ -59,7 +59,11 @@
       <HintPath>..\packages\Serilog.Sinks.File.4.0.0\lib\net45\Serilog.Sinks.File.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
+    <Reference Include="SimpleInjector, Version=4.3.0.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
+      <HintPath>..\packages\SimpleInjector.4.3.0\lib\net45\SimpleInjector.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -77,8 +81,17 @@
       <DependentUpon>BackgroundForm.cs</DependentUpon>
     </Compile>
     <Compile Include="BlankScreen.cs" />
+    <Compile Include="BlankScreenFactory.cs" />
     <Compile Include="CaptureScreen.cs" />
-    <Compile Include="LayoutOptions.cs" />
+    <Compile Include="ContainerFactory.cs" />
+    <Compile Include="MameScreen.cs" />
+    <Compile Include="Configuration\Models\AdvancedSettings.cs" />
+    <Compile Include="Configuration\Models\FontSettings.cs" />
+    <Compile Include="Configuration\Models\GameList.cs" />
+    <Compile Include="Configuration\Models\InGameTitles.cs" />
+    <Compile Include="Configuration\Models\LayoutSettings.cs" />
+    <Compile Include="Configuration\Models\SplashScreen.cs" />
+    <Compile Include="Configuration\GameListStore.cs" />
     <Compile Include="ScreenCloner.cs" />
     <Compile Include="ConfigForm.cs">
       <SubType>Form</SubType>
@@ -101,9 +114,9 @@
     <Compile Include="Layout\Models\MameLayout.cs" />
     <Compile Include="Layout\Models\Screen.cs" />
     <Compile Include="Layout\Models\View.cs" />
-    <Compile Include="MameScreen.cs" />
     <Compile Include="MultiFormApplicationContext.cs" />
-    <Compile Include="SettingsStore.cs" />
+    <Compile Include="Configuration\GeneralSettingsStore.cs" />
+    <Compile Include="Configuration\SettingsStore.cs" />
     <Compile Include="Windows\PlatformInvokeGDI32.cs" />
     <Compile Include="Windows\PlatformInvokeUSER32.cs" />
     <Compile Include="Program.cs" />
@@ -116,14 +129,18 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="SelectableGame.cs" />
-    <Compile Include="Settings.cs" />
+    <Compile Include="Configuration\Models\Settings.cs" />
     <Compile Include="Windows\UserActivityHook.cs" />
     <Compile Include="Windows\WindowsInterop.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="ILMerge.props" />
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="BackgroundForm.resx">
@@ -142,11 +159,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="key.snk" />
-    <None Include="Resources\otheroptions.ico" />
   </ItemGroup>
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="ILMergeOrder.txt" />
+    <Content Include="Resources\mame.ico" />
     <Content Include="Resources\MAMELogoTM.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
