@@ -6,13 +6,10 @@ namespace Mamesaver
 {
     public class MultiFormApplicationContext : ApplicationContext
     {
-        private readonly List<Form> _forms;
         private int _openForms;
 
         public MultiFormApplicationContext(List<Form> forms)
         {
-            _forms = forms;
-            
             foreach (var form in forms)
             {
                 form.FormClosed += FormClosed;
