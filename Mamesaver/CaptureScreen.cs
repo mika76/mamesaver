@@ -21,7 +21,7 @@ namespace Mamesaver
         {
         }
 
-        public CaptureScreen(IntPtr sourceHwnd, int width, int height)
+        private CaptureScreen(IntPtr sourceHwnd, int width, int height)
         {
             _sourceHwnd = sourceHwnd;
             _width = width;
@@ -30,8 +30,29 @@ namespace Mamesaver
             _hDeviceContext = PlatformInvokeUser32.GetDC(_sourceHwnd);
         }
 
+        public Bitmap Capture()
+        {
+            if (_hMemoryContext == IntPtr.Zero) _hMemoryContext = PlatformInvokeGdi32.CreateCompatibleDC(_hDeviceContext);
+            if (_hBitmap == IntPtr.Zero) _hBitmap = PlatformInvokeGdi32.CreateCompatibleBitmap(_hDeviceContext, _width, _height);
+
+            PlatformInvokeGdi32.SelectObject(_hMemoryContext, _hBitmap);
+            PlatformInvokeGdi32.BitBlt(_hMemoryContext, 0, 0, _width, _height, _hDeviceContext, 0, 0, PlatformInvokeGdi32.SRCOPY);
+            var bitmap = Image.FromHbitmap(_hBitmap);
+            return bitmap;
+        }
+
+        public void CloneTo(IntPtr destinationDeviceContext, Rectangle destinationRect)
+        {
+            Log.Debug("Cloning screen {width}x{height} to {destination}", _width, _height, destinationRect);
+
+            PlatformInvokeGdi32.StretchBlt(destinationDeviceContext, 0, 0, destinationRect.Width, destinationRect.Height,
+                _hDeviceContext, 0, 0, _width, _height, PlatformInvokeGdi32.SRCOPY);
+        }
+
         public void Dispose()
         {
+            Log.Debug("{class} Dispose()", GetType().Name);
+
             ReleaseUnmanagedResources();
             GC.SuppressFinalize(this);
         }
@@ -67,25 +88,6 @@ namespace Mamesaver
             {
                 Log.Error(ex, "Error releasing unmanaged resources");
             }
-        }
-
-        public Bitmap Capture()
-        {
-            if (_hMemoryContext == IntPtr.Zero) _hMemoryContext = PlatformInvokeGdi32.CreateCompatibleDC(_hDeviceContext);
-            if (_hBitmap == IntPtr.Zero) _hBitmap = PlatformInvokeGdi32.CreateCompatibleBitmap(_hDeviceContext, _width, _height);
-
-            PlatformInvokeGdi32.SelectObject(_hMemoryContext, _hBitmap);
-            PlatformInvokeGdi32.BitBlt(_hMemoryContext, 0, 0, _width, _height, _hDeviceContext, 0, 0, PlatformInvokeGdi32.SRCOPY);
-            var bitmap = Image.FromHbitmap(_hBitmap);
-            return bitmap;
-        }
-
-        public void CloneTo(IntPtr destinationDeviceContext, Rectangle destinationRect)
-        {
-            Log.Debug($"Cloning screen {_width}x{_height} to {destinationRect}");
-
-            PlatformInvokeGdi32.StretchBlt(destinationDeviceContext, 0, 0, destinationRect.Width, destinationRect.Height,
-                _hDeviceContext, 0, 0, _width, _height, PlatformInvokeGdi32.SRCOPY);
         }
     }
 }
