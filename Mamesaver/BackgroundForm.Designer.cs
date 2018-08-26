@@ -115,7 +115,7 @@ namespace Mamesaver
 
         public System.Windows.Forms.Label secondaryLabel;
         public System.Windows.Forms.Label primaryLabel;
+        public System.Windows.Forms.PictureBox mameLogo;
         private System.Windows.Forms.ImageList imageList1;
-        private System.Windows.Forms.PictureBox mameLogo;
     }
 }

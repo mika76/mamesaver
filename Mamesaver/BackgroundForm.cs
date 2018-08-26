@@ -24,7 +24,6 @@ namespace Mamesaver
             // Background form is only visible if we are displaying the splash screen on the primary display
             primaryLabel.Visible = secondaryLabel.Visible = false;
 
-
             var fontSettings = settings.SplashScreen.FontSettings;
 
             primaryLabel.Font = new Font(fontSettings.Face, fontSettings.Size, FontStyle.Bold, GraphicsUnit.Point);

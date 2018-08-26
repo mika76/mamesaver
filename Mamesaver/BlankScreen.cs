@@ -27,6 +27,7 @@ namespace Mamesaver
             BackgroundForm.Load += BackgroundForm_Load;
             BackgroundForm.primaryLabel.Text = string.Empty;
             BackgroundForm.secondaryLabel.Text = string.Empty;
+            BackgroundForm.mameLogo.Visible = false;
 
             Cursor.Hide();
 

@@ -43,6 +43,8 @@ namespace Mamesaver
         {
             base.Initialise(screen, onClosed);
 
+            BackgroundForm.mameLogo.Visible = true;
+
             // Set up the timer
             var minutes = _settings.MinutesPerGame;
             _timer = new Timer { Interval = minutes * 60000 };
