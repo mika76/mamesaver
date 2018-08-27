@@ -12,7 +12,7 @@ namespace Mamesaver
     internal class GameListBuilder
     {
         private readonly Settings _settings;
-        private readonly AdvancedSettings _advancedSetings;
+        private readonly AdvancedSettings _advancedSettings;
         private readonly MameInvoker _invoker;
 
         /// <summary>
@@ -26,10 +26,10 @@ namespace Mamesaver
         /// </summary>
         private readonly XmlReaderSettings _readerSettings;
        
-        public GameListBuilder(Settings settings, AdvancedSettings advancedSetings, MameInvoker invoker)
+        public GameListBuilder(Settings settings, AdvancedSettings advancedSettings, MameInvoker invoker)
         {
             _settings = settings;
-            _advancedSetings = advancedSetings;
+            _advancedSettings = advancedSettings;
             _invoker = invoker;
 
             _readerSettings = new XmlReaderSettings { DtdProcessing = DtdProcessing.Parse };
@@ -110,7 +110,7 @@ namespace Mamesaver
                     if (driver == null) continue;
 
                     // Skip games which aren't fully emulated, unless check disabled in configuration
-                    if (!_advancedSetings.SkipGameValidation)
+                    if (!_advancedSettings.SkipGameValidation)
                     {
                         var status = driver.Attribute("status")?.Value;
                         if (status != "good") continue;
