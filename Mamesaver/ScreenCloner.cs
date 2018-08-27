@@ -33,7 +33,6 @@ namespace Mamesaver
                 return;
             }
 
-            Log.Information("Source Mame screen found {device} {bounds}", _sourceScreen.Screen.DeviceName, _sourceScreen.Screen.Bounds);
             _blankScreens.ForEach(screen => Log.Information("Destination screen found {device} {bounds}", screen.Screen.DeviceName, screen.Screen.Bounds));
 
             _refreshTimer = new Timer
@@ -60,13 +59,11 @@ namespace Mamesaver
 
         private void _refreshTimer_Tick(object sender, EventArgs e)
         {
-            if (_sourceScreen.GameProcess?.MainWindowHandle == null) return;
-
             try
             {
                 _blankScreens.ForEach(screen =>
                 {
-                    Log.Debug($"Cloning to screen {screen.Screen.DeviceName}");
+                    Log.Verbose($"Cloning to screen {screen.Screen.DeviceName}");
                     _captureScreen.CloneTo(screen.HandleDeviceContext, screen.Screen.Bounds);
                 });
             }

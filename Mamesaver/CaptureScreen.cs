@@ -43,7 +43,7 @@ namespace Mamesaver
 
         public void CloneTo(IntPtr destinationDeviceContext, Rectangle destinationRect)
         {
-            Log.Debug("Cloning screen {width}x{height} to {destination}", _width, _height, destinationRect);
+            Log.Verbose("Cloning screen {width}x{height} to {destination}", _width, _height, destinationRect);
 
             PlatformInvokeGdi32.StretchBlt(destinationDeviceContext, 0, 0, destinationRect.Width, destinationRect.Height,
                 _hDeviceContext, 0, 0, _width, _height, PlatformInvokeGdi32.SRCOPY);
