@@ -423,6 +423,8 @@ namespace Mamesaver
             // 
             // splashScreenFont
             // 
+            this.splashScreenFont.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
+            this.splashScreenFont.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.splashScreenFont.FormattingEnabled = true;
             this.splashScreenFont.Location = new System.Drawing.Point(3, 64);
             this.splashScreenFont.Name = "splashScreenFont";
@@ -468,6 +470,8 @@ namespace Mamesaver
             // 
             // inGameFont
             // 
+            this.inGameFont.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
+            this.inGameFont.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.inGameFont.FormattingEnabled = true;
             this.inGameFont.Location = new System.Drawing.Point(3, 17);
             this.inGameFont.Name = "inGameFont";
