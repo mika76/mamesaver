@@ -48,14 +48,14 @@ namespace Mamesaver
                 // Exit run method if there were no selected games
                 if (!gameList.Any()) return;
 
-                // Verify that MAME can be run
+                // Verify that MAME can be run so we can return immediately if there are errors
                 _invoker.Run("-showconfig");
                 
                 // Initialise primary MAME screen
                 _mameScreens.Add(_mameScreen);
                 _mameScreen.Initialise(Screen.PrimaryScreen, OnScreenClosed);
 
-               // Initialise all other screens
+                // Initialise all other screens
                 foreach (var otherScreen in Screen.AllScreens.Where(s => !Equals(s, Screen.PrimaryScreen)))
                 {
                     var blankScreen = _screenFactory.Create();
