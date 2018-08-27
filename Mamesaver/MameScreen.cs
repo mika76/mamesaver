@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows.Forms;
 using Mamesaver.Configuration.Models;
 using Mamesaver.Layout;
 using Mamesaver.Windows;
 using Serilog;
+using LayoutSettings = Mamesaver.Configuration.Models.LayoutSettings;
 
 namespace Mamesaver
 {
@@ -14,29 +16,45 @@ namespace Mamesaver
     /// </summary>
     internal class MameScreen : BlankScreen
     {
-       private readonly Settings _settings;
-        private readonly GameList _gameList;
+        private readonly Settings _settings;
         private readonly LayoutBuilder _layoutBuilder;
         private readonly MameInvoker _invoker;
+        private readonly SplashScreen _splashSettings;
 
-        private Timer _timer;
+        /// <summary>
+        ///     Shuffled games that will be played.
+        /// </summary>
+        private readonly List<Game> _selectedGames;
+
+        /// <summary>
+        ///     Index of game in <see cref="_selectedGames"/> which is being played.
+        /// </summary>
+        private int _gameIndex;
+
+        private Timer _gameTimer;
+        private Timer _splashTimer;
         private bool _closed;
- 
+
         private readonly object _syncLock = new object();
+
+        private readonly Random _random = new Random();
 
         public Process GameProcess { get; set; }
 
         public MameScreen(
             Settings settings,
+            LayoutSettings layoutSettings,
             GameList gameList,
             LayoutBuilder layoutBuilder,
             MameInvoker invoker,
             BackgroundForm backgroundForm) : base(backgroundForm)
         {
             _settings = settings;
-            _gameList = gameList;
             _layoutBuilder = layoutBuilder;
             _invoker = invoker;
+
+            _splashSettings = layoutSettings.SplashScreen;
+            _selectedGames = gameList.SelectedGames.OrderBy(_ => _random.Next()).ToList();
         }
 
         public override void Initialise(Screen screen, Action onClosed)
@@ -44,23 +62,47 @@ namespace Mamesaver
             base.Initialise(screen, onClosed);
 
             BackgroundForm.mameLogo.Visible = true;
-
-            // Set up the timer
-            var minutes = _settings.MinutesPerGame;
-            _timer = new Timer { Interval = minutes * 60000 };
-            _timer.Tick += timer_Tick;
-
-            Log.Information("Initialised screen");
-
             BackgroundForm.Load += OnFormBackground_Load;
+
+            InitGameTimer();
+
+            InitSplashTimer();
+
+            Log.Information("Initialised primary MAME screen");
         }
 
-        private void OnFormBackground_Load(object sender, EventArgs e)
+        private void InitSplashTimer()
         {
+            var splashSeconds = _splashSettings.DurationSeconds;
+            var splashInterval = (int) TimeSpan.FromSeconds(splashSeconds).TotalMilliseconds;
+
+            // This is a bit of a bodge; set the splash screen duration to 1ms if the splash is disabled
+            if (!_splashSettings.Enabled) splashInterval = 1;
+
+            _splashTimer = new Timer { Interval = splashInterval };
+            _splashTimer.Tick += SplashTimerTick;
+        }
+
+        private void InitGameTimer()
+        {
+            var minutes = _settings.MinutesPerGame;
+            var gameTimerInterval = (int) TimeSpan.FromMinutes(minutes).TotalMilliseconds;
+
+            _gameTimer = new Timer { Interval = gameTimerInterval };
+            _gameTimer.Tick += GameTimerTick;
+        }
+
+        /// <summary>
+        ///     Invoked when when the splash screen timer has fired, indicating that the game should start.
+        /// </summary>
+        private void SplashTimerTick(object sender, EventArgs e)
+        {
+            _splashTimer.Stop();
+
             try
             {
                 // Start the first game
-                GameProcess = RunRandomGame(_gameList.SelectedGames);
+                GameProcess = RunGame();
             }
             catch (Exception ex)
             {
@@ -71,22 +113,48 @@ namespace Mamesaver
             }
         }
 
-        private void timer_Tick(object sender, EventArgs e)
+        private void OnFormBackground_Load(object sender, EventArgs e)
+        {
+            _splashTimer.Start();
+            DisplaySplashText();
+        }
+
+        private Game CurrentGame() => _selectedGames[_gameIndex];
+
+        /// <summary>
+        ///     Displays the game description and details on the splash screen/
+        /// </summary>
+        private void DisplaySplashText()
+        {
+            if (!_splashSettings.Enabled) return;
+
+            var game = CurrentGame();
+            BackgroundForm.SetGameText(game.Description, $@"{game.Year} {game.Manufacturer}");
+        }
+
+        /// <summary>
+        ///     Invoked after a game has finished running.
+        /// </summary>
+        private void GameTimerTick(object sender, EventArgs e)
         {
             try
             {
-                _timer.Stop();
+                _gameTimer.Stop();
 
                 // End the currently playing game
                 if (GameProcess != null && !GameProcess.HasExited) GameProcess.CloseMainWindow();
 
-                // Start new game
-                Log.Information("New game scheduled for execution");
-                GameProcess = RunRandomGame(_gameList.SelectedGames);
-           }
+                // Retrieve next game
+                _gameIndex++;
+                if (_gameIndex >= _selectedGames.Count) _gameIndex = 0;
+
+                // Display splash screen for next game if required
+                DisplaySplashText();
+                _splashTimer.Start();
+            }
             catch (Exception ex)
             {
-                Log.Error(ex, "MameScreen tick");
+                Log.Error(ex, "Error preparing next game");
             }
         }
 
@@ -101,8 +169,9 @@ namespace Mamesaver
             {
                 try
                 {
-                    _timer?.Stop();
-                    _timer = null;
+                    _gameTimer?.Stop();
+                    _splashTimer?.Stop();
+                    _gameTimer = _splashTimer = null;
 
                     if (GameProcess != null && !GameProcess.HasExited)
                     {
@@ -127,44 +196,12 @@ namespace Mamesaver
         }
 
         /// <summary>
-        ///     Gets a random number and then runs <see cref="RunGame" /> using the game in the
-        ///     <see cref="List{T}" />.
+        ///     Runs the MAME game.
         /// </summary>
-        /// <param name="gameList"></param>
         /// <returns>The <see cref="Process" /> running the game</returns>
-        private Process RunRandomGame(List<Game> gameList)
+        private Process RunGame()
         {
-            // Get random game
-            var r = new Random();
-            var randomIndex = r.Next(0, gameList.Count - 1);
-            var randomGame = gameList[randomIndex];
-            return RunGame(randomGame);
-        }
-
-        /// <summary>
-        ///     Runs the process.
-        /// </summary>
-        /// <param name="game"></param>
-        /// <returns>The <see cref="Process" /> running the game</returns>
-        private Process RunGame(Game game)
-        {
-            // Set the game name and details on the splash screen if requested
-            var splashSettings = _settings.LayoutSettings.SplashScreen;
-            if (splashSettings.Enabled)
-            {
-                BackgroundForm.SetGameText(game.Description, $@"{game.Year} {game.Manufacturer}");
-
-                // Show the splash screen
-                var end = DateTime.Now.AddSeconds(splashSettings.DurationSeconds);
-                while (DateTime.Now < end)
-                {
-                    Application.DoEvents();
-                }
-            }
-            else
-            {
-                Application.DoEvents();
-            }
+            var game = CurrentGame();
 
             // Don't attempt to run a game if the screen has been closed
             if (_closed) return null;
@@ -174,7 +211,7 @@ namespace Mamesaver
                 game.Year, game.Manufacturer, Screen.DeviceName);
 
             // Start the timer and the process
-            _timer.Start();
+            _gameTimer.Start();
 
             // Create layout and run game
             var arguments = new List<string>
