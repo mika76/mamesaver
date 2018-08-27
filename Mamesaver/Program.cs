@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using Mamesaver.Configuration.Models;
 using Serilog;
 using SimpleInjector;
+using SimpleInjector.Lifestyles;
 
 namespace Mamesaver
 {
@@ -40,25 +41,26 @@ namespace Mamesaver
 
                 Log.Information("Mamesaver started with args {arguments}", string.Join(",", args));
 
-                var saver = _container.GetInstance<Mamesaver>();
-
-                switch (arguments[0].Trim().Substring(0, 2).ToLower())
+                using (AsyncScopedLifestyle.BeginScope(_container))
                 {
-                    case "/c":
-                        //TODO: Catch display properties window handle and set it as parent
-                        ShowConfig();
-                        break;
+                    var saver = _container.GetInstance<Mamesaver>();
 
-                    case "/s":
-                        saver.Run();
-                        break;
+                    switch (arguments[0].Trim().Substring(0, 2).ToLower())
+                    {
+                        case "/c":
+                            //TODO: Catch display properties window handle and set it as parent
+                            ShowConfig();
+                            break;
 
-                    case "/p":
-                        // do nothing
-                        break;
+                        case "/s":
+                            saver.Run();
+                            break;
+
+                        case "/p":
+                            // do nothing
+                            break;
+                    }
                 }
-
-                saver?.Dispose();
             }
             catch(Exception ex)
             {
