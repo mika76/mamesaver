@@ -4,8 +4,6 @@
  */
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Xml.Serialization;
 
 namespace Mamesaver
@@ -13,49 +11,32 @@ namespace Mamesaver
     [Serializable, XmlRoot("game")]
     public class Game
     {
-        protected string name;
-        protected string description;
-        protected string year;
-        protected string manufacturer;
-
         public Game()
         {
         }
 
-        public Game(string name, string description, string year, string manufacturer)
+        public Game(string name, string description, string year, string manufacturer, string rotation)
         {
-            this.name = name;
-            this.description = description;
-            this.year = year;
-            this.manufacturer = manufacturer;
+            Name = name;
+            Description = description;
+            Year = year;
+            Manufacturer = manufacturer;
+            Rotation = rotation;
         }
 
         [XmlAttribute("name")]
-        public string Name
-        {
-            get { return name; }
-            set { name = value; }
-        }
+        public string Name { get; set; }
 
         [XmlAttribute("description")]
-        public string Description
-        {
-            get { return description; }
-            set { description = value; }
-        }
+        public string Description { get; set; }
 
         [XmlAttribute("year")]
-        public string Year
-        {
-            get { return year; }
-            set { year = value; }
-        }
+        public string Year { get; set; }
 
         [XmlAttribute("manufacturer")]
-        public string Manufacturer
-        {
-            get { return manufacturer; }
-            set { manufacturer = value; }
-        }
+        public string Manufacturer { get; set; }
+
+        [XmlAttribute("rotation")]
+        public string Rotation { get; set; }
     }
 }

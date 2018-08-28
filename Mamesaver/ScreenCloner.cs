@@ -6,16 +6,24 @@ using Serilog;
 
 namespace Mamesaver
 {
-    public class ScreenCloner : IDisposable
+    /// <summary>
+    ///     Clones a MAME screen onto a number of blank screens.
+    /// </summary>
+    internal class ScreenCloner : IDisposable
     {
-        private readonly List<BlankScreen> _blankScreens;
         private readonly MameScreen _sourceScreen;
-        private readonly Timer _refreshTimer;
-        private CaptureScreen _captureScreen;
+        private readonly CaptureScreen _captureScreen;
+        private List<BlankScreen> _blankScreens;
+        private Timer _refreshTimer;
 
-        public ScreenCloner(MameScreen mameScreen, List<BlankScreen> blankScreens)
+        public ScreenCloner(CaptureScreen captureScreen, MameScreen mameScreen)
         {
+            _captureScreen = captureScreen;
             _sourceScreen = mameScreen;
+        }
+
+        public void Clone(List<BlankScreen> blankScreens)
+        {
             _blankScreens = blankScreens;
 
             // is there anything to clone?
@@ -25,19 +33,20 @@ namespace Mamesaver
                 return;
             }
 
-            Log.Information($"Source Mame screen found {_sourceScreen.Screen.DeviceName} {_sourceScreen.Screen.Bounds}");
-            _blankScreens.ForEach(screen => Log.Information($"Destination screen found {screen.Screen.DeviceName} {screen.Screen.Bounds}"));
+            _blankScreens.ForEach(screen => Log.Information("Destination screen found {device} {bounds}", screen.Screen.DeviceName, screen.Screen.Bounds));
 
             _refreshTimer = new Timer
             {
                 Enabled = true,
-                Interval = 1000 / 30 // fps - todo verify cpu usage
+                Interval = 1000 / 30 // fps - TODO verify CPU usage
             };
             _refreshTimer.Tick += _refreshTimer_Tick;
         }
 
         public void Dispose()
         {
+            Log.Debug("{class} Dispose()", GetType().Name);
+
             _sourceScreen?.Dispose();
             _refreshTimer?.Dispose();
             _captureScreen?.Dispose();
@@ -46,20 +55,15 @@ namespace Mamesaver
         public void Stop()
         {
             _refreshTimer?.Stop();
-            _captureScreen?.Dispose();
         }
 
         private void _refreshTimer_Tick(object sender, EventArgs e)
         {
-            if (_sourceScreen.GameProcess?.MainWindowHandle == null) return;
-
             try
             {
-                if (_captureScreen == null) _captureScreen = new CaptureScreen();
-
                 _blankScreens.ForEach(screen =>
                 {
-                    Log.Debug($"Cloning to screen {screen.Screen.DeviceName}");
+                    Log.Verbose($"Cloning to screen {screen.Screen.DeviceName}");
                     _captureScreen.CloneTo(screen.HandleDeviceContext, screen.Screen.Bounds);
                 });
             }

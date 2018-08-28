@@ -33,35 +33,56 @@ namespace Mamesaver
         /// </summary>
         private void InitializeComponent()
         {
-            this.lblData2 = new System.Windows.Forms.Label();
-            this.lblData1 = new System.Windows.Forms.Label();
+            this.components = new System.ComponentModel.Container();
+            this.secondaryLabel = new System.Windows.Forms.Label();
+            this.primaryLabel = new System.Windows.Forms.Label();
+            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
+            this.mameLogo = new System.Windows.Forms.PictureBox();
+            ((System.ComponentModel.ISupportInitialize)(this.mameLogo)).BeginInit();
             this.SuspendLayout();
             // 
-            // lblData2
+            // secondaryLabel
             // 
-            this.lblData2.BackColor = System.Drawing.Color.Transparent;
-            this.lblData2.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.lblData2.Font = new System.Drawing.Font("Arial", 20.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblData2.ForeColor = System.Drawing.Color.White;
-            this.lblData2.Location = new System.Drawing.Point(0, 360);
-            this.lblData2.Name = "lblData2";
-            this.lblData2.Size = new System.Drawing.Size(488, 46);
-            this.lblData2.TabIndex = 0;
-            this.lblData2.Text = "Text";
-            this.lblData2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.secondaryLabel.BackColor = System.Drawing.Color.Transparent;
+            this.secondaryLabel.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.secondaryLabel.Font = new System.Drawing.Font("Arial", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.secondaryLabel.ForeColor = System.Drawing.Color.White;
+            this.secondaryLabel.Location = new System.Drawing.Point(0, 366);
+            this.secondaryLabel.Name = "secondaryLabel";
+            this.secondaryLabel.Padding = new System.Windows.Forms.Padding(0, 0, 0, 9);
+            this.secondaryLabel.Size = new System.Drawing.Size(488, 40);
+            this.secondaryLabel.TabIndex = 0;
+            this.secondaryLabel.Text = "Text";
+            this.secondaryLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // lblData1
+            // primaryLabel
             // 
-            this.lblData1.BackColor = System.Drawing.Color.Transparent;
-            this.lblData1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.lblData1.Font = new System.Drawing.Font("Arial", 20.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblData1.ForeColor = System.Drawing.Color.White;
-            this.lblData1.Location = new System.Drawing.Point(0, 314);
-            this.lblData1.Name = "lblData1";
-            this.lblData1.Size = new System.Drawing.Size(488, 46);
-            this.lblData1.TabIndex = 1;
-            this.lblData1.Text = "Text";
-            this.lblData1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.primaryLabel.BackColor = System.Drawing.Color.Transparent;
+            this.primaryLabel.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.primaryLabel.Font = new System.Drawing.Font("Arial", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.primaryLabel.ForeColor = System.Drawing.Color.White;
+            this.primaryLabel.Location = new System.Drawing.Point(0, 320);
+            this.primaryLabel.Name = "primaryLabel";
+            this.primaryLabel.Size = new System.Drawing.Size(488, 46);
+            this.primaryLabel.TabIndex = 1;
+            this.primaryLabel.Text = "Text";
+            this.primaryLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // imageList1
+            // 
+            this.imageList1.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
+            this.imageList1.ImageSize = new System.Drawing.Size(16, 16);
+            this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
+            // 
+            // mameLogo
+            // 
+            this.mameLogo.BackgroundImage = global::Mamesaver.Properties.Resources.MAMELogoTM;
+            this.mameLogo.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.mameLogo.Location = new System.Drawing.Point(84, 77);
+            this.mameLogo.Name = "mameLogo";
+            this.mameLogo.Size = new System.Drawing.Size(314, 191);
+            this.mameLogo.TabIndex = 2;
+            this.mameLogo.TabStop = false;
             // 
             // BackgroundForm
             // 
@@ -71,8 +92,9 @@ namespace Mamesaver
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.ClientSize = new System.Drawing.Size(488, 406);
             this.ControlBox = false;
-            this.Controls.Add(this.lblData1);
-            this.Controls.Add(this.lblData2);
+            this.Controls.Add(this.mameLogo);
+            this.Controls.Add(this.primaryLabel);
+            this.Controls.Add(this.secondaryLabel);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.MaximizeBox = false;
@@ -84,14 +106,16 @@ namespace Mamesaver
             this.Text = "BackgroundForm";
             this.TopMost = true;
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+            ((System.ComponentModel.ISupportInitialize)(this.mameLogo)).EndInit();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        public System.Windows.Forms.Label lblData2;
-        public System.Windows.Forms.Label lblData1;
-
+        public System.Windows.Forms.Label secondaryLabel;
+        public System.Windows.Forms.Label primaryLabel;
+        public System.Windows.Forms.PictureBox mameLogo;
+        private System.Windows.Forms.ImageList imageList1;
     }
 }

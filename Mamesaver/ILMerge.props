@@ -47,7 +47,7 @@
     <ILMergeDelaySign></ILMergeDelaySign>
 
     <!-- Types in assemblies other than the primary assembly have their visibility modified -->
-    <ILMergeInternalize></ILMergeInternalize>
+    <ILMergeInternalize>true</ILMergeInternalize>
 
     <!-- The path name of the file that will be used to identify types that are not to have their visibility modified -->
     <ILMergeInternalizeExcludeFile></ILMergeInternalizeExcludeFile>
