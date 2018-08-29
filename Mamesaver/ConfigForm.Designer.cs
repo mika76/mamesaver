@@ -78,7 +78,7 @@ namespace Mamesaver
             this.label9 = new System.Windows.Forms.Label();
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.debugLogging = new System.Windows.Forms.CheckBox();
-            this.skipGameValidation = new System.Windows.Forms.CheckBox();
+            this.includeImperfectEmulation = new System.Windows.Forms.CheckBox();
             this.resetToDefaults = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -547,7 +547,7 @@ namespace Mamesaver
             // tabPage4
             // 
             this.tabPage4.Controls.Add(this.debugLogging);
-            this.tabPage4.Controls.Add(this.skipGameValidation);
+            this.tabPage4.Controls.Add(this.includeImperfectEmulation);
             this.tabPage4.Location = new System.Drawing.Point(4, 22);
             this.tabPage4.Name = "tabPage4";
             this.tabPage4.Size = new System.Drawing.Size(440, 337);
@@ -565,15 +565,15 @@ namespace Mamesaver
             this.debugLogging.Text = "Debug logging";
             this.debugLogging.UseVisualStyleBackColor = true;
             // 
-            // skipGameValidation
+            // includeImperfectEmulation
             // 
-            this.skipGameValidation.AutoSize = true;
-            this.skipGameValidation.Location = new System.Drawing.Point(9, 17);
-            this.skipGameValidation.Name = "skipGameValidation";
-            this.skipGameValidation.Size = new System.Drawing.Size(124, 17);
-            this.skipGameValidation.TabIndex = 0;
-            this.skipGameValidation.Text = "Skip game validation";
-            this.skipGameValidation.UseVisualStyleBackColor = true;
+            this.includeImperfectEmulation.AutoSize = true;
+            this.includeImperfectEmulation.Location = new System.Drawing.Point(9, 17);
+            this.includeImperfectEmulation.Name = "includeImperfectEmulation";
+            this.includeImperfectEmulation.Size = new System.Drawing.Size(211, 17);
+            this.includeImperfectEmulation.TabIndex = 0;
+            this.includeImperfectEmulation.Text = "Include games with imperfect emulation";
+            this.includeImperfectEmulation.UseVisualStyleBackColor = true;
             // 
             // resetToDefaults
             // 
@@ -673,6 +673,6 @@ namespace Mamesaver
         private System.Windows.Forms.ProgressBar gameListProgress;
         private System.Windows.Forms.TabPage tabPage4;
         private System.Windows.Forms.CheckBox debugLogging;
-        private System.Windows.Forms.CheckBox skipGameValidation;
+        private System.Windows.Forms.CheckBox includeImperfectEmulation;
     }
 }

@@ -92,6 +92,7 @@ namespace Mamesaver
         private List<SelectableGame> GetRomDetails(StreamReader stream)
         {
             var games = new List<SelectableGame>();
+            var validGameStatuses = ValidGameStatuses();
 
             using (var reader = XmlReader.Create(stream, _readerSettings))
             {
@@ -109,12 +110,9 @@ namespace Mamesaver
                     var driver = element.Element("driver");
                     if (driver == null) continue;
 
-                    // Skip games which aren't fully emulated, unless check disabled in configuration
-                    if (!_advancedSettings.SkipGameValidation)
-                    {
-                        var status = driver.Attribute("status")?.Value;
-                        if (status != "good") continue;
-                    }
+                    // Skip games which aren't sufficiently emulated
+                    var status = driver.Attribute("status")?.Value;
+                    if (!validGameStatuses.Contains(status)) continue;
 
                     var year = element.Element("year")?.Value ?? "";
                     var manufacturer = element.Element("manufacturer")?.Value ?? "";
@@ -261,6 +259,17 @@ namespace Mamesaver
             }
 
             throw new InvalidOperationException("Unable to retrieve ROM paths");
+        }
+
+        /// <summary>
+        ///     Emulation status of games which are added to the game list.
+        /// </summary>
+        private List<string> ValidGameStatuses()
+        {
+            var statuses = new List<string> { "good" };
+            if (_advancedSettings.IncludeImperfectEmulation) statuses.Add("imperfect");
+
+            return statuses;
         }
 
         /// <summary>
