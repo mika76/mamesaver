@@ -22,7 +22,7 @@ namespace Mamesaver
             _sourceScreen = mameScreen;
         }
 
-        public void Clone(List<BlankScreen> blankScreens)
+        public void StartCloning(List<BlankScreen> blankScreens)
         {
             _blankScreens = blankScreens;
 
@@ -33,6 +33,9 @@ namespace Mamesaver
                 return;
             }
 
+            Log.Information("Source screen found {device} {bounds}", _sourceScreen.Screen.DeviceName, _sourceScreen.Screen.Bounds);
+            _captureScreen.Initialise(_sourceScreen.Screen.Bounds);
+            
             _blankScreens.ForEach(screen => Log.Information("Destination screen found {device} {bounds}", screen.Screen.DeviceName, screen.Screen.Bounds));
 
             _refreshTimer = new Timer
@@ -63,7 +66,7 @@ namespace Mamesaver
             {
                 _blankScreens.ForEach(screen =>
                 {
-                    Log.Verbose($"Cloning to screen {screen.Screen.DeviceName}");
+                    Log.Verbose("Cloning to screen {deviceName} {destination}", screen.Screen.DeviceName, screen.Screen.Bounds);
                     _captureScreen.CloneTo(screen.HandleDeviceContext, screen.Screen.Bounds);
                 });
             }
