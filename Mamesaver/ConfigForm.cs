@@ -103,7 +103,7 @@ namespace Mamesaver
 
             // Advanced
             debugLogging.Checked = _advancedSettings.DebugLogging;
-            skipGameValidation.Checked = _advancedSettings.SkipGameValidation;
+            includeImperfectEmulation.Checked = _advancedSettings.IncludeImperfectEmulation;
         }
 
         private void ResetToDefaults(object sender, EventArgs e)
@@ -346,7 +346,7 @@ namespace Mamesaver
 
             // Advanced
             _advancedSettings.DebugLogging = debugLogging.Checked;
-            _advancedSettings.SkipGameValidation = skipGameValidation.Checked;
+            _advancedSettings.IncludeImperfectEmulation = includeImperfectEmulation.Checked;
         }
 
         /**
