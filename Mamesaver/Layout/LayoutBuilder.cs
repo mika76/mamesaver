@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using Mamesaver.Layout.Models;
+using Serilog;
 
 namespace Mamesaver.Layout
 {
@@ -8,24 +9,31 @@ namespace Mamesaver.Layout
     ///     Constructs and manages Mame layouts, used for rendering information about
     ///     the currently-playing game.
     /// </summary>
-    public class LayoutBuilder : IDisposable
+    internal class LayoutBuilder : IDisposable
     {
-        private readonly DirectoryInfo _tempDirectory;
-        private bool _disposed;
-
         /// <summary>
-        ///     Rotation for horizontal games
+        ///     Rotation angle returned by MAME for horizontal games.
         /// </summary>
         private const string Horizontal = "0";
 
-        public LayoutBuilder()
+        private readonly GameListBuilder _gameListBuilder;
+        private readonly LayoutFactory _layoutFactory;
+        private readonly DirectoryInfo _tempDirectory;
+        private readonly TitleFactory _titleFactory;
+        private bool _disposed;
+
+        public LayoutBuilder(GameListBuilder gameListBuilder, TitleFactory titleFactory, LayoutFactory layoutFactory)
         {
+            _gameListBuilder = gameListBuilder;
+            _titleFactory = titleFactory;
+            _layoutFactory = layoutFactory;
+
             var tempPath = Path.GetTempPath();
-            _tempDirectory = Directory.CreateDirectory(Path.Combine(tempPath, "Mamesaver"));
+            _tempDirectory = Directory.CreateDirectory(Path.Combine(tempPath, "Mamesaver", "Layouts"));
         }
 
         /// <summary>
-        ///     Writes a Mame layout to disk. The layout contains a rendered image of the game's
+        ///     Writes a MAME layout to disk. The layout contains a rendered image of the game's
         ///     metadata.
         /// </summary>
         /// <returns>art path containing temporary layout</returns>
@@ -36,24 +44,26 @@ namespace Mamesaver.Layout
             var horizontalGame = rotation == Horizontal;
 
             // Build layout and write to the temporary layout directory
-            var layout = LayoutFactory.Build(monitorWidth, monitorHeight, TitleFactory.TitleHeight, horizontalGame);
+            var titleHeight = _titleFactory.GetBezelHeight(game);
+            var layout = _layoutFactory.Build(monitorWidth, monitorHeight, titleHeight, horizontalGame);
             WriteLayout(game, layout);
 
             // Write title image
-            using (var stream = new FileStream(Path.Combine(LayoutDirectory(game), LayoutConstants.TitleImage), FileMode.Create))
+            using (var stream = new FileStream(Path.Combine(LayoutDirectory(game), LayoutConstants.TitleImage),
+                FileMode.Create))
             {
-                TitleFactory.Render(game, stream, monitorWidth);
+                _titleFactory.Render(game, layout, stream, monitorWidth);
             }
 
             // Add our temporary art path so Mame picks up the temporary layout
-            var artPath = GameListBuilder.GetArtPaths();
+            var artPath = _gameListBuilder.GetArtPaths();
             artPath.Add(_tempDirectory.FullName);
 
-           return string.Join(";", artPath);
+            return string.Join(";", artPath);
         }
 
         /// <summary>
-        ///     Writes Mame layout file to disk
+        ///     Writes MAME layout file to disk.
         /// </summary>
         /// <param name="game">game to write layout for</param>
         /// <param name="layout">layout to write</param>
@@ -66,21 +76,18 @@ namespace Mamesaver.Layout
             // Write layout
             using (var stream = new FileStream(Path.Combine(layoutDirectory, "default.lay"), FileMode.Create))
             {
-                LayoutFactory.Serialize(layout, stream);
+                _layoutFactory.Serialize(layout, stream);
             }
         }
 
-        private string LayoutDirectory(Game game)
-        {
-            return Path.Combine(_tempDirectory.FullName, game.Name);
-        }
+        private string LayoutDirectory(Game game) => Path.Combine(_tempDirectory.FullName, game.Name);
 
         /// <summary>
-        ///     Identifies a game's rotation
+        ///     Identifies a game's rotation as identified by MAME.
         /// </summary>
-        /// <param name="game"game to identify rotation for></param>
+        /// <param name="game">game to identify rotation for></param>
         /// <returns>rotation in degrees</returns>
-        private static string GetRotation(Game game)
+        private string GetRotation(Game game)
         {
             var rotation = game.Rotation;
 
@@ -88,7 +95,7 @@ namespace Mamesaver.Layout
             // the rotation field persisted, so retrieve game details again to fetch it for the current game.
             if (rotation == null)
             {
-               var details = GameListBuilder.GetRomDetails(game.Name);
+                var details = _gameListBuilder.GetRomDetails(game.Name);
                 rotation = details.Rotation;
             }
 
@@ -96,26 +103,28 @@ namespace Mamesaver.Layout
             return rotation ?? Horizontal;
         }
 
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
         protected virtual void Dispose(bool disposing)
         {
             if (_disposed) return;
+
+            Log.Debug("{class} Dispose()", GetType().Name);
 
             try
             {
                 _tempDirectory?.Delete(true);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                Program.Log(e);
+                // Directory may have already been deleted by another instance
             }
 
             _disposed = true;
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         ~LayoutBuilder()

@@ -15,7 +15,7 @@ namespace Mamesaver
         {
         }
 
-        public SelectableGame(string name, string description, string year, string manufacturer, string rotation, bool selected)
+        public SelectableGame(string name, string description, string year, string manufacturer, string rotation, bool selected = false)
             : base(name, description, year, manufacturer, rotation)
         {
             Selected = selected;

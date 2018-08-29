@@ -1,9 +1,9 @@
-<?xml version="1.0"?>
-<MameLayout xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2">
+﻿<?xml version="1.0"?>
+<mamelayout xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2">
   <element name="bezel">
     <image file="gameInfo.png" />
   </element>
-  <view>
+  <view name="Mamesaver">
     <screen index="0">
       <bounds x="280" y="0" width="1360" height="1020" />
     </screen>
@@ -11,4 +11,4 @@
       <bounds x="0" y="1020" width="1920" height="60" />
     </bezel>
   </view>
-</MameLayout>
+</mamelayout>

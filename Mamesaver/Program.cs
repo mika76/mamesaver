@@ -5,104 +5,145 @@
 
 using System;
 using System.Diagnostics;
+using System.IO;
+using System.Threading;
 using System.Windows.Forms;
-using System.Text;
+using Mamesaver.Configuration.Models;
+using Serilog;
+using SimpleInjector;
+using SimpleInjector.Lifestyles;
 
 namespace Mamesaver
 {
-    class Program
+    public class Program
     {
+        private static Container _container;
+        private static bool _debug;
+
         [STAThread]
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
-            Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(Application_ThreadException);
+            ConfigureErrorHandling();
 
             try
             {
-                string[] arguments = new string[] {"/c"};
+                // Initialise the DI container
+                _container = ContainerFactory.NewContainer();
 
-                if (args.Length != 0) //default to config if no options passed
-                    arguments = args;
+                SetDebugFlag();
+                ConfigureLogging();
 
-#if DEBUG
-                Log("Mamesaver started with args " + string.Join(",", args));
-#endif
+                // Perform a sanity check on component installation
+                _container.Verify(VerificationOption.VerifyAndDiagnose);
 
-                Mamesaver saver = new Mamesaver();
+                // Default to config if no options passed
+                var arguments = args.Length != 0 ? args : new[] { "/c" };
 
-                switch (arguments[0].Trim().Substring(0, 2).ToLower())
+                Log.Information("Mamesaver started with args {arguments}", string.Join(",", args));
+
+                using (AsyncScopedLifestyle.BeginScope(_container))
                 {
-                    case "/c":
-                        //TODO: Catch display properties window handle and set it as parent
-                        saver.ShowConfig();
-                        break;
+                    var saver = _container.GetInstance<Mamesaver>();
 
-                    case "/s":
-                        saver.Run();
-                        break;
+                    switch (arguments[0].Trim().Substring(0, 2).ToLower())
+                    {
+                        case "/c":
+                            //TODO: Catch display properties window handle and set it as parent
+                            ShowConfig();
+                            break;
 
-                    case "/p":
-                        // do nothing
-                        break;
+                        case "/s":
+                            saver.Run();
+                            break;
+
+                        case "/p":
+                            // do nothing
+                            break;
+                    }
                 }
             }
-            catch(Exception x)
+            catch(Exception ex)
             {
-                Log(x);
+                Log.Error(ex, "Main");
+                DisplayError();
             }
         }
 
-        static void Application_ThreadException(object sender, System.Threading.ThreadExceptionEventArgs e)
+        /// <summary>
+        ///     Configures global error handling.
+        /// </summary>
+        private static void ConfigureErrorHandling()
         {
-            Log(e.Exception);
-            MessageBox.Show("There was an error running Mamesaver. Please see your error log for more details", "Mamesaver error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            Application.SetUnhandledExceptionMode(UnhandledExceptionMode.ThrowException);
+
+            Application.ThreadException += OnThreadException;
+            AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
+        }
+
+        private static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            Log.Error(e.ExceptionObject as Exception, "Thread exception");
+            DisplayError();
+
+            // Screensaver is in an unhandled state; force exit
+            Environment.Exit(-1);
+        }
+
+        private static void OnThreadException(object sender, ThreadExceptionEventArgs e)
+        {
+            Log.Error(e.Exception, "Thread exception");
+            DisplayError();
             Application.Exit();
         }
 
-        /// <summary>
-        /// Write a message to the event log
-        /// </summary>
-        /// <param name="message"></param>
-        public static void Log(string message)
+        private static void DisplayError()
         {
-            if ( !EventLog.SourceExists("Mamesaver") )
-                EventLog.CreateEventSource("Mamesaver", "Application");
+            MessageBox.Show(@"Error running screensaver. Verify that your MAME path and and arguments are correct.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
 
-            EventLog.WriteEntry("Mamesaver", message, EventLogEntryType.Information);
+        [Conditional("DEBUG")]
+        private static void SetDebugFlag()
+        {
+            _debug = true;
         }
 
         /// <summary>
-        /// Write an exceptions details to the event log
+        ///     Release logging to the event log.  If debug logging is configured, then release logging will not be configured
         /// </summary>
-        /// <param name="exception"></param>
-        public static void Log(Exception exception)
+        public static void ConfigureLogging()
         {
-            if (!EventLog.SourceExists("Mamesaver"))
-                EventLog.CreateEventSource("Mamesaver", "Application");
+            ConfigureDebugLogging();
 
-            StringBuilder log = new StringBuilder();
-
-            log.AppendLine("Exception Message:");
-            log.AppendLine(exception.Message);
-            log.AppendLine("");
-
-            log.AppendLine("Stack Trace:");
-            log.AppendLine(exception.StackTrace);
-            log.AppendLine("");
-
-            Exception e = exception;
-            int depth = 1;
-            while ( e.InnerException != null )
+            if (Log.Logger == null)
             {
-                log.AppendFormat("Inner Message {0}:\n", depth);
-                log.AppendLine(e.InnerException.Message);
-                log.AppendLine("");
-                
-                e = e.InnerException;
-                depth++;
+                Log.Logger = new LoggerConfiguration()
+                    .WriteTo.EventLog("Mamesaver")
+                    .CreateLogger();
             }
+        }
 
-            EventLog.WriteEntry("Mamesaver", log.ToString(), EventLogEntryType.Error);
+        /// <summary>
+        ///     Debug logging will go to a file.
+        /// </summary>
+        public static void ConfigureDebugLogging()
+        {
+            // Configure debug logging if requested by the user or if we are running a debug build
+            var advancedSettings = _container.GetInstance<AdvancedSettings>();
+            if (!advancedSettings.DebugLogging && !_debug) return;
+
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .WriteTo.File(Path.Combine(Path.GetTempPath(), "MameSaver", "Logs", "MameSaver-.txt"),
+                    rollingInterval: RollingInterval.Day,
+                    fileSizeLimitBytes: 100000,
+                    retainedFileCountLimit: 5)
+                .CreateLogger();
+        }
+
+        public static void ShowConfig()
+        {
+            Application.EnableVisualStyles();
+            Application.Run(_container.GetInstance<ConfigForm>());
         }
     }
 }

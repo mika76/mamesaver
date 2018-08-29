@@ -5,192 +5,110 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using Mamesaver.Layout;
+using Mamesaver.Configuration.Models;
+using Serilog;
 
 namespace Mamesaver
 {
-    public class Mamesaver
+    internal class Mamesaver : IDisposable
     {
-        #region Variables
-        GameTimer timer = null;
-        BackgroundForm frmBackground = null;
-        UserActivityHook actHook = null;
-        bool cancelled = false;
-        LayoutBuilder layoutBuilder;
-        #endregion
+        private readonly List<BlankScreen> _mameScreens = new List<BlankScreen>();
 
-        #region DLL Imports
-        [DllImport("user32.dll", EntryPoint = "GetSystemMetrics")]
-        public static extern int GetSystemMetrics(int which);
+        private readonly ScreenCloner _screenCloner;
+        private readonly Settings _settings;
+        private readonly GameList _gameList;
+        private readonly BlankScreenFactory _screenFactory;
+        private readonly MameInvoker _invoker;
+        private readonly MameScreen _mameScreen;
 
-        [DllImport("user32.dll")]
-        public static extern void SetWindowPos(IntPtr hwnd, IntPtr hwndInsertAfter, int X, int Y, int width, int height, uint flags);
-        #endregion
-
-        #region Constants
-        private const int SM_CXSCREEN = 0;
-        private const int SM_CYSCREEN = 1;
-        private static IntPtr HWND_TOP = IntPtr.Zero;
-        private const int SWP_SHOWWINDOW = 64; // 0×0040
-        #endregion
-
-        #region Interops
-        public static int ScreenX
+        public Mamesaver(
+            Settings settings, 
+            GameList gameList, 
+            ScreenCloner screenCloner,
+            BlankScreenFactory screenFactory,
+            MameInvoker invoker,
+            MameScreen mameScreen)
         {
-            get { return GetSystemMetrics(SM_CXSCREEN);}
-        }
-
-        public static int ScreenY
-        {
-            get { return GetSystemMetrics(SM_CYSCREEN);}
-        }
-
-        public static void SetWinFullScreen(IntPtr hwnd)
-        {
-            SetWindowPos(hwnd, HWND_TOP, 0, 0, ScreenX, ScreenY, SWP_SHOWWINDOW);
-        }
-        #endregion
-
-
-        #region Public Methods
-        public void ShowConfig()
-        {
-            ConfigForm frmConfig = new ConfigForm(this);
-            Application.EnableVisualStyles();
-            Application.Run(frmConfig);
+            _settings = settings;
+            _gameList = gameList;
+            _screenCloner = screenCloner;
+            _screenFactory = screenFactory;
+            _invoker = invoker;
+            _mameScreen = mameScreen;
         }
 
         public void Run()
         {
             try
             {
-                using (layoutBuilder = new LayoutBuilder())
+                var gameList = _gameList.SelectedGames;
+
+                // Exit run method if there were no selected games
+                if (!gameList.Any()) return;
+
+                // Verify that MAME can be run so we can return immediately if there are errors
+                _invoker.Run("-showconfig");
+                
+                // Initialise primary MAME screen
+                _mameScreens.Add(_mameScreen);
+                _mameScreen.Initialise(Screen.PrimaryScreen, OnScreenClosed);
+
+                // Initialise all other screens
+                foreach (var otherScreen in Screen.AllScreens.Where(s => !Equals(s, Screen.PrimaryScreen)))
                 {
-                    // Load list and get only selected games from it
-                    List<SelectableGame> gameListFull = Settings.LoadGameList();
+                    var blankScreen = _screenFactory.Create();
+                    _mameScreens.Add(blankScreen);
+                    blankScreen.Initialise(otherScreen, OnScreenClosed);
+                }
 
-                    if (!gameListFull.Any()) return;
-                    var gameList = gameListFull.Where(game => game.Selected).Cast<Game>().ToList();
+                // Clone mame screens to other screens if required
+                if (_settings.CloneScreen) _screenCloner.Clone(_mameScreens.Where(s => s != _mameScreen).ToList());
 
-                    // Exit run method if there were no selected games
-                    if (gameList.Count == 0) return;
+                // Run the application
+                Application.EnableVisualStyles();
 
-                    // Set up the timer
-                    int minutes = Settings.Minutes;
-                    timer = new GameTimer(minutes * 60000, gameList);
-                    timer.Tick += timer_Tick;
+                var allForms = _mameScreens.Select(s => s.BackgroundForm).OfType<Form>().ToList();
+                Application.Run(new MultiFormApplicationContext(allForms));
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Failed to run screensaver");
+                throw;
+            }
+        }
 
-                    // Set up the background form
-                    Cursor.Hide();
-                    frmBackground = new BackgroundForm();
-                    frmBackground.Capture = true;
-                    frmBackground.Load += frmBackground_Load;
+        private void OnScreenClosed()
+        {
+            try
+            {
+                _screenCloner.Stop();
 
-                    // Set up the global hooks
-                    actHook = new UserActivityHook();
-                    actHook.OnMouseActivity += actHook_OnMouseActivity;
-                    actHook.KeyDown += actHook_KeyDown;
-
-                    // Run the application
-                    Application.EnableVisualStyles();
-                    Application.Run(frmBackground);
+                // one screen has closed so close them all
+                foreach (var screen in new List<BlankScreen>(_mameScreens))
+                {
+                    _mameScreens.Remove(screen);
+                    screen.Close();
+                    screen.Dispose();
                 }
             }
-            catch (Exception x)
+            catch (Exception ex)
             {
-                MessageBox.Show(x.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // do nothing as we are closing
+                Log.Error(ex, "Error closing screens");
             }
-       }
 
-        #endregion
-
-        #region Event Hanlders
-        void frmBackground_Load(object sender, EventArgs e)
-        {
-            // Start the first game
-            timer.Process = RunRandomGame(timer.GameList);
+            Application.DoEvents();
+            Application.Exit();
         }
 
-        private void timer_Tick(object sender, EventArgs e)
+        public void Dispose()
         {
-            timer.Stop();
+            Log.Debug("{class} Dispose()", GetType().Name);
 
-            // End the currently playing game
-            if (timer.Process != null && !timer.Process.HasExited) timer.Process.CloseMainWindow();
-
-            // Start new game
-            timer.Process = RunRandomGame(timer.GameList);
+            // Explicitly dispose transient screen cloner
+            _screenCloner?.Dispose();
         }
-
-        void actHook_KeyDown(object sender, KeyEventArgs e)
-        {
-            Close();
-        }
-
-
-        void actHook_OnMouseActivity(object sender, MouseEventArgs e)
-        {
-            Close();
-        }
-        #endregion
-
-        #region Private Methods
-        /// <summary>
-        /// Stop the timer, set cancelled flag, close any current process and close the background form. 
-        /// Once this has all been done, the application should end.
-        /// </summary>
-        private void Close()
-        {
-            timer.Stop();
-            cancelled = true;
-            if (timer.Process != null && !timer.Process.HasExited) timer.Process.CloseMainWindow();
-            frmBackground.Close();
-        }
-
-        /// <summary>
-        /// Gets a random number and then runs <see cref="RunGame"/> using the game in the
-        /// <see cref="List{T}"/>.
-        /// </summary>
-        /// <param name="gameList"></param>
-        /// <returns>The <see cref="Process"/> running the game</returns>
-        private Process RunRandomGame(List<Game> gameList)
-        {
-            // get random game
-            Random r = new Random();
-            int randomIndex = r.Next(0, gameList.Count - 1);
-            Game randomGame = gameList[randomIndex];
-
-            return RunGame(randomGame);
-        }
-
-        /// <summary>
-        /// Runs the process
-        /// </summary>
-        /// <param name="game"></param>
-        /// <returns>The <see cref="Process"/> running the game</returns>
-        private Process RunGame(Game game)
-        {
-            SetWinFullScreen(frmBackground.Handle);
-
-#if DEBUG
-            Program.Log("Running game " + game.Description + " " + game.Year + " " + game.Manufacturer);            
-#endif
-
-            // Start the timer and the process
-            timer.Start();
-
-          
-            // Create layout and run game
-            var artPath = layoutBuilder.EnsureLayout(game, ScreenX, ScreenY);
-            return MameInvoker.Run(game.Name, Settings.CommandLineOptions, "-artpath", artPath);
-        }
-
-        #endregion
     }
 }

@@ -5,59 +5,112 @@ using System.Drawing.Imaging;
 using System.Drawing.Text;
 using System.IO;
 using System.Windows.Forms;
+using Mamesaver.Configuration.Models;
+using Mamesaver.Layout.Models;
 
 namespace Mamesaver.Layout
 {
     /// <summary>
-    ///     Generates an image containing game metadata for display in a Mame layout.
+    ///     Generates an image containing game metadata for display in a MAME layout.
     /// </summary>
-    public static class TitleFactory
+    public class TitleFactory
     {
-        /// <summary>
-        ///     Font size in pixels
-        /// </summary>
-        private const int FontSize = 20;
+        private readonly Color _backgroundColour = Color.Black;
+        private readonly Settings _settings;
+        private readonly Color _textColour = Color.FromArgb(255, 210, 210, 210);
 
-        private const string FontFace = "Arial";
-
-        public static int TitleHeight { get; } = 30;
-
-        private static readonly Font RegularFont = new Font(FontFace, FontSize, FontStyle.Regular, GraphicsUnit.Pixel);
-        private static readonly Font BoldFont = new Font(FontFace, FontSize, FontStyle.Bold, GraphicsUnit.Pixel);
-
-        private static readonly Color BackgroundColour = Color.Black;
-        private static readonly Color TextColour = Color.White;
+        public TitleFactory(Settings settings) => _settings = settings;
 
         /// <summary>
-        ///     Render a layout image for a game. The image's width is determined by <see cref="monitorWidth"/> and height
-        ///     by <see cref="TitleHeight"/>.
+        ///     Returns the height of the bezel containing the rendered title
         /// </summary>
-        public static void Render(Game game, Stream outputStream, int monitorWidth)
+        public int GetBezelHeight(Game game) => GetBezelHeight(GetDescriptionSize(game));
+
+        /// <summary>
+        ///     Returns the height of the bezel containing the rendered title.
+        /// </summary>
+        /// <param name="titleSize">size of title text</param>
+        private int GetBezelHeight(Size titleSize) => (int)Math.Round(titleSize.Height * 1.3f);
+
+        /// <summary>
+        ///     Returns the size of the rendered game description text.
+        /// </summary>
+        private Size GetDescriptionSize(Game game)
         {
-            using (var image = new Bitmap(monitorWidth, TitleHeight, PixelFormat.Format32bppArgb)) 
+            var font = GetTitleFonts().BoldFont;
+            return TextRenderer.MeasureText(DescriptionText(game), font);
+        }
+
+        /// <summary>
+        ///     Returns the size of the rendered game details text.
+        /// </summary>
+        private Size GetDetailSize(Game game)
+        {
+            var font = GetTitleFonts().RegularFont;
+            return TextRenderer.MeasureText(DetailText(game), font);
+        }
+
+        /// <summary>
+        ///     Render a layout image for a game. The image's width is determined by <see cref="monitorWidth" /> and height
+        ///     relative to the font height.
+        /// </summary>
+        public int Render(Game game, MameLayout layout, Stream outputStream, int monitorWidth)
+        {
+            var bezelHeight = GetBezelHeight(game);
+            var titleSize = GetDescriptionSize(game);
+            var fonts = GetTitleFonts();
+
+            using (var image = new Bitmap(monitorWidth, bezelHeight, PixelFormat.Format32bppArgb))
             using (var graphics = Graphics.FromImage(image))
             {
                 PrepareGraphics(graphics);
 
+                // Vertically centre text inside bezel
+                var yOffset = (int) Math.Round(bezelHeight / 2.0 - titleSize.Height / 2.0);
+
+                // Horizontally centre game on screen
+                var textWidth = GetDetailSize(game).Width + GetDescriptionSize(game).Width;
+                var xOffset = (int) Math.Round(monitorWidth / 2.0 - textWidth / 2.0);
+
                 // Render game description, manufacturer and year
-                var titleSize = TextRenderer.MeasureText(game.Description, BoldFont);
-
-                // Vertically centre text
-                var offset = (int)Math.Round(TitleHeight / 2.0 - titleSize.Height / 2.0);
-
-                TextRenderer.DrawText(graphics, game.Description, BoldFont, new Point(offset, offset), TextColour);
-                TextRenderer.DrawText(graphics, $"| {game.Manufacturer} {game.Year}", RegularFont, new Point(titleSize.Width, offset), TextColour);
+                TextRenderer.DrawText(graphics, DescriptionText(game), fonts.BoldFont, new Point(xOffset, yOffset),
+                    _textColour);
+                TextRenderer.DrawText(graphics, DetailText(game), fonts.RegularFont,
+                    new Point(xOffset + titleSize.Width, yOffset), _textColour);
 
                 graphics.Save();
                 image.Save(outputStream, ImageFormat.Png);
             }
+
+            return bezelHeight;
+        }
+
+        private string DescriptionText(Game game) => game.Description;
+
+        private string DetailText(Game game) => $"| {game.Manufacturer} {game.Year}";
+
+        private TitleFonts GetTitleFonts()
+        {
+            var fontSettings = FontSettings();
+
+            return new TitleFonts
+            {
+                RegularFont = new Font(fontSettings.Face, fontSettings.Size, FontStyle.Regular, GraphicsUnit.Point),
+                BoldFont = new Font(fontSettings.Face, fontSettings.Size, FontStyle.Bold, GraphicsUnit.Point)
+            };
+        }
+
+        private FontSettings FontSettings()
+        {
+            var layoutSettings = _settings.LayoutSettings.InGameTitles;
+            return layoutSettings.FontSettings;
         }
 
         /// <summary>
-        ///     Adjusts a <see cref="Graphics"/> object for high quality rendering
+        ///     Adjusts a <see cref="Graphics" /> object for high quality rendering.
         /// </summary>
         /// <param name="graphics"></param>
-        private static void PrepareGraphics(Graphics graphics)
+        private void PrepareGraphics(Graphics graphics)
         {
             graphics.CompositingQuality = CompositingQuality.HighQuality;
             graphics.InterpolationMode = InterpolationMode.HighQualityBilinear;
@@ -65,7 +118,13 @@ namespace Mamesaver.Layout
             graphics.SmoothingMode = SmoothingMode.HighQuality;
             graphics.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
 
-            graphics.Clear(BackgroundColour);
+            graphics.Clear(_backgroundColour);
+        }
+
+        private class TitleFonts
+        {
+            public Font RegularFont { get; set; }
+            public Font BoldFont { get; set; }
         }
     }
 }
