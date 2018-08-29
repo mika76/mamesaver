@@ -10,6 +10,7 @@ using System.Threading;
 using System.Windows.Forms;
 using Mamesaver.Configuration.Models;
 using Serilog;
+using Serilog.Core;
 using Serilog.Events;
 using SimpleInjector;
 using SimpleInjector.Lifestyles;
@@ -110,18 +111,22 @@ namespace Mamesaver
         /// </remarks>
         public static void ConfigureLogging()
         {
+            var configuration = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .WriteTo.EventLog("Mamesaver", restrictedToMinimumLevel: LogEventLevel.Warning);
+
             // Configure debug logging if requested by the user or if we are running a debug build
             var advancedSettings = _container.GetInstance<AdvancedSettings>();
-            if (!advancedSettings.DebugLogging && !_debug) return;
+            if (advancedSettings.DebugLogging || _debug)
+            {
+                configuration.WriteTo.File(Path.Combine(Path.GetTempPath(), "Mamesaver", "Logs", "Mamesaver-.txt"),
+                      rollingInterval: RollingInterval.Day,
+                      restrictedToMinimumLevel: LogEventLevel.Debug,
+                      fileSizeLimitBytes: 100000,
+                      retainedFileCountLimit: 5);
+            }
 
-            Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Debug()
-                .WriteTo.EventLog("Mamesaver", restrictedToMinimumLevel: LogEventLevel.Warning)
-                .WriteTo.File(Path.Combine(Path.GetTempPath(), "MameSaver", "Logs", "MameSaver-.txt"),
-                    rollingInterval: RollingInterval.Day,
-                    fileSizeLimitBytes: 100000,
-                    retainedFileCountLimit: 5)
-                .CreateLogger();
+            Log.Logger = configuration.CreateLogger();
         }
 
         public static void ShowConfig()
