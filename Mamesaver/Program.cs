@@ -10,6 +10,8 @@ using System.Threading;
 using System.Windows.Forms;
 using Mamesaver.Configuration.Models;
 using Serilog;
+using Serilog.Core;
+using Serilog.Events;
 using SimpleInjector;
 using SimpleInjector.Lifestyles;
 
@@ -101,43 +103,30 @@ namespace Mamesaver
             MessageBox.Show(@"Error running screensaver. Verify that your MAME path and and arguments are correct.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
-        [Conditional("DEBUG")]
-        private static void SetDebugFlag()
-        {
-            _debug = true;
-        }
-
         /// <summary>
-        ///     Release logging to the event log.  If debug logging is configured, then release logging will not be configured
+        ///     Configures event log and filesystem logging. 
         /// </summary>
+        /// <remarks>
+        ///     Logging is written to the filesystem in debug builds and when enabled by the user.
+        /// </remarks>
         public static void ConfigureLogging()
         {
-            ConfigureDebugLogging();
+            var configuration = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .WriteTo.EventLog("Mamesaver", restrictedToMinimumLevel: LogEventLevel.Warning);
 
-            if (Log.Logger == null)
-            {
-                Log.Logger = new LoggerConfiguration()
-                    .WriteTo.EventLog("Mamesaver")
-                    .CreateLogger();
-            }
-        }
-
-        /// <summary>
-        ///     Debug logging will go to a file.
-        /// </summary>
-        public static void ConfigureDebugLogging()
-        {
             // Configure debug logging if requested by the user or if we are running a debug build
             var advancedSettings = _container.GetInstance<AdvancedSettings>();
-            if (!advancedSettings.DebugLogging && !_debug) return;
+            if (advancedSettings.DebugLogging || _debug)
+            {
+                configuration.WriteTo.File(Path.Combine(Path.GetTempPath(), "Mamesaver", "Logs", "Mamesaver-.txt"),
+                      rollingInterval: RollingInterval.Day,
+                      restrictedToMinimumLevel: LogEventLevel.Debug,
+                      fileSizeLimitBytes: 100000,
+                      retainedFileCountLimit: 5);
+            }
 
-            Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Debug()
-                .WriteTo.File(Path.Combine(Path.GetTempPath(), "MameSaver", "Logs", "MameSaver-.txt"),
-                    rollingInterval: RollingInterval.Day,
-                    fileSizeLimitBytes: 100000,
-                    retainedFileCountLimit: 5)
-                .CreateLogger();
+            Log.Logger = configuration.CreateLogger();
         }
 
         public static void ShowConfig()
@@ -145,5 +134,8 @@ namespace Mamesaver
             Application.EnableVisualStyles();
             Application.Run(_container.GetInstance<ConfigForm>());
         }
+
+        [Conditional("DEBUG")]
+        private static void SetDebugFlag() => _debug = true;
     }
 }

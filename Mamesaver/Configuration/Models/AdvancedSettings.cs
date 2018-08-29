@@ -6,14 +6,14 @@ namespace Mamesaver.Configuration.Models
     public class AdvancedSettings
     {
         /// <summary>
-        ///     Disable status checks on MAME ROMs.
+        ///     Include games which have imperfect emulation.
         /// </summary>
         /// <remarks>
-        ///     This is usfeul if running a custom MAME build with the mandatory imperfect emulation
+        ///     This is useful if running a custom MAME build with the mandatory imperfect emulation
         ///     screen disabled.
         /// </remarks>
-        [XmlElement("SkipGameValidation")]
-        public bool SkipGameValidation { get; set; }
+        [XmlElement("IncludeImperfectEmulation")]
+        public bool IncludeImperfectEmulation { get; set; }
 
         /// <summary>
         ///     Enable debug logging to disk.
