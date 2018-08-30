@@ -121,7 +121,7 @@ namespace Mamesaver
                     var description = element.Element("description")?.Value ?? "";
                     var rotation = element.Element("display")?.Attribute("rotate")?.Value ?? "";
 
-                    games.Add(new SelectableGame(name, description, year, manufacturer, rotation));
+                    games.Add(new SelectableGame(name, description, year, manufacturer, rotation, false));
                 }
             }
 
