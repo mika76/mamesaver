@@ -112,9 +112,9 @@ namespace Mamesaver
             // btnExecBrowse
             // 
             this.btnExecBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnExecBrowse.Location = new System.Drawing.Point(393, 30);
+            this.btnExecBrowse.Location = new System.Drawing.Point(393, 33);
             this.btnExecBrowse.Name = "btnExecBrowse";
-            this.btnExecBrowse.Size = new System.Drawing.Size(41, 23);
+            this.btnExecBrowse.Size = new System.Drawing.Size(38, 20);
             this.btnExecBrowse.TabIndex = 2;
             this.btnExecBrowse.Text = "...";
             this.btnExecBrowse.UseVisualStyleBackColor = true;
