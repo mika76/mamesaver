@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using Mamesaver.Configuration.Models;
 using Mamesaver.Windows;
 using Serilog;
 
@@ -7,17 +8,22 @@ namespace Mamesaver
 {
     internal class BlankScreen : IDisposable
     {
+        private readonly Settings _settings;
         public BackgroundForm BackgroundForm { get; }
 
         private bool _disposed;
         private Action _onClosed;
-        private UserActivityHook _actHook;
+        protected UserActivityHook ActivityHook { get; private set; }
         private bool _cancelled;
         private readonly object _syncLock = new object();
         public Screen Screen { get; private set; }
         public IntPtr HandleDeviceContext { get; private set; } = IntPtr.Zero;
 
-        public BlankScreen(BackgroundForm backgroundForm) => BackgroundForm = backgroundForm;
+        public BlankScreen(BackgroundForm backgroundForm, Settings settings)
+        {
+            _settings = settings;
+            BackgroundForm = backgroundForm;
+        }
 
         public virtual void Initialise(Screen screen, Action onClosed)
         {
@@ -32,9 +38,20 @@ namespace Mamesaver
             Cursor.Hide();
 
             // Set up the global hooks
-            _actHook = new UserActivityHook();
-            _actHook.OnMouseActivity += actHook_OnMouseActivity;
-            _actHook.KeyDown += actHook_KeyDown;
+            ActivityHook = new UserActivityHook();
+            BindActivityHooks();
+        }
+
+        protected void BindActivityHooks()
+        {
+            ActivityHook.OnMouseActivity += actHook_OnMouseActivity;
+            ActivityHook.KeyDown += actHook_KeyDown;
+        }
+
+        protected void UnbindActivityHooks()
+        {
+            ActivityHook.OnMouseActivity -= actHook_OnMouseActivity;
+            ActivityHook.KeyDown -= actHook_KeyDown;
         }
 
         private void BackgroundForm_Load(object sender, EventArgs e)
@@ -43,7 +60,14 @@ namespace Mamesaver
             HandleDeviceContext = PlatformInvokeUser32.GetDC(BackgroundForm.Handle);
         }
 
-        void actHook_KeyDown(object sender, KeyEventArgs e) => Close();
+        /// <summary>
+        ///     Close window on key press if hotkeys aren't enabled.
+        /// </summary>
+        public virtual void actHook_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (!_settings.HotKeys) Close();
+        }
+
         void actHook_OnMouseActivity(object sender, MouseEventArgs e) => Close();
 
         public virtual void Close()
@@ -56,7 +80,7 @@ namespace Mamesaver
                     if (_cancelled) return;
                     Log.Information("Closing screen {screen}", Screen.DeviceName);
 
-                    _actHook?.Stop();
+                    ActivityHook?.Stop();
                     Cursor.Show();
 
                     ReleaseUnmanagedResources();
