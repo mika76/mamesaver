@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
 using Mamesaver.Configuration.Models;
+using Serilog;
 
 namespace Mamesaver
 {
@@ -113,7 +114,11 @@ namespace Mamesaver
                     if (!_advancedSettings.SkipGameValidation)
                     {
                         var status = driver.Attribute("status")?.Value;
-                        if (status != "good") continue;
+                        if (status != "good")
+                        {
+                            Log.Information("{name} not added to game list because it has a status of {status}", name, status);
+                            continue;
+                        }
                     }
 
                     var year = element.Element("year")?.Value ?? "";
