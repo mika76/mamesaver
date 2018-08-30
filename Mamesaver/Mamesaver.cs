@@ -44,9 +44,14 @@ namespace Mamesaver
             try
             {
                 var gameList = _gameList.SelectedGames;
+                Log.Information("{selected} selected games out of {available} games", gameList.Count, _gameList.Games.Count);
 
                 // Exit run method if there were no selected games
-                if (!gameList.Any()) return;
+                if (!gameList.Any())
+                {
+                    Log.Information("No selected games available; screensaver exiting");
+                    return;
+                }
 
                 // Verify that MAME can be run so we can return immediately if there are errors
                 _invoker.Run("-showconfig");
