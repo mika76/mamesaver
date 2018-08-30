@@ -1,19 +1,56 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 using Mamesaver.Configuration.Models;
+using Mamesaver.Windows;
 using Serilog;
 
 namespace Mamesaver
 {
     /// <summary>
-    ///     Invookes the MAME executable configured in <see cref="Settings"/>.
+    ///     Invokes the MAME executable configured in <see cref="Settings"/>.
     /// </summary>
     internal class MameInvoker
     {
         private readonly Settings _settings;
 
         public MameInvoker(Settings settings) => _settings = settings;
+
+        /// <summary>
+        ///     Kills MAME in a background task, optionally waiting for it to complete.
+        /// </summary>
+        /// <param name="process"></param>
+        /// <param name="wait"></param>
+        public void Kill(Process process, bool wait = false)
+        {
+            if (process == null || process.HasExited) return;
+
+            Log.Debug("Killing MAME; pid: {pid}", process.Id);
+
+            var task = Task.Run(() =>
+            {
+                try
+                {
+                    // Minimise and then exit. Minimising it makes it disappear instantly
+                    if (process.MainWindowHandle != IntPtr.Zero)
+                        WindowsInterop.MinimizeWindow(process.MainWindowHandle);
+
+                    // Stop the MAME process. Note that we need to call Kill() instead of CloseMainWindow() in case 
+                    // we are terminating MAME before the window has been created.
+                    process.Kill();
+
+                    Log.Debug("MAME killed; pid {pid}", process.Id);
+                }
+                catch (Exception e)
+                {
+
+                    Log.Error(e, "Error killing MAME");
+                }
+            });
+
+            if (wait) task.Wait(TimeSpan.FromSeconds(5));
+        }
 
         /// <summary>
         ///     Invokes MAME, returning the created process
