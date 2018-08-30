@@ -6,7 +6,6 @@ using System.Windows.Forms;
 using Mamesaver.Configuration;
 using Mamesaver.Configuration.Models;
 using Mamesaver.Layout;
-using Mamesaver.Windows;
 using Serilog;
 using LayoutSettings = Mamesaver.Configuration.Models.LayoutSettings;
 
@@ -151,7 +150,7 @@ namespace Mamesaver
                     UnbindActivityHooks();
 
                     // Close existing MAME instance running in screensaver
-                    CloseMame();
+                    _invoker.Kill(GameProcess);
 
                     // Run MAME without screensaver options
                     _invoker.Run(currentGame.Name).WaitForExit(int.MaxValue);
@@ -250,7 +249,7 @@ namespace Mamesaver
                 _gameTimer.Stop();
 
                 // End the currently playing game
-                CloseMame();
+                _invoker.Kill(GameProcess);
 
                 // Display splash screen for next game if required
                 DisplaySplashText();
@@ -260,14 +259,6 @@ namespace Mamesaver
             {
                 Log.Error(ex, "Error preparing next game");
             }
-        }
-
-        /// <summary>
-        ///     Closes MAME
-        /// </summary>
-        private void CloseMame()
-        {
-            if (GameProcess != null && !GameProcess.HasExited) GameProcess.CloseMainWindow();
         }
 
         /// <summary>
@@ -303,16 +294,8 @@ namespace Mamesaver
                     _splashTimer?.Stop();
                     _gameTimer = _splashTimer = null;
 
-                    if (GameProcess != null && !GameProcess.HasExited)
-                    {
-                        // Minimise and then exit. Minimising it makes it disappear instantly
-                        if (GameProcess.MainWindowHandle != IntPtr.Zero)
-                            WindowsInterop.MinimizeWindow(GameProcess.MainWindowHandle);
-
-                        // Stop the MAME process. Note that we need to call Kill() instead of CloseMainWindow() in case 
-                        // we are terminating MAME before the window has been created.
-                        GameProcess.Kill();
-                    }
+                    // Stop MAME and wait for it to terminate
+                    _invoker.Kill(GameProcess, true);
 
                     _closed = true;
                 }
