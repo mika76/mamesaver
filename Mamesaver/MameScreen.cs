@@ -26,13 +26,12 @@ namespace Mamesaver
         /// <summary>
         ///     Shuffled games that will be played.
         /// </summary>
-        private readonly LinkedList<Game> _selectedGames;
+        private readonly List<Game> _selectedGames;
 
         /// <summary>
-        ///     Currently active game.
+        ///     Index of game in <see cref="_selectedGames"/> which is being played.
         /// </summary>
-        private LinkedListNode<Game> _game;
-
+        private int _gameIndex;
 
         /// <summary>
         ///     Timer for game execution.
@@ -74,8 +73,7 @@ namespace Mamesaver
 
             _splashSettings = layoutSettings.SplashScreen;
 
-            _selectedGames = new LinkedList<Game>(gameList.SelectedGames.OrderBy(_ => _random.Next()));
-            _game = _selectedGames.First;
+            _selectedGames = gameList.SelectedGames.OrderBy(_ => _random.Next()).ToList();
         }
 
         public override void actHook_KeyDown(object sender, KeyEventArgs e)
@@ -102,6 +100,8 @@ namespace Mamesaver
         /// </summary>
         private void ProcessHotKeys(KeyEventArgs e)
         {
+            var currentGame = CurrentGame();
+
             switch (e.KeyCode)
             {
                 // Play next game
@@ -120,8 +120,6 @@ namespace Mamesaver
 
                 // Remove current game from circulation and play next game
                 case Keys.Delete:
-                    var currentGame = _game.Value;
-
                     // Sanity check that the user isn't attempting to deselect their last selected game
                     if (_selectedGames.Count == 1)
                     {
@@ -133,7 +131,9 @@ namespace Mamesaver
 
                     // Update game selection and update store
                     _gameListStore.ChangeSelection(currentGame.Name, false);
+
                     _selectedGames.Remove(currentGame);
+                    NextGame();
 
                     // Start next game
                     StartGame();
@@ -155,7 +155,7 @@ namespace Mamesaver
                     CloseMame();
 
                     // Run MAME without screensaver options
-                    _invoker.Run(_game.Value.Name).WaitForExit(int.MaxValue);
+                    _invoker.Run(currentGame.Name).WaitForExit(int.MaxValue);
 
                     // Close screensaver after game has terminated
                     Close();
@@ -216,6 +216,9 @@ namespace Mamesaver
             DisplaySplashText();
         }
 
+        private Game CurrentGame() => _selectedGames[_gameIndex];
+
+
         /// <summary>
         ///     Displays the game description and details on the splash screen/
         /// </summary>
@@ -223,7 +226,7 @@ namespace Mamesaver
         {
             if (!_splashSettings.Enabled) return;
 
-            var game = _game.Value;
+            var game = CurrentGame();
             BackgroundForm.SetGameText(game.Description, $@"{game.Year} {game.Manufacturer}");
         }
 
@@ -269,12 +272,20 @@ namespace Mamesaver
         /// <summary>
         ///     Selects the next game for play.
         /// </summary>
-        private void NextGame() => _game = _game.Next ?? _game.List.First;
+        private void NextGame()
+        {
+            _gameIndex++;
+            if (_gameIndex >= _selectedGames.Count) _gameIndex = 0;
+        }
 
         /// <summary>
         ///     Selects the previous game for play.
         /// </summary>
-        private void PreviousGame() => _game = _game.Previous ?? _game.List.Last;
+        private void PreviousGame()
+        {
+            _gameIndex--;
+            if (_gameIndex < 0) _gameIndex = _selectedGames.Count - 1;
+        }
 
         /// <summary>
         ///     Stop the timer, set cancelled flag, close any current process and close the background form.
@@ -319,7 +330,7 @@ namespace Mamesaver
         /// <returns>The <see cref="Process" /> running the game</returns>
         private Process RunGame()
         {
-            var game = _game.Value;
+            var game = CurrentGame();
 
             // Don't attempt to run a game if the screen has been closed
             if (_closed) return null;
