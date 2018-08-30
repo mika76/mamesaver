@@ -53,7 +53,7 @@ namespace Mamesaver
         private readonly Random _random = new Random();
 
         /// <summary>
-        ///     MAME process running <see cref="_game"/> or <c>null</c> if not started.
+        ///     MAME process running the current game, or <c>null</c> if not started.
         /// </summary>
         public Process GameProcess { get; set; }
 
@@ -131,9 +131,8 @@ namespace Mamesaver
 
                     // Update game selection and update store
                     _gameListStore.ChangeSelection(currentGame.Name, false);
-
                     _selectedGames.Remove(currentGame);
-                    NextGame();
+                    if (_gameIndex >= _selectedGames.Count) _gameIndex = 0;
 
                     // Start next game
                     StartGame();
