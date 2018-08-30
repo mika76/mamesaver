@@ -39,6 +39,8 @@ namespace Mamesaver.Layout
         /// <returns>art path containing temporary layout</returns>
         public string EnsureLayout(Game game, int monitorWidth, int monitorHeight)
         {
+            Log.Information("Creating layout");
+
             // Identify game rotation
             var rotation = GetRotation(game);
             var horizontalGame = rotation == Horizontal;

@@ -39,6 +39,8 @@ namespace Mamesaver
                 var process = Process.Start(psi);
                 if (process == null) throw new InvalidOperationException($"MAME process not created: {psi.FileName} {psi.Arguments}");
 
+                Log.Debug("MAME started; pid: {pid}", process.Id);
+
                 return process;
             }
             catch (Exception e)

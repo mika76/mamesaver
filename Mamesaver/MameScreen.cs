@@ -225,6 +225,8 @@ namespace Mamesaver
         {
             if (!_splashSettings.Enabled) return;
 
+            Log.Debug("Displaying splash screen");
+
             var game = CurrentGame();
             BackgroundForm.SetGameText(game.Description, $@"{game.Year} {game.Manufacturer}");
         }
