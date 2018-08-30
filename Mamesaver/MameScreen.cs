@@ -294,6 +294,9 @@ namespace Mamesaver
                     _splashTimer?.Stop();
                     _gameTimer = _splashTimer = null;
 
+                    BackgroundForm.HideAll();
+                    BackgroundForm.Refresh();
+
                     // Stop MAME and wait for it to terminate
                     _invoker.Kill(GameProcess, true);
 
