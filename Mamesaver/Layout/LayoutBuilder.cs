@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Mamesaver.Layout.Models;
 using Serilog;
 
@@ -22,6 +24,11 @@ namespace Mamesaver.Layout
         private readonly TitleFactory _titleFactory;
         private bool _disposed;
 
+        /// <summary>
+        ///     Base MAME paths to layout files
+        /// </summary>
+        private readonly Lazy<List<string>> _artPaths;
+
         public LayoutBuilder(GameListBuilder gameListBuilder, TitleFactory titleFactory, LayoutFactory layoutFactory)
         {
             _gameListBuilder = gameListBuilder;
@@ -30,6 +37,7 @@ namespace Mamesaver.Layout
 
             var tempPath = Path.GetTempPath();
             _tempDirectory = Directory.CreateDirectory(Path.Combine(tempPath, "Mamesaver", "Layouts"));
+            _artPaths = new Lazy<List<string>>(() => _gameListBuilder.GetArtPaths());
         }
 
         /// <summary>
@@ -58,10 +66,7 @@ namespace Mamesaver.Layout
             }
 
             // Add our temporary art path so Mame picks up the temporary layout
-            var artPath = _gameListBuilder.GetArtPaths();
-            artPath.Add(_tempDirectory.FullName);
-
-            return string.Join(";", artPath);
+            return string.Join(";", _artPaths.Value.Concat(new List<string> { _tempDirectory.FullName }));
         }
 
         /// <summary>
