@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
+using Mamesaver.Configuration;
 using Mamesaver.Configuration.Models;
 using Mamesaver.Layout;
 using Mamesaver.Windows;
@@ -17,6 +18,7 @@ namespace Mamesaver
     internal class MameScreen : BlankScreen
     {
         private readonly Settings _settings;
+        private readonly GameListStore _gameListStore;
         private readonly LayoutBuilder _layoutBuilder;
         private readonly MameInvoker _invoker;
         private readonly SplashScreen _splashSettings;
@@ -24,37 +26,62 @@ namespace Mamesaver
         /// <summary>
         ///     Shuffled games that will be played.
         /// </summary>
-        private readonly List<Game> _selectedGames;
+        private readonly LinkedList<Game> _selectedGames;
 
         /// <summary>
-        ///     Index of game in <see cref="_selectedGames"/> which is being played.
+        ///     Currently active game.
         /// </summary>
-        private int _gameIndex;
+        private LinkedListNode<Game> _game;
 
+
+        /// <summary>
+        ///     Timer for game execution.
+        /// </summary>
         private Timer _gameTimer;
+
+        /// <summary>
+        ///     Timer for splash screen display.
+        /// </summary>
         private Timer _splashTimer;
+
+        /// <summary>
+        ///     If <see cref="Close" /> has been invoked, indicating that no further games should be played.
+        /// </summary>
         private bool _closed;
 
         private readonly object _syncLock = new object();
 
         private readonly Random _random = new Random();
 
+        /// <summary>
+        ///     MAME process running <see cref="_game"/> or <c>null</c> if not started.
+        /// </summary>
         public Process GameProcess { get; set; }
 
         public MameScreen(
             Settings settings,
             LayoutSettings layoutSettings,
             GameList gameList,
+            GameListStore gameListStore,
             LayoutBuilder layoutBuilder,
             MameInvoker invoker,
-            BackgroundForm backgroundForm) : base(backgroundForm)
+            BackgroundForm backgroundForm) : base(backgroundForm, settings)
         {
             _settings = settings;
+            _gameListStore = gameListStore;
             _layoutBuilder = layoutBuilder;
             _invoker = invoker;
 
             _splashSettings = layoutSettings.SplashScreen;
-            _selectedGames = gameList.SelectedGames.OrderBy(_ => _random.Next()).ToList();
+
+            _selectedGames = new LinkedList<Game>(gameList.SelectedGames.OrderBy(_ => _random.Next()));
+            _game = _selectedGames.First;
+        }
+
+        public override void actHook_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (_settings.HotKeys) ProcessHotKeys(e);
+            else base.actHook_KeyDown(sender, e);
         }
 
         public override void Initialise(Screen screen, Action onClosed)
@@ -65,10 +92,65 @@ namespace Mamesaver
             BackgroundForm.Load += OnFormBackground_Load;
 
             InitGameTimer();
-
             InitSplashTimer();
 
             Log.Information("Initialised primary MAME screen");
+        }
+
+        /// <summary>
+        ///     Handle a key down event, processing hotkey actions.
+        /// </summary>
+        private void ProcessHotKeys(KeyEventArgs e)
+        {
+            switch (e.KeyCode)
+            {
+                // Play next game
+                case Keys.Right:
+                    Log.Information("Skipping to next game");
+                    NextGame();
+                    StartGame();
+                    break;
+
+                // Play previous game
+                case Keys.Left:
+                    Log.Information("Skipping to previous game");
+                    PreviousGame();
+                    StartGame();
+                    break;
+
+                // Remove current game from circulation and play next game
+                case Keys.Delete:
+                    var currentGame = _game.Value;
+
+                    // Sanity check that the user isn't attempting to deselect their last selected game
+                    if (_selectedGames.Count == 1)
+                    {
+                        Log.Information("Attempting to deselect single remaining game; ignoring request");
+                        return;
+                    }
+
+                    Log.Information("Deselecting {game}", currentGame.Name);
+
+                    // Update game selection and update store
+                    _gameListStore.ChangeSelection(currentGame.Name, false);
+                    _selectedGames.Remove(currentGame);
+
+                    // Start next game
+                    StartGame();
+                    break;
+
+                case Keys.Enter:
+
+                    // Play game
+                    _gameTimer.Stop();
+                    UnbindActivityHooks();
+                    break;
+
+                // Exit screensaver for unhandled keys
+                default:
+                    Close();
+                    break;
+            }
         }
 
         private void InitSplashTimer()
@@ -119,8 +201,6 @@ namespace Mamesaver
             DisplaySplashText();
         }
 
-        private Game CurrentGame() => _selectedGames[_gameIndex];
-
         /// <summary>
         ///     Displays the game description and details on the splash screen/
         /// </summary>
@@ -128,7 +208,7 @@ namespace Mamesaver
         {
             if (!_splashSettings.Enabled) return;
 
-            var game = CurrentGame();
+            var game = _game.Value;
             BackgroundForm.SetGameText(game.Description, $@"{game.Year} {game.Manufacturer}");
         }
 
@@ -137,16 +217,21 @@ namespace Mamesaver
         /// </summary>
         private void GameTimerTick(object sender, EventArgs e)
         {
+            NextGame();        
+            StartGame();
+        }
+
+        /// <summary>
+        ///     Executes MAME, running the currently selected game.
+        /// </summary>
+        private void StartGame()
+        {
             try
             {
                 _gameTimer.Stop();
 
                 // End the currently playing game
                 if (GameProcess != null && !GameProcess.HasExited) GameProcess.CloseMainWindow();
-
-                // Retrieve next game
-                _gameIndex++;
-                if (_gameIndex >= _selectedGames.Count) _gameIndex = 0;
 
                 // Display splash screen for next game if required
                 DisplaySplashText();
@@ -157,6 +242,16 @@ namespace Mamesaver
                 Log.Error(ex, "Error preparing next game");
             }
         }
+
+        /// <summary>
+        ///     Selects the next game for play.
+        /// </summary>
+        private void NextGame() => _game = _game.Next ?? _game.List.First;
+
+        /// <summary>
+        ///     Selects the previous game for play.
+        /// </summary>
+        private void PreviousGame() => _game = _game.Previous ?? _game.List.Last;
 
         /// <summary>
         ///     Stop the timer, set cancelled flag, close any current process and close the background form.
@@ -201,7 +296,7 @@ namespace Mamesaver
         /// <returns>The <see cref="Process" /> running the game</returns>
         private Process RunGame()
         {
-            var game = CurrentGame();
+            var game = _game.Value;
 
             // Don't attempt to run a game if the screen has been closed
             if (_closed) return null;
