@@ -30,6 +30,14 @@ namespace Mamesaver
             secondaryLabel.Font = new Font(fontSettings.Face, fontSettings.Size * 0.9f, FontStyle.Regular, GraphicsUnit.Point);
         }
 
+        /// <summary>
+        ///     Hides all form components.
+        /// </summary>
+        public void HideAll()
+        {
+            primaryLabel.Visible = secondaryLabel.Visible = mameLogo.Visible = false;
+        }
+
         public void SetGameText(string heading, string subheading)
         {
             primaryLabel.Text = heading;
