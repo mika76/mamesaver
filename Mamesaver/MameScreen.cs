@@ -142,8 +142,23 @@ namespace Mamesaver
                 case Keys.Enter:
 
                     // Play game
+
+                    // Hide the background form elements to provide a seamless transition. We are also
+                    // forcing an immediate refresh to avoid any flicker of the MAME logo before it's hidden/
+                    BackgroundForm.HideAll();
+                    BackgroundForm.Refresh();
+
                     _gameTimer.Stop();
                     UnbindActivityHooks();
+
+                    // Close existing MAME instance running in screensaver
+                    CloseMame();
+
+                    // Run MAME without screensaver options
+                    _invoker.Run(_game.Value.Name).WaitForExit(int.MaxValue);
+
+                    // Close screensaver after game has terminated
+                    Close();
                     break;
 
                 // Exit screensaver for unhandled keys
@@ -231,7 +246,7 @@ namespace Mamesaver
                 _gameTimer.Stop();
 
                 // End the currently playing game
-                if (GameProcess != null && !GameProcess.HasExited) GameProcess.CloseMainWindow();
+                CloseMame();
 
                 // Display splash screen for next game if required
                 DisplaySplashText();
@@ -241,6 +256,14 @@ namespace Mamesaver
             {
                 Log.Error(ex, "Error preparing next game");
             }
+        }
+
+        /// <summary>
+        ///     Closes MAME
+        /// </summary>
+        private void CloseMame()
+        {
+            if (GameProcess != null && !GameProcess.HasExited) GameProcess.CloseMainWindow();
         }
 
         /// <summary>
