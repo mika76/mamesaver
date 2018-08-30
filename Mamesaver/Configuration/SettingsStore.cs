@@ -23,15 +23,20 @@ namespace Mamesaver.Configuration
         /// </summary>
         public abstract string Filename { get; }
 
-        private readonly Lazy<T> _settings;
+        private Lazy<T> _settings;
         private readonly XmlSerializer _serializer = new XmlSerializer(typeof(T));
 
-        protected SettingsStore() => _settings = new Lazy<T>(Load);
+        protected SettingsStore() => Reload();
 
         /// <summary>
         ///     Returns settings, loading from disk if not in memory.
         /// </summary>
-        public T Get() => _settings.Value;
+        /// <para name="forceReload">if settings should always be reloaded from disk</para>
+        public T Get(bool forceReload = false)
+        {
+            if (forceReload) Reload();
+            return _settings.Value;
+        }
 
         /// <summary>
         ///     Serializes externally-managed settings to disk.
@@ -45,6 +50,8 @@ namespace Mamesaver.Configuration
             {
                 _serializer.Serialize(writer, settings);
             }
+
+            Log.Information("{store} settings saved", GetType().Name);
         }
 
         /// <summary>
@@ -97,5 +104,10 @@ namespace Mamesaver.Configuration
             if (!Directory.Exists(applicationFolder)) Directory.CreateDirectory(applicationFolder);
             return applicationFolder;
         }
+
+        /// <summary>
+        ///     Reloads settings from disk.
+        /// </summary>
+        private void Reload() => _settings = new Lazy<T>(Load);
     }
 }
