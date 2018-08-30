@@ -20,6 +20,10 @@ namespace Mamesaver
             var container = new Container();
             container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
 
+            // Register setting stores
+            container.Register<GameListStore>(Lifestyle.Singleton);
+            container.Register<GeneralSettingsStore>(Lifestyle.Singleton);
+
             // Register setting factories
             container.Register(() => container.GetInstance<GeneralSettingsStore>().Get(), Lifestyle.Singleton);
             container.Register(() => container.GetInstance<GameListStore>().GetGameList, Lifestyle.Singleton);
