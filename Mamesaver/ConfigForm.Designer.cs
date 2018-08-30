@@ -50,6 +50,7 @@ namespace Mamesaver
             this.dlgOpen = new System.Windows.Forms.OpenFileDialog();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.hotKeys = new System.Windows.Forms.CheckBox();
             this.cloneScreen = new System.Windows.Forms.CheckBox();
             this.txtMinutes = new System.Windows.Forms.NumericUpDown();
             this.label4 = new System.Windows.Forms.Label();
@@ -241,6 +242,7 @@ namespace Mamesaver
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.hotKeys);
             this.tabPage1.Controls.Add(this.cloneScreen);
             this.tabPage1.Controls.Add(this.txtMinutes);
             this.tabPage1.Controls.Add(this.label4);
@@ -257,6 +259,16 @@ namespace Mamesaver
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "General";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // hotKeys
+            // 
+            this.hotKeys.AutoSize = true;
+            this.hotKeys.Location = new System.Drawing.Point(9, 192);
+            this.hotKeys.Name = "hotKeys";
+            this.hotKeys.Size = new System.Drawing.Size(99, 17);
+            this.hotKeys.TabIndex = 8;
+            this.hotKeys.Text = "Enable hotkeys";
+            this.hotKeys.UseVisualStyleBackColor = true;
             // 
             // cloneScreen
             // 
@@ -674,5 +686,6 @@ namespace Mamesaver
         private System.Windows.Forms.TabPage tabPage4;
         private System.Windows.Forms.CheckBox debugLogging;
         private System.Windows.Forms.CheckBox skipGameValidation;
+        private System.Windows.Forms.CheckBox hotKeys;
     }
 }
