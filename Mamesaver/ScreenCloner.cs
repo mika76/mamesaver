@@ -33,9 +33,10 @@ namespace Mamesaver
                 return;
             }
 
-            Log.Information("Source screen found {device} {bounds}", _sourceScreen.Screen.DeviceName, _sourceScreen.Screen.Bounds);
             _captureScreen.Initialise(_sourceScreen.Screen.Bounds);
-            
+            Log.Information("Source screen initialised {device} {bounds} xDpi {xDpi} yDpi {yDpi}", _sourceScreen.Screen.DeviceName, _sourceScreen.Screen.Bounds,
+                _sourceScreen.XDpi, _sourceScreen.YDpi);
+
             _blankScreens.ForEach(screen => Log.Information("Destination screen found {device} {bounds}", screen.Screen.DeviceName, screen.Screen.Bounds));
 
             _refreshTimer = new Timer
