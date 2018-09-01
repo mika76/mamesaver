@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using System.Threading.Tasks;
 using Mamesaver.Configuration.Models;
 using Mamesaver.Windows;
 using Serilog;
@@ -18,42 +17,38 @@ namespace Mamesaver
         public MameInvoker(Settings settings) => _settings = settings;
 
         /// <summary>
-        ///     Kills MAME in a background task, optionally waiting for it to complete.
+        ///     Kills a MAME process.
         /// </summary>
-        /// <param name="process"></param>
-        /// <param name="wait"></param>
-        public void Kill(Process process, bool wait = false)
+        public void Stop(Process process)
         {
             if (process == null || process.HasExited) return;
 
-            Log.Debug("Killing MAME; pid: {pid}", process.Id);
+            Log.Debug("Stopping MAME; pid: {pid}", process.Id);
 
-            var task = Task.Run(() =>
+            try
             {
-                try
+                // Minimise and then exit. Minimising it makes it disappear instantly
+                if (process.MainWindowHandle != IntPtr.Zero)
                 {
-                    // Minimise and then exit. Minimising it makes it disappear instantly
-                    if (process.MainWindowHandle != IntPtr.Zero)
-                        WindowsInterop.MinimizeWindow(process.MainWindowHandle);
-
-                    // Stop the MAME process. Note that we need to call Kill() instead of CloseMainWindow() in case 
-                    // we are terminating MAME before the window has been created.
+                    WindowsInterop.MinimizeWindow(process.MainWindowHandle);
+                    process.CloseMainWindow();
+                }
+                else
+                {
                     process.Kill();
-
-                    Log.Debug("MAME killed; pid {pid}", process.Id);
                 }
-                catch (Exception e)
-                {
 
-                    Log.Error(e, "Error killing MAME");
-                }
-            });
+                Log.Debug("MAME stopped; pid {pid}", process.Id);
+            }
+            catch (Exception e)
+            {
 
-            if (wait) task.Wait(TimeSpan.FromSeconds(5));
+                Log.Error(e, "Error stopping MAME");
+            }
         }
 
         /// <summary>
-        ///     Invokes MAME, returning the created process
+        ///     Invokes MAME, returning the created process.
         /// </summary>
         /// <param name="arguments">arguments to pass to Mame</param>
         public Process Run(params string[] arguments)
@@ -88,7 +83,7 @@ namespace Mamesaver
         }
 
         /// <summary>
-        ///     Invokes MAME, returning the standard output stream
+        ///     Invokes MAME, returning the standard output stream.
         /// </summary>
         /// <param name="arguments">arguments to pass to MAME</param>
         public StreamReader GetOutput(params string[] arguments) => Run(arguments).StandardOutput;

@@ -86,12 +86,12 @@ namespace Mamesaver
             this.label14 = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
             this.label21 = new System.Windows.Forms.Label();
+            this.label22 = new System.Windows.Forms.Label();
             this.hotKeys = new System.Windows.Forms.CheckBox();
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.debugLogging = new System.Windows.Forms.CheckBox();
             this.includeImperfectEmulation = new System.Windows.Forms.CheckBox();
             this.resetToDefaults = new System.Windows.Forms.Button();
-            this.label22 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.txtMinutes)).BeginInit();
@@ -653,16 +653,25 @@ namespace Mamesaver
             // label21
             // 
             this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(13, 52);
+            this.label21.Location = new System.Drawing.Point(6, 52);
             this.label21.Name = "label21";
             this.label21.Size = new System.Drawing.Size(67, 13);
             this.label21.TabIndex = 25;
             this.label21.Text = "Key bindings";
             // 
+            // label22
+            // 
+            this.label22.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.label22.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.label22.Location = new System.Drawing.Point(18, 59);
+            this.label22.Name = "label22";
+            this.label22.Size = new System.Drawing.Size(400, 2);
+            this.label22.TabIndex = 24;
+            // 
             // hotKeys
             // 
             this.hotKeys.AutoSize = true;
-            this.hotKeys.Location = new System.Drawing.Point(16, 21);
+            this.hotKeys.Location = new System.Drawing.Point(17, 17);
             this.hotKeys.Name = "hotKeys";
             this.hotKeys.Size = new System.Drawing.Size(99, 17);
             this.hotKeys.TabIndex = 9;
@@ -683,7 +692,7 @@ namespace Mamesaver
             // debugLogging
             // 
             this.debugLogging.AutoSize = true;
-            this.debugLogging.Location = new System.Drawing.Point(9, 40);
+            this.debugLogging.Location = new System.Drawing.Point(17, 40);
             this.debugLogging.Name = "debugLogging";
             this.debugLogging.Size = new System.Drawing.Size(95, 17);
             this.debugLogging.TabIndex = 1;
@@ -693,7 +702,7 @@ namespace Mamesaver
             // includeImperfectEmulation
             // 
             this.includeImperfectEmulation.AutoSize = true;
-            this.includeImperfectEmulation.Location = new System.Drawing.Point(9, 17);
+            this.includeImperfectEmulation.Location = new System.Drawing.Point(17, 17);
             this.includeImperfectEmulation.Name = "includeImperfectEmulation";
             this.includeImperfectEmulation.Size = new System.Drawing.Size(211, 17);
             this.includeImperfectEmulation.TabIndex = 0;
@@ -710,15 +719,6 @@ namespace Mamesaver
             this.resetToDefaults.TabIndex = 14;
             this.resetToDefaults.Text = "&Reset to Defaults";
             this.resetToDefaults.UseVisualStyleBackColor = true;
-            // 
-            // label22
-            // 
-            this.label22.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.label22.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.label22.Location = new System.Drawing.Point(18, 59);
-            this.label22.Name = "label22";
-            this.label22.Size = new System.Drawing.Size(400, 2);
-            this.label22.TabIndex = 24;
             // 
             // ConfigForm
             // 

@@ -22,7 +22,6 @@ namespace Mamesaver.Layout
         private readonly LayoutFactory _layoutFactory;
         private readonly DirectoryInfo _tempDirectory;
         private readonly TitleFactory _titleFactory;
-        private bool _disposed;
 
         /// <summary>
         ///     Base MAME paths to layout files
@@ -112,10 +111,6 @@ namespace Mamesaver.Layout
 
         protected virtual void Dispose(bool disposing)
         {
-            if (_disposed) return;
-
-            Log.Debug("{class} Dispose()", GetType().Name);
-
             try
             {
                 _tempDirectory?.Delete(true);
@@ -124,8 +119,6 @@ namespace Mamesaver.Layout
             {
                 // Directory may have already been deleted by another instance
             }
-
-            _disposed = true;
         }
 
         public void Dispose()
@@ -134,9 +127,6 @@ namespace Mamesaver.Layout
             GC.SuppressFinalize(this);
         }
 
-        ~LayoutBuilder()
-        {
-            Dispose(false);
-        }
+        ~LayoutBuilder() => Dispose(false);
     }
 }

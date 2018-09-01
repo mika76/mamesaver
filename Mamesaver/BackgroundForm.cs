@@ -12,6 +12,7 @@ namespace Mamesaver
 {
     public partial class BackgroundForm : Form
     {
+
         /// <summary>
         ///    Scale to apply to MAME logo, relative to display size
         /// </summary>

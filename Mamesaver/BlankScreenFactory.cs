@@ -8,17 +8,12 @@ namespace Mamesaver
     internal class BlankScreenFactory
     {
         private readonly LayoutSettings _layoutSettings;
-        private readonly Settings _settings;
 
-        public BlankScreenFactory(LayoutSettings layoutSettings, Settings settings)
-        {
-            _layoutSettings = layoutSettings;
-            _settings = settings;
-        }
+        public BlankScreenFactory(LayoutSettings layoutSettings) => _layoutSettings = layoutSettings;
 
         /// <summary>
         ///     Creates a new <see cref="BlankScreen"/>.
         /// </summary>
-        public BlankScreen Create() => new BlankScreen(new BackgroundForm(_layoutSettings), _settings);
+        public BlankScreen Create() => new BlankScreen(_layoutSettings);
     }
 }

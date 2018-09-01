@@ -10,7 +10,6 @@ using System.Threading;
 using System.Windows.Forms;
 using Mamesaver.Configuration.Models;
 using Serilog;
-using Serilog.Core;
 using Serilog.Events;
 using SimpleInjector;
 using SimpleInjector.Lifestyles;
@@ -34,9 +33,6 @@ namespace Mamesaver
 
                 SetDebugFlag();
                 ConfigureLogging();
-
-                // Perform a sanity check on component installation
-                _container.Verify(VerificationOption.VerifyAndDiagnose);
 
                 // Default to config if no options passed
                 var arguments = args.Length != 0 ? args : new[] { "/c" };
@@ -63,6 +59,9 @@ namespace Mamesaver
                             break;
                     }
                 }
+
+                _container.Dispose();
+                Log.Debug("Container disposed");
             }
             catch(Exception ex)
             {

@@ -227,7 +227,7 @@ namespace Mamesaver
         /// <returns>list of absolute paths</returns>
         public List<string>GetConfigPaths(string key)
         {
-            Log.Debug("Getting MAME {key} configuration path", key);
+            Log.Debug("Getting MAME {key}", key);
 
             // Configuration in the MAME ini file which indicates path to ROMs
             var regex = new Regex($@"{key}\s+(.*)");
