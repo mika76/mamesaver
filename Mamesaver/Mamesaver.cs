@@ -64,10 +64,14 @@ namespace Mamesaver
                 // Verify that MAME can be run so we can return immediately if there are errors
                 _invoker.Run("-showconfig");
 
+                // Find the best primary screen for MAME. As games are largely vertical and screens are wide, select the one with the greatest Y axis
+                var bestPrimaryScreen = Screen.AllScreens.OrderByDescending(screen => screen.Bounds.Height).First();
+
                 // Initialise primary MAME screen
                 _mameScreen.Initialise(bestPrimaryScreen);
 
                 // Initialise all other screens
+                var clonedScreens = new List<BlankScreen>();
                 foreach (var otherScreen in Screen.AllScreens.Where(screen => !Equals(screen, bestPrimaryScreen)))
                 {
                     var blankScreen = _screenFactory.Create();
@@ -78,7 +82,7 @@ namespace Mamesaver
                 }
 
                 // Clone mame screens to other screens if required
-                if (_settings.CloneScreen) _screenCloner.StartCloning(_mameScreens.Where(s => s != _mameScreen).ToList());
+                if (_settings.CloneScreen) _screenCloner.StartCloning(clonedScreens);
 
                 // Run the application
                 Application.EnableVisualStyles();
