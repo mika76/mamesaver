@@ -59,7 +59,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Integration\GameListStoreTest.cs" />
-    <Compile Include="Integration\HotKeyManagerTests.cs" />
+    <Compile Include="Integration\PowerTests.cs" />
+    <Compile Include="Unit\HotKeyManagerTests.cs" />
     <Compile Include="Integration\SettingsStoreTests.cs" />
     <Compile Include="Integration\TestActivityHook.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
