@@ -1,5 +1,17 @@
 # Mamesaver
 
+- [Introduction](#introduction)
+- [Requirements](#requirements)
+ - [Installation](#installation)
+- [Usage](#usage)
+- [Configuration](#configuration)
+- [Hotkeys](#hotkeys)
+- [Comments](#comments)
+- [Logging](#logging)
+- [Contributors](#contributors)
+- [Open source](#open-source)
+
+
 v1.1
 Licensed under The MIT License
 
@@ -40,6 +52,16 @@ Other than those main settings, you can also:
 * Enable and configure in-game game information
 * Enable multi-monitor cloning
 * Include games with imperfect emulation
+* Enable in-game hotkeys
+
+### HOTKEYS
+
+When enabled, the following hotkeys are enabled in-game:
+
+* <kbd>←</kbd> show previous game 
+* <kbd>→</kbd> show next game
+* <kbd>enter</kbd> exit screensaver and play game
+* <kbd>del</kbd> deselect game
 
 ### COMMENTS
 

@@ -72,8 +72,8 @@ namespace Mamesaver.Test.Integration
         {
             return new List<SelectableGame>
             {
-                new SelectableGame("tempest", "Tempest (rev 3, Revised Hardware)", "1980", "Atari", "270"),
-                new SelectableGame("donpachij", "DonPachi (Japan)", "1995", "Cave (Atlus license)", "270")
+                new SelectableGame("tempest", "Tempest (rev 3, Revised Hardware)", "1980", "Atari", "270", true),
+                new SelectableGame("donpachij", "DonPachi (Japan)", "1995", "Cave (Atlus license)", "270", false)
             };
         }
     }

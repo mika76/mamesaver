@@ -28,16 +28,12 @@ namespace Mamesaver
 
         public void Dispose()
         {
-            Log.Debug("{class} Dispose()", GetType().Name);
-
-            ReleaseUnmanagedResources();
+            Dispose(true);
             GC.SuppressFinalize(this);
         }
 
-        ~CaptureScreen()
-        {
-            ReleaseUnmanagedResources();
-        }
+        public virtual void Dispose(bool disposing) => ReleaseUnmanagedResources();
+        ~CaptureScreen() => Dispose(false);
 
         private void ReleaseUnmanagedResources()
         {

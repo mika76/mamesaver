@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
 using Mamesaver.Configuration.Models;
+using Serilog;
 
 namespace Mamesaver
 {
@@ -112,14 +113,18 @@ namespace Mamesaver
 
                     // Skip games which aren't sufficiently emulated
                     var status = driver.Attribute("status")?.Value;
-                    if (!validGameStatuses.Contains(status)) continue;
+                    if (!validGameStatuses.Contains(status))
+                    {
+                        Log.Information("{name} not added to game list because it has a status of {status}", name, status);
+                        continue;
+                    }
 
                     var year = element.Element("year")?.Value ?? "";
                     var manufacturer = element.Element("manufacturer")?.Value ?? "";
                     var description = element.Element("description")?.Value ?? "";
                     var rotation = element.Element("display")?.Attribute("rotate")?.Value ?? "";
 
-                    games.Add(new SelectableGame(name, description, year, manufacturer, rotation));
+                    games.Add(new SelectableGame(name, description, year, manufacturer, rotation, false));
                 }
             }
 
@@ -222,6 +227,8 @@ namespace Mamesaver
         /// <returns>list of absolute paths</returns>
         public List<string>GetConfigPaths(string key)
         {
+            Log.Debug("Getting MAME {key}", key);
+
             // Configuration in the MAME ini file which indicates path to ROMs
             var regex = new Regex($@"{key}\s+(.*)");
 

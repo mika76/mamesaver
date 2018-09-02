@@ -8,15 +8,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using Mamesaver.Configuration.Models;
+using Mamesaver.Hotkeys;
 using Serilog;
 
 namespace Mamesaver
 {
-    internal class Mamesaver : IDisposable
+    internal class Mamesaver 
     {
-        private readonly List<BlankScreen> _mameScreens = new List<BlankScreen>();
-
         private readonly ScreenCloner _screenCloner;
+        private readonly ScreenManager _screenManager;
+        private readonly HotKeyManager _hotKeyManager;
         private readonly Settings _settings;
         private readonly GameList _gameList;
         private readonly BlankScreenFactory _screenFactory;
@@ -24,9 +25,11 @@ namespace Mamesaver
         private readonly MameScreen _mameScreen;
 
         public Mamesaver(
-            Settings settings, 
-            GameList gameList, 
+            Settings settings,
+            GameList gameList,
             ScreenCloner screenCloner,
+            ScreenManager screenManager,
+            HotKeyManager hotKeyManager,
             BlankScreenFactory screenFactory,
             MameInvoker invoker,
             MameScreen mameScreen)
@@ -34,6 +37,8 @@ namespace Mamesaver
             _settings = settings;
             _gameList = gameList;
             _screenCloner = screenCloner;
+            _screenManager = screenManager;
+            _hotKeyManager = hotKeyManager;
             _screenFactory = screenFactory;
             _invoker = invoker;
             _mameScreen = mameScreen;
@@ -44,26 +49,32 @@ namespace Mamesaver
             try
             {
                 var gameList = _gameList.SelectedGames;
+                Log.Information("{selected} selected games out of {available} games", gameList.Count, _gameList.Games.Count);
 
                 // Exit run method if there were no selected games
-                if (!gameList.Any()) return;
+                if (!gameList.Any())
+                {
+                    Log.Information("No selected games available; screensaver exiting");
+                    return;
+                }
+
+                _screenManager.Initialise();
+                _hotKeyManager.Initialise();            
 
                 // Verify that MAME can be run so we can return immediately if there are errors
                 _invoker.Run("-showconfig");
-                
-                // Find the best primary screen for MAME. As games are largely vertical and screens are wide, select the one with the greatest Y axis
-                var bestPrimaryScreen = Screen.AllScreens.OrderByDescending(screen => screen.Bounds.Height).First();
 
                 // Initialise primary MAME screen
-                _mameScreens.Add(_mameScreen);
-                _mameScreen.Initialise(bestPrimaryScreen, OnScreenClosed);
+                _mameScreen.Initialise(bestPrimaryScreen);
 
                 // Initialise all other screens
                 foreach (var otherScreen in Screen.AllScreens.Where(screen => !Equals(screen, bestPrimaryScreen)))
                 {
                     var blankScreen = _screenFactory.Create();
-                    _mameScreens.Add(blankScreen);
-                    blankScreen.Initialise(otherScreen, OnScreenClosed);
+                    _screenManager.RegisterScreen(blankScreen);
+
+                    blankScreen.Initialise(otherScreen);
+                    clonedScreens.Add(blankScreen);
                 }
 
                 // Clone mame screens to other screens if required
@@ -72,7 +83,12 @@ namespace Mamesaver
                 // Run the application
                 Application.EnableVisualStyles();
 
-                var allForms = _mameScreens.Select(s => s.BackgroundForm).OfType<Form>().ToList();
+                var allForms = clonedScreens
+                    .Concat(new List<BlankScreen> { _mameScreen })
+                    .Select(s => s.BackgroundForm)
+                    .OfType<Form>()
+                    .ToList();
+
                 Application.Run(new MultiFormApplicationContext(allForms));
             }
             catch (Exception ex)
@@ -80,38 +96,6 @@ namespace Mamesaver
                 Log.Error(ex, "Failed to run screensaver");
                 throw;
             }
-        }
-
-        private void OnScreenClosed()
-        {
-            try
-            {
-                _screenCloner.Stop();
-
-                // one screen has closed so close them all
-                foreach (var screen in new List<BlankScreen>(_mameScreens))
-                {
-                    _mameScreens.Remove(screen);
-                    screen.Close();
-                    screen.Dispose();
-                }
-            }
-            catch (Exception ex)
-            {
-                // do nothing as we are closing
-                Log.Error(ex, "Error closing screens");
-            }
-
-            Application.DoEvents();
-            Application.Exit();
-        }
-
-        public void Dispose()
-        {
-            Log.Debug("{class} Dispose()", GetType().Name);
-
-            // Explicitly dispose transient screen cloner
-            _screenCloner?.Dispose();
         }
     }
 }

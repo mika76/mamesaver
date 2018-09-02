@@ -22,6 +22,15 @@ namespace Mamesaver
             _sourceScreen = mameScreen;
         }
 
+        /// <summary>
+        ///     Indicates whether the screen cloner has started and is cloning screens.
+        /// </summary>
+        public bool Started => _refreshTimer != null && _refreshTimer.Enabled;
+
+        /// <summary>
+        ///     Initialise cloning the source screen onto a collection of <see cref="BlankScreen"/>s.
+        /// </summary>
+        /// <param name="blankScreens"></param>
         public void StartCloning(List<BlankScreen> blankScreens)
         {
             _blankScreens = blankScreens;
@@ -49,15 +58,13 @@ namespace Mamesaver
 
         public void Dispose()
         {
-            Log.Debug("{class} Dispose()", GetType().Name);
-
-            _sourceScreen?.Dispose();
+            Stop();
             _refreshTimer?.Dispose();
-            _captureScreen?.Dispose();
         }
 
         public void Stop()
         {
+            Log.Debug("Stopping screen cloning");
             _refreshTimer?.Stop();
         }
 

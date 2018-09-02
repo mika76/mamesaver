@@ -84,6 +84,10 @@
     <Compile Include="BlankScreenFactory.cs" />
     <Compile Include="CaptureScreen.cs" />
     <Compile Include="ContainerFactory.cs" />
+    <Compile Include="Helper\StackHelper.cs" />
+    <Compile Include="Hotkeys\HotKey.cs" />
+    <Compile Include="Hotkeys\HotKeyEventArgs.cs" />
+    <Compile Include="Hotkeys\HotKeyManager.cs" />
     <Compile Include="MameScreen.cs" />
     <Compile Include="Configuration\Models\AdvancedSettings.cs" />
     <Compile Include="Configuration\Models\FontSettings.cs" />
@@ -92,6 +96,7 @@
     <Compile Include="Configuration\Models\LayoutSettings.cs" />
     <Compile Include="Configuration\Models\SplashScreen.cs" />
     <Compile Include="Configuration\GameListStore.cs" />
+    <Compile Include="MultiFormApplicationContext.cs" />
     <Compile Include="ScreenCloner.cs" />
     <Compile Include="ConfigForm.cs">
       <SubType>Form</SubType>
@@ -114,9 +119,9 @@
     <Compile Include="Layout\Models\MameLayout.cs" />
     <Compile Include="Layout\Models\Screen.cs" />
     <Compile Include="Layout\Models\View.cs" />
-    <Compile Include="MultiFormApplicationContext.cs" />
     <Compile Include="Configuration\GeneralSettingsStore.cs" />
     <Compile Include="Configuration\SettingsStore.cs" />
+    <Compile Include="ScreenManager.cs" />
     <Compile Include="Windows\PlatformInvokeGDI32.cs" />
     <Compile Include="Windows\PlatformInvokeUSER32.cs" />
     <Compile Include="Program.cs" />
