@@ -43,6 +43,8 @@ namespace Mamesaver
             var width = XDpi * Screen.Bounds.Width / 96f;
             var height = YDpi * Screen.Bounds.Height / 96f;
             WindowsInterop.SetWinFullScreen(BackgroundForm.Handle, Screen.Bounds.Left, Screen.Bounds.Top, (int) width, (int)height);
+
+            Log.Information("Blank screen resized {device} {bounds} xDpi {xDpi} yDpi {yDpi}", Screen.DeviceName, Screen.Bounds, XDpi, YDpi);
         }
 
         private void ReleaseDeviceContext()
