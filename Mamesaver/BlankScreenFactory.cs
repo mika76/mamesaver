@@ -1,5 +1,4 @@
-﻿using System;
-using Mamesaver.Configuration.Models;
+﻿using Mamesaver.Configuration.Models;
 
 namespace Mamesaver
 {
@@ -15,9 +14,6 @@ namespace Mamesaver
         /// <summary>
         ///     Creates a new <see cref="BlankScreen"/>.
         /// </summary>
-        public BlankScreen Create()
-        {
-            return new BlankScreen(new BackgroundForm(_layoutSettings));
-        }
+        public BlankScreen Create() => new BlankScreen(_layoutSettings);
     }
 }

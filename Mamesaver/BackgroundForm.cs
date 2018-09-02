@@ -12,6 +12,7 @@ namespace Mamesaver
 {
     public partial class BackgroundForm : Form
     {
+
         /// <summary>
         ///    Scale to apply to MAME logo, relative to display size
         /// </summary>
@@ -28,6 +29,14 @@ namespace Mamesaver
 
             primaryLabel.Font = new Font(fontSettings.Face, fontSettings.Size, FontStyle.Bold, GraphicsUnit.Point);
             secondaryLabel.Font = new Font(fontSettings.Face, fontSettings.Size * 0.9f, FontStyle.Regular, GraphicsUnit.Point);
+        }
+
+        /// <summary>
+        ///     Hides all form components.
+        /// </summary>
+        public void HideAll()
+        {
+            primaryLabel.Visible = secondaryLabel.Visible = mameLogo.Visible = false;
         }
 
         public void SetGameText(string heading, string subheading)

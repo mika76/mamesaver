@@ -1,6 +1,8 @@
 using Mamesaver.Configuration;
 using Mamesaver.Configuration.Models;
+using Mamesaver.Hotkeys;
 using Mamesaver.Layout;
+using Mamesaver.Windows;
 using SimpleInjector;
 using SimpleInjector.Lifestyles;
 
@@ -20,6 +22,10 @@ namespace Mamesaver
             var container = new Container();
             container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
 
+            // Register setting stores
+            container.Register<GameListStore>(Lifestyle.Singleton);
+            container.Register<GeneralSettingsStore>(Lifestyle.Singleton);
+
             // Register setting factories
             container.Register(() => container.GetInstance<GeneralSettingsStore>().Get(), Lifestyle.Singleton);
             container.Register(() => container.GetInstance<GameListStore>().GetGameList, Lifestyle.Singleton);
@@ -27,14 +33,19 @@ namespace Mamesaver
             container.Register(() => container.GetInstance<Settings>().AdvancedSettings, Lifestyle.Singleton);
 
             // Register components requiring explicit lifestyles
-            container.Register<BackgroundForm>(Lifestyle.Scoped);
             container.Register<MameScreen>(Lifestyle.Scoped);
+            container.Register<CaptureScreen>(Lifestyle.Scoped);
+            container.Register<ScreenCloner>(Lifestyle.Scoped);
+            container.Register<ScreenManager>(Lifestyle.Scoped);
 
             container.Register<GameListBuilder>(Lifestyle.Singleton);
             container.Register<TitleFactory>(Lifestyle.Singleton);
             container.Register<LayoutBuilder>(Lifestyle.Singleton);
             container.Register<LayoutFactory>(Lifestyle.Singleton);
             container.Register<MameInvoker>(Lifestyle.Singleton);
+            container.Register<HotKeyManager>(Lifestyle.Singleton);
+
+            container.Register<IActivityHook>(() => new UserActivityHook(), Lifestyle.Singleton);
 
             return container;
         }

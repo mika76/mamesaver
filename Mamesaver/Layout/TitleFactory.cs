@@ -7,6 +7,7 @@ using System.IO;
 using System.Windows.Forms;
 using Mamesaver.Configuration.Models;
 using Mamesaver.Layout.Models;
+using Serilog;
 
 namespace Mamesaver.Layout
 {
@@ -56,6 +57,8 @@ namespace Mamesaver.Layout
         /// </summary>
         public int Render(Game game, MameLayout layout, Stream outputStream, int monitorWidth)
         {
+            Log.Information("Rendering game titles");
+
             var bezelHeight = GetBezelHeight(game);
             var titleSize = GetDescriptionSize(game);
             var fonts = GetTitleFonts();

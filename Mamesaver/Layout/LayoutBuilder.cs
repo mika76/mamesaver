@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Mamesaver.Layout.Models;
 using Serilog;
 
@@ -20,7 +22,11 @@ namespace Mamesaver.Layout
         private readonly LayoutFactory _layoutFactory;
         private readonly DirectoryInfo _tempDirectory;
         private readonly TitleFactory _titleFactory;
-        private bool _disposed;
+
+        /// <summary>
+        ///     Base MAME paths to layout files
+        /// </summary>
+        private readonly Lazy<List<string>> _artPaths;
 
         public LayoutBuilder(GameListBuilder gameListBuilder, TitleFactory titleFactory, LayoutFactory layoutFactory)
         {
@@ -30,6 +36,7 @@ namespace Mamesaver.Layout
 
             var tempPath = Path.GetTempPath();
             _tempDirectory = Directory.CreateDirectory(Path.Combine(tempPath, "Mamesaver", "Layouts"));
+            _artPaths = new Lazy<List<string>>(() => _gameListBuilder.GetArtPaths());
         }
 
         /// <summary>
@@ -39,6 +46,8 @@ namespace Mamesaver.Layout
         /// <returns>art path containing temporary layout</returns>
         public string EnsureLayout(Game game, int monitorWidth, int monitorHeight)
         {
+            Log.Information("Creating layout");
+
             // Identify game rotation
             var rotation = GetRotation(game);
             var horizontalGame = rotation == Horizontal;
@@ -56,10 +65,7 @@ namespace Mamesaver.Layout
             }
 
             // Add our temporary art path so Mame picks up the temporary layout
-            var artPath = _gameListBuilder.GetArtPaths();
-            artPath.Add(_tempDirectory.FullName);
-
-            return string.Join(";", artPath);
+            return string.Join(";", _artPaths.Value.Concat(new List<string> { _tempDirectory.FullName }));
         }
 
         /// <summary>
@@ -105,10 +111,6 @@ namespace Mamesaver.Layout
 
         protected virtual void Dispose(bool disposing)
         {
-            if (_disposed) return;
-
-            Log.Debug("{class} Dispose()", GetType().Name);
-
             try
             {
                 _tempDirectory?.Delete(true);
@@ -117,8 +119,6 @@ namespace Mamesaver.Layout
             {
                 // Directory may have already been deleted by another instance
             }
-
-            _disposed = true;
         }
 
         public void Dispose()
@@ -127,9 +127,6 @@ namespace Mamesaver.Layout
             GC.SuppressFinalize(this);
         }
 
-        ~LayoutBuilder()
-        {
-            Dispose(false);
-        }
+        ~LayoutBuilder() => Dispose(false);
     }
 }

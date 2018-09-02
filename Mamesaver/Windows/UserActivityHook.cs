@@ -11,12 +11,35 @@ using System.Windows.Forms;
 
 namespace Mamesaver.Windows
 {
+    public interface IActivityHook
+    {
+        /// <summary>
+        ///     Occurs when the user moves the mouse, presses any mouse button or scrolls the wheel
+        /// </summary>
+        event MouseEventHandler OnMouseActivity;
+
+        /// <summary>
+        ///     Occurs when the user presses a key
+        /// </summary>
+        event KeyEventHandler KeyDown;
+
+        /// <summary>
+        ///     Occurs when the user presses and releases
+        /// </summary>
+        event KeyPressEventHandler KeyPress;
+
+        /// <summary>
+        ///     Occurs when the user releases a key
+        /// </summary>
+        event KeyEventHandler KeyUp;
+    }
+
     /// <summary>
     /// This class allows you to tap keyboard and mouse and / or to detect their activity even when an 
     /// application runes in background or does not have any user interface at all. This class raises 
     /// common .NET events with KeyEventArgs and MouseEventArgs so you can easily retrive any information you need.
     /// </summary>
-    public class UserActivityHook
+    public class UserActivityHook : IActivityHook
     {
         #region Windows structure definitions
 
