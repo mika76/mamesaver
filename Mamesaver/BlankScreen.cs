@@ -28,6 +28,16 @@ namespace Mamesaver
             Cursor.Hide();
         }
 
+        /// <summary>
+        ///     Hide the background form elements to provide seamless transition between games or after MAME termination.
+        /// </summary>
+        protected void HideBackgroundForm()
+        {
+            BackgroundForm.HideAll();
+
+            // Force an immediate refresh to avoid flicker of the MAME logo
+            BackgroundForm.Refresh();
+        }
         private void BackgroundForm_Load(object sender, EventArgs e)
         {
             WindowsInterop.SetWinFullScreen(BackgroundForm.Handle, Screen.Bounds.Left, Screen.Bounds.Top, Screen.Bounds.Width, Screen.Bounds.Height);
@@ -36,6 +46,8 @@ namespace Mamesaver
 
         private void ReleaseDeviceContext()
         {
+            HideBackgroundForm();
+
             try
             {
                 if (HandleDeviceContext == IntPtr.Zero)

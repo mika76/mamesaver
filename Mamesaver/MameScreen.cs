@@ -136,10 +136,7 @@ namespace Mamesaver
                     // Unsubscribe from hotkey events as control is being handed over to MAME
                     _hotKeyManager.HotKeyPressed -= ProcessHotKey;
 
-                    // Hide the background form elements to provide a seamless transition. We are also
-                    // forcing an immediate refresh to avoid any flicker of the MAME logo before it's hidden.
-                    BackgroundForm.HideAll();
-                    BackgroundForm.Refresh();
+                   HideBackgroundForm();
 
                     _gameTimer.Stop();
 
@@ -283,8 +280,7 @@ namespace Mamesaver
                 _splashTimer?.Stop();
                 _gameTimer = _splashTimer = null;
 
-                BackgroundForm.HideAll();
-                BackgroundForm.Refresh();
+                HideBackgroundForm();
 
                 // Stop MAME and wait for it to terminate
                 _invoker.Stop(GameProcess);
