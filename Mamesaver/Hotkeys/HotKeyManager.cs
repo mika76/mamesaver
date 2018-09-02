@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using Mamesaver.Configuration.Models;
+using Mamesaver.Power;
 using Mamesaver.Windows;
 using Serilog;
 
@@ -32,14 +33,20 @@ namespace Mamesaver.Hotkeys
 
         private readonly IActivityHook _activityHook;
         private readonly Settings _settings;
+        private readonly PowerManager _powerManager;
 
-        public HotKeyManager(IActivityHook activityHook, Settings settings)
+        public HotKeyManager(IActivityHook activityHook, Settings settings, PowerManager powerManager)
         {
             _activityHook = activityHook;
             _settings = settings;
+            _powerManager = powerManager;
         }
 
-        public void Initialise() => _activityHook.KeyDown += OnKeyDown;
+        public void Initialise()
+        {
+            Log.Debug("Initialising hotkey manager");
+            _activityHook.KeyDown += OnKeyDown;
+        }
 
         /// <summary>
         ///     Handles key down events, dispatching events for both hotkeys and unhandled key presses.
@@ -47,6 +54,9 @@ namespace Mamesaver.Hotkeys
         private void OnKeyDown(object sender, KeyEventArgs e)
         {
             var key = e.KeyCode;
+
+            // Reset display sleep timer
+            _powerManager.ResetTimer();
 
             if (_settings.HotKeys && _keyMapping.ContainsKey(key))
             {
