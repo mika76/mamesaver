@@ -1,19 +1,27 @@
 ﻿using System;
 using System.Windows.Forms;
+using Mamesaver.Power;
 using Mamesaver.Windows;
 using Serilog;
+using static Mamesaver.Windows.MonitorInterop;
+using static Mamesaver.Windows.PlatformInvokeUser32;
 using LayoutSettings = Mamesaver.Configuration.Models.LayoutSettings;
 
 namespace Mamesaver
 {
     internal class BlankScreen
     {
+        private readonly PowerManager _powerManager;
         public BackgroundForm BackgroundForm { get; }
 
         public Screen Screen { get; private set; }
         public IntPtr HandleDeviceContext { get; private set; } = IntPtr.Zero;
 
-        public BlankScreen(LayoutSettings layoutSettings) => BackgroundForm = new BackgroundForm(layoutSettings);
+        public BlankScreen(LayoutSettings layoutSettings, PowerManager powerManager)
+        {
+            _powerManager = powerManager;
+            BackgroundForm = new BackgroundForm(layoutSettings);
+        }
 
         public virtual void Initialise(Screen screen)
         {
@@ -24,6 +32,8 @@ namespace Mamesaver
             BackgroundForm.secondaryLabel.Text = string.Empty;
             BackgroundForm.mameLogo.Visible = false;
             BackgroundForm.Disposed += (sender, args) => ReleaseDeviceContext();
+
+            _powerManager.SleepTriggered += OnSleep;
 
             Cursor.Hide();
         }
@@ -38,10 +48,17 @@ namespace Mamesaver
             // Force an immediate refresh to avoid flicker of the MAME logo
             BackgroundForm.Refresh();
         }
+
+        private void OnSleep(object sender, EventArgs e)
+        {
+            Log.Information("Sleeping screen {screen}", Screen.DeviceName);
+            SetMonitorState(BackgroundForm.Handle, MonitorState.MonitorStateOff);
+        }
+
         private void BackgroundForm_Load(object sender, EventArgs e)
         {
             WindowsInterop.SetWinFullScreen(BackgroundForm.Handle, Screen.Bounds.Left, Screen.Bounds.Top, Screen.Bounds.Width, Screen.Bounds.Height);
-            HandleDeviceContext = PlatformInvokeUser32.GetDC(BackgroundForm.Handle);
+            HandleDeviceContext = GetDC(BackgroundForm.Handle);
         }
 
         private void ReleaseDeviceContext()
@@ -58,7 +75,7 @@ namespace Mamesaver
 
                 Log.Debug("Releasing device context for {screen}", Screen.DeviceName);
 
-                PlatformInvokeUser32.ReleaseDC(BackgroundForm.Handle, HandleDeviceContext);
+                ReleaseDC(BackgroundForm.Handle, HandleDeviceContext);
                 HandleDeviceContext = IntPtr.Zero;
             }
             catch (Exception ex)
