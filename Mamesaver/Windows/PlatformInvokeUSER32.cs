@@ -10,6 +10,9 @@ namespace Mamesaver.Windows
         public const int SM_CYSCREEN = 1;
         public const int SW_MINIMIZE = 6;
 
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        public static extern IntPtr SendMessage(IntPtr hWnd, int Msg, int wParam, IntPtr lParam);
+
         [DllImport("user32.dll")]
         public static extern void SetWindowPos(IntPtr hwnd, IntPtr hwndInsertAfter, int x, int y, int width, int height, uint flags);
 
