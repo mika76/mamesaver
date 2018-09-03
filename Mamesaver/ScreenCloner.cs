@@ -31,7 +31,7 @@ namespace Mamesaver
         ///     Initialise cloning the source screen onto a collection of <see cref="BlankScreen"/>s.
         /// </summary>
         /// <param name="blankScreens"></param>
-        public void Clone(List<BlankScreen> blankScreens)
+        public void StartCloning(List<BlankScreen> blankScreens)
         {
             _blankScreens = blankScreens;
 
@@ -41,6 +41,9 @@ namespace Mamesaver
                 Log.Information("No source or destinations screens to clone");
                 return;
             }
+
+            _captureScreen.Initialise(_sourceScreen.Screen.Bounds);
+            Log.Information("Source screen initialised {device} {bounds}", _sourceScreen.Screen.DeviceName, _sourceScreen.Screen.Bounds);
 
             _blankScreens.ForEach(screen => Log.Information("Destination screen found {device} {bounds}", screen.Screen.DeviceName, screen.Screen.Bounds));
 
@@ -70,7 +73,7 @@ namespace Mamesaver
             {
                 _blankScreens.ForEach(screen =>
                 {
-                    Log.Verbose("Cloning to screen {device}", screen.Screen.DeviceName);
+                    Log.Verbose("Cloning to screen {deviceName} {destination}", screen.Screen.DeviceName, screen.Screen.Bounds);
                     _captureScreen.CloneTo(screen.HandleDeviceContext, screen.Screen.Bounds);
                 });
             }
