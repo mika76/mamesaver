@@ -17,14 +17,14 @@ namespace Mamesaver
         public void Initialise(Rectangle sourceRect)
         {
             _sourceRect = sourceRect;
-            _sourceHwnd = PlatformInvokeUser32.GetDesktopWindow();
-            _hDeviceContext = PlatformInvokeUser32.GetDC(_sourceHwnd);
+            _sourceHwnd = GetDesktopWindow();
+            _hDeviceContext = GetDC(_sourceHwnd);
         }
 
         public void CloneTo(IntPtr destinationDeviceContext, Rectangle destinationRect)
         {
-            PlatformInvokeGdi32.StretchBlt(destinationDeviceContext, 0, 0, destinationRect.Width, destinationRect.Height,
-                _hDeviceContext, _sourceRect.X, _sourceRect.Y, _sourceRect.Width, _sourceRect.Height, PlatformInvokeGdi32.SRCOPY);
+            StretchBlt(destinationDeviceContext, 0, 0, destinationRect.Width, destinationRect.Height,
+                _hDeviceContext, _sourceRect.X, _sourceRect.Y, _sourceRect.Width, _sourceRect.Height, SRCOPY);
         }
 
         public void Dispose()

@@ -5,6 +5,7 @@ using Mamesaver.Windows;
 using Serilog;
 using static Mamesaver.Windows.MonitorInterop;
 using static Mamesaver.Windows.PlatformInvokeUser32;
+using static Mamesaver.Windows.PlatformInvokeGdi32;
 using LayoutSettings = Mamesaver.Configuration.Models.LayoutSettings;
 
 namespace Mamesaver
@@ -16,6 +17,8 @@ namespace Mamesaver
 
         public Screen Screen { get; private set; }
         public IntPtr HandleDeviceContext { get; private set; } = IntPtr.Zero;
+
+        private int _xDpi, _yDpi;
 
         public BlankScreen(LayoutSettings layoutSettings, PowerManager powerManager)
         {
@@ -57,18 +60,18 @@ namespace Mamesaver
 
         private void BackgroundForm_Load(object sender, EventArgs e)
         {
-            HandleDeviceContext = PlatformInvokeUser32.GetDC(BackgroundForm.Handle);
+            HandleDeviceContext = GetDC(BackgroundForm.Handle);
 
-            XDpi = PlatformInvokeGdi32.GetDeviceCaps(HandleDeviceContext, (int)PlatformInvokeGdi32.DeviceCap.LOGPIXELSX);
-            YDpi = PlatformInvokeGdi32.GetDeviceCaps(HandleDeviceContext, (int)PlatformInvokeGdi32.DeviceCap.LOGPIXELSY);
+            _xDpi = GetDeviceCaps(HandleDeviceContext, (int)DeviceCap.LOGPIXELSX);
+            _yDpi = GetDeviceCaps(HandleDeviceContext, (int)DeviceCap.LOGPIXELSY);
 
             // 96 is the default dpi for windows 
             // https://docs.microsoft.com/en-us/windows/desktop/directwrite/how-to-ensure-that-your-application-displays-properly-on-high-dpi-displays
-            var width = XDpi * Screen.Bounds.Width / 96f;
-            var height = YDpi * Screen.Bounds.Height / 96f;
+            var width = _xDpi * Screen.Bounds.Width / 96f;
+            var height = _yDpi * Screen.Bounds.Height / 96f;
             WindowsInterop.SetWinFullScreen(BackgroundForm.Handle, Screen.Bounds.Left, Screen.Bounds.Top, (int) width, (int)height);
 
-            Log.Information("Blank screen resized {device} {bounds} xDpi {xDpi} yDpi {yDpi}", Screen.DeviceName, Screen.Bounds, XDpi, YDpi);
+            Log.Information("Blank screen resized {device} {bounds} xDpi {xDpi} yDpi {yDpi}", Screen.DeviceName, Screen.Bounds, _xDpi, _yDpi);
         }
 
         private void ReleaseDeviceContext()
