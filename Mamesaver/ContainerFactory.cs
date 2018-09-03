@@ -2,6 +2,7 @@ using Mamesaver.Configuration;
 using Mamesaver.Configuration.Models;
 using Mamesaver.Hotkeys;
 using Mamesaver.Layout;
+using Mamesaver.Power;
 using Mamesaver.Windows;
 using SimpleInjector;
 using SimpleInjector.Lifestyles;
@@ -37,13 +38,15 @@ namespace Mamesaver
             container.Register<CaptureScreen>(Lifestyle.Scoped);
             container.Register<ScreenCloner>(Lifestyle.Scoped);
             container.Register<ScreenManager>(Lifestyle.Scoped);
+            container.Register<PowerManager>(Lifestyle.Scoped);
+            container.Register<HotKeyManager>(Lifestyle.Scoped);
 
             container.Register<GameListBuilder>(Lifestyle.Singleton);
             container.Register<TitleFactory>(Lifestyle.Singleton);
             container.Register<LayoutBuilder>(Lifestyle.Singleton);
             container.Register<LayoutFactory>(Lifestyle.Singleton);
             container.Register<MameInvoker>(Lifestyle.Singleton);
-            container.Register<HotKeyManager>(Lifestyle.Singleton);
+            container.Register<PowerEventWatcher>(Lifestyle.Singleton);
 
             container.Register<IActivityHook>(() => new UserActivityHook(), Lifestyle.Singleton);
 

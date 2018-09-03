@@ -42,7 +42,6 @@ namespace Mamesaver
             }
             catch (Exception e)
             {
-
                 Log.Error(e, "Error stopping MAME");
             }
         }

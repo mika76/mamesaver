@@ -1,19 +1,30 @@
 ﻿using System;
 using System.Windows.Forms;
+using Mamesaver.Power;
 using Mamesaver.Windows;
 using Serilog;
+using static Mamesaver.Windows.MonitorInterop;
+using static Mamesaver.Windows.PlatformInvokeUser32;
+using static Mamesaver.Windows.PlatformInvokeGdi32;
 using LayoutSettings = Mamesaver.Configuration.Models.LayoutSettings;
 
 namespace Mamesaver
 {
     internal class BlankScreen
     {
+        private readonly PowerManager _powerManager;
         public BackgroundForm BackgroundForm { get; }
 
         public Screen Screen { get; private set; }
         public IntPtr HandleDeviceContext { get; private set; } = IntPtr.Zero;
 
-        public BlankScreen(LayoutSettings layoutSettings) => BackgroundForm = new BackgroundForm(layoutSettings);
+        private int _xDpi, _yDpi;
+
+        public BlankScreen(LayoutSettings layoutSettings, PowerManager powerManager)
+        {
+            _powerManager = powerManager;
+            BackgroundForm = new BackgroundForm(layoutSettings);
+        }
 
         public virtual void Initialise(Screen screen)
         {
@@ -25,30 +36,48 @@ namespace Mamesaver
             BackgroundForm.mameLogo.Visible = false;
             BackgroundForm.Disposed += (sender, args) => ReleaseDeviceContext();
 
+            _powerManager.SleepTriggered += OnSleep;
+
             Cursor.Hide();
         }
 
-        public int XDpi { get; private set; }
-        public int YDpi { get; private set; }
+        /// <summary>
+        ///     Hide the background form elements to provide seamless transition between games or after MAME termination.
+        /// </summary>
+        protected void HideBackgroundForm()
+        {
+            BackgroundForm.HideAll();
+
+            // Force an immediate refresh to avoid flicker of the MAME logo
+            BackgroundForm.Refresh();
+        }
+
+        private void OnSleep(object sender, EventArgs e)
+        {
+            Log.Information("Sleeping screen {screen}", Screen.DeviceName);
+            SetMonitorState(BackgroundForm.Handle, MonitorState.MonitorStateOff);
+        }
 
         private void BackgroundForm_Load(object sender, EventArgs e)
         {
-            HandleDeviceContext = PlatformInvokeUser32.GetDC(BackgroundForm.Handle);
+            HandleDeviceContext = GetDC(BackgroundForm.Handle);
 
-            XDpi = PlatformInvokeGdi32.GetDeviceCaps(HandleDeviceContext, (int)PlatformInvokeGdi32.DeviceCap.LOGPIXELSX);
-            YDpi = PlatformInvokeGdi32.GetDeviceCaps(HandleDeviceContext, (int)PlatformInvokeGdi32.DeviceCap.LOGPIXELSY);
+            _xDpi = GetDeviceCaps(HandleDeviceContext, (int)DeviceCap.LOGPIXELSX);
+            _yDpi = GetDeviceCaps(HandleDeviceContext, (int)DeviceCap.LOGPIXELSY);
 
             // 96 is the default dpi for windows 
             // https://docs.microsoft.com/en-us/windows/desktop/directwrite/how-to-ensure-that-your-application-displays-properly-on-high-dpi-displays
-            var width = XDpi * Screen.Bounds.Width / 96f;
-            var height = YDpi * Screen.Bounds.Height / 96f;
+            var width = _xDpi * Screen.Bounds.Width / 96f;
+            var height = _yDpi * Screen.Bounds.Height / 96f;
             WindowsInterop.SetWinFullScreen(BackgroundForm.Handle, Screen.Bounds.Left, Screen.Bounds.Top, (int) width, (int)height);
 
-            Log.Information("Blank screen resized {device} {bounds} xDpi {xDpi} yDpi {yDpi}", Screen.DeviceName, Screen.Bounds, XDpi, YDpi);
+            Log.Information("Blank screen resized {device} {bounds} xDpi {xDpi} yDpi {yDpi}", Screen.DeviceName, Screen.Bounds, _xDpi, _yDpi);
         }
 
         private void ReleaseDeviceContext()
         {
+            HideBackgroundForm();
+
             try
             {
                 if (HandleDeviceContext == IntPtr.Zero)
@@ -59,7 +88,7 @@ namespace Mamesaver
 
                 Log.Debug("Releasing device context for {screen}", Screen.DeviceName);
 
-                PlatformInvokeUser32.ReleaseDC(BackgroundForm.Handle, HandleDeviceContext);
+                ReleaseDC(BackgroundForm.Handle, HandleDeviceContext);
                 HandleDeviceContext = IntPtr.Zero;
             }
             catch (Exception ex)

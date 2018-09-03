@@ -7,6 +7,7 @@ using Mamesaver.Configuration;
 using Mamesaver.Configuration.Models;
 using Mamesaver.Hotkeys;
 using Mamesaver.Layout;
+using Mamesaver.Power;
 using Serilog;
 using LayoutSettings = Mamesaver.Configuration.Models.LayoutSettings;
 
@@ -23,6 +24,7 @@ namespace Mamesaver
         private readonly GameListStore _gameListStore;
         private readonly HotKeyManager _hotKeyManager;
         private readonly LayoutBuilder _layoutBuilder;
+        private readonly PowerManager _powerManager;
         private readonly MameInvoker _invoker;
         private readonly SplashScreen _splashSettings;
 
@@ -61,13 +63,15 @@ namespace Mamesaver
             GameListStore gameListStore,
             HotKeyManager hotKeyManager,
             LayoutBuilder layoutBuilder,
-            MameInvoker invoker) : base(layoutSettings)
+            PowerManager powerManager,
+            MameInvoker invoker) : base(layoutSettings, powerManager)
         {
             _settings = settings;
             _gameList = gameList;
             _gameListStore = gameListStore;
             _hotKeyManager = hotKeyManager;
             _layoutBuilder = layoutBuilder;
+            _powerManager = powerManager;
             _invoker = invoker;
 
             _splashSettings = layoutSettings.SplashScreen;
@@ -79,6 +83,7 @@ namespace Mamesaver
 
             _selectedGames = _gameList.SelectedGames.OrderBy(_ => _random.Next()).ToList();
             _hotKeyManager.HotKeyPressed += ProcessHotKey;
+            _powerManager.SleepTriggered += OnSleep;
 
             BackgroundForm.mameLogo.Visible = true;
             BackgroundForm.Load += OnFormBackground_Load;
@@ -89,6 +94,20 @@ namespace Mamesaver
             _initialised = true;
 
             Log.Information("Initialised primary MAME screen");
+        }
+
+        /// <summary>
+        ///     Handles sleep events, closing MAME.
+        /// </summary>
+        private void OnSleep(object sender, EventArgs args)
+        {
+            Log.Information("Stopping MAME due to sleep event");
+
+            _powerManager.SleepTriggered -= OnSleep;
+            DisposeTimers();
+            HideBackgroundForm();
+
+            _invoker.Stop(GameProcess);
         }
 
         /// <summary>
@@ -136,10 +155,7 @@ namespace Mamesaver
                     // Unsubscribe from hotkey events as control is being handed over to MAME
                     _hotKeyManager.HotKeyPressed -= ProcessHotKey;
 
-                    // Hide the background form elements to provide a seamless transition. We are also
-                    // forcing an immediate refresh to avoid any flicker of the MAME logo before it's hidden.
-                    BackgroundForm.HideAll();
-                    BackgroundForm.Refresh();
+                   HideBackgroundForm();
 
                     _gameTimer.Stop();
 
@@ -279,12 +295,8 @@ namespace Mamesaver
 
             try
             {
-                _gameTimer?.Stop();
-                _splashTimer?.Stop();
-                _gameTimer = _splashTimer = null;
-
-                BackgroundForm.HideAll();
-                BackgroundForm.Refresh();
+                DisposeTimers();
+                HideBackgroundForm();
 
                 // Stop MAME and wait for it to terminate
                 _invoker.Stop(GameProcess);
@@ -293,6 +305,13 @@ namespace Mamesaver
             {
                 Log.Error(ex, "Error closing screen");
             }
+        }
+
+        private void DisposeTimers()
+        {
+            _gameTimer?.Stop();
+            _splashTimer?.Stop();
+            _gameTimer = _splashTimer = null;
         }
 
         public void Dispose()

@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Drawing;
-using Mamesaver.Windows;
 using Serilog;
+using static Mamesaver.Windows.PlatformInvokeUser32;
+using static Mamesaver.Windows.PlatformInvokeGdi32;
 
 namespace Mamesaver
 {
@@ -16,14 +17,14 @@ namespace Mamesaver
         public void Initialise(Rectangle sourceRect)
         {
             _sourceRect = sourceRect;
-            _sourceHwnd = PlatformInvokeUser32.GetDesktopWindow();
-            _hDeviceContext = PlatformInvokeUser32.GetDC(_sourceHwnd);
+            _sourceHwnd = GetDesktopWindow();
+            _hDeviceContext = GetDC(_sourceHwnd);
         }
 
         public void CloneTo(IntPtr destinationDeviceContext, Rectangle destinationRect)
         {
-            PlatformInvokeGdi32.StretchBlt(destinationDeviceContext, 0, 0, destinationRect.Width, destinationRect.Height,
-                _hDeviceContext, _sourceRect.X, _sourceRect.Y, _sourceRect.Width, _sourceRect.Height, PlatformInvokeGdi32.SRCOPY);
+            StretchBlt(destinationDeviceContext, 0, 0, destinationRect.Width, destinationRect.Height,
+                _hDeviceContext, _sourceRect.X, _sourceRect.Y, _sourceRect.Width, _sourceRect.Height, SRCOPY);
         }
 
         public void Dispose()
@@ -41,19 +42,19 @@ namespace Mamesaver
             {
                 if (_hBitmap != IntPtr.Zero)
                 {
-                    PlatformInvokeGdi32.DeleteObject(_hBitmap);
+                    DeleteObject(_hBitmap);
                     _hBitmap = IntPtr.Zero;
                 }
 
                 if (_hMemoryContext != IntPtr.Zero)
                 {
-                    PlatformInvokeGdi32.DeleteDC(_hMemoryContext);
+                    DeleteDC(_hMemoryContext);
                     _hMemoryContext = IntPtr.Zero;
                 }
 
                 if (_hDeviceContext != IntPtr.Zero)
                 {
-                    PlatformInvokeUser32.ReleaseDC(_sourceHwnd, _hDeviceContext);
+                    ReleaseDC(_sourceHwnd, _hDeviceContext);
                     _hDeviceContext = IntPtr.Zero;
                 }
             }

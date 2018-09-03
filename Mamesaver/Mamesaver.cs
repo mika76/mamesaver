@@ -9,6 +9,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Mamesaver.Configuration.Models;
 using Mamesaver.Hotkeys;
+using Mamesaver.Power;
 using Serilog;
 
 namespace Mamesaver
@@ -18,6 +19,7 @@ namespace Mamesaver
         private readonly ScreenCloner _screenCloner;
         private readonly ScreenManager _screenManager;
         private readonly HotKeyManager _hotKeyManager;
+        private readonly PowerManager _powerManager;
         private readonly Settings _settings;
         private readonly GameList _gameList;
         private readonly BlankScreenFactory _screenFactory;
@@ -30,6 +32,7 @@ namespace Mamesaver
             ScreenCloner screenCloner,
             ScreenManager screenManager,
             HotKeyManager hotKeyManager,
+            PowerManager powerManager,
             BlankScreenFactory screenFactory,
             MameInvoker invoker,
             MameScreen mameScreen)
@@ -39,6 +42,7 @@ namespace Mamesaver
             _screenCloner = screenCloner;
             _screenManager = screenManager;
             _hotKeyManager = hotKeyManager;
+            _powerManager = powerManager;
             _screenFactory = screenFactory;
             _invoker = invoker;
             _mameScreen = mameScreen;
@@ -58,8 +62,12 @@ namespace Mamesaver
                     return;
                 }
 
+                // Start listening for user input events
                 _screenManager.Initialise();
                 _hotKeyManager.Initialise();            
+
+                // Start power management timer
+                _powerManager.Initialise();
 
                 // Verify that MAME can be run so we can return immediately if there are errors
                 _invoker.Run("-showconfig");

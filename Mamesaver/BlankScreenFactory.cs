@@ -1,4 +1,5 @@
 ﻿using Mamesaver.Configuration.Models;
+using Mamesaver.Power;
 
 namespace Mamesaver
 {
@@ -8,12 +9,17 @@ namespace Mamesaver
     internal class BlankScreenFactory
     {
         private readonly LayoutSettings _layoutSettings;
+        private readonly PowerManager _powerManager;
 
-        public BlankScreenFactory(LayoutSettings layoutSettings) => _layoutSettings = layoutSettings;
+        public BlankScreenFactory(LayoutSettings layoutSettings, PowerManager powerManager)
+        {
+            _layoutSettings = layoutSettings;
+            _powerManager = powerManager;
+        }
 
         /// <summary>
         ///     Creates a new <see cref="BlankScreen"/>.
         /// </summary>
-        public BlankScreen Create() => new BlankScreen(_layoutSettings);
+        public BlankScreen Create() => new BlankScreen(_layoutSettings, _powerManager);
     }
 }
