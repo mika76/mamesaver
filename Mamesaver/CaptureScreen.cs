@@ -8,46 +8,23 @@ namespace Mamesaver
 {
     public class CaptureScreen : IDisposable
     {
-        private readonly IntPtr _sourceHwnd;
-        private readonly int _width;
-        private readonly int _height;
+        private Rectangle _sourceRect;
+        private IntPtr _sourceHwnd;
         private IntPtr _hDeviceContext;
         private IntPtr _hMemoryContext = IntPtr.Zero;
         private IntPtr _hBitmap = IntPtr.Zero;
 
-        public CaptureScreen() : this(
-            GetDesktopWindow(),
-            GetSystemMetrics(SM_CXSCREEN),
-            GetSystemMetrics(SM_CYSCREEN))
+        public void Initialise(Rectangle sourceRect)
         {
-        }
-
-        private CaptureScreen(IntPtr sourceHwnd, int width, int height)
-        {
-            _sourceHwnd = sourceHwnd;
-            _width = width;
-            _height = height;
-
-            _hDeviceContext = GetDC(_sourceHwnd);
-        }
-
-        public Bitmap Capture()
-        {
-            if (_hMemoryContext == IntPtr.Zero) _hMemoryContext = CreateCompatibleDC(_hDeviceContext);
-            if (_hBitmap == IntPtr.Zero) _hBitmap = CreateCompatibleBitmap(_hDeviceContext, _width, _height);
-
-            SelectObject(_hMemoryContext, _hBitmap);
-            BitBlt(_hMemoryContext, 0, 0, _width, _height, _hDeviceContext, 0, 0, SRCOPY);
-            var bitmap = Image.FromHbitmap(_hBitmap);
-            return bitmap;
+            _sourceRect = sourceRect;
+            _sourceHwnd = PlatformInvokeUser32.GetDesktopWindow();
+            _hDeviceContext = PlatformInvokeUser32.GetDC(_sourceHwnd);
         }
 
         public void CloneTo(IntPtr destinationDeviceContext, Rectangle destinationRect)
         {
-            Log.Verbose("Cloning screen {width}x{height} to {destination}", _width, _height, destinationRect);
-
-            StretchBlt(destinationDeviceContext, 0, 0, destinationRect.Width, destinationRect.Height,
-                _hDeviceContext, 0, 0, _width, _height, SRCOPY);
+            PlatformInvokeGdi32.StretchBlt(destinationDeviceContext, 0, 0, destinationRect.Width, destinationRect.Height,
+                _hDeviceContext, _sourceRect.X, _sourceRect.Y, _sourceRect.Width, _sourceRect.Height, PlatformInvokeGdi32.SRCOPY);
         }
 
         public void Dispose()

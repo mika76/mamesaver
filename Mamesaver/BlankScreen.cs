@@ -57,8 +57,18 @@ namespace Mamesaver
 
         private void BackgroundForm_Load(object sender, EventArgs e)
         {
-            WindowsInterop.SetWinFullScreen(BackgroundForm.Handle, Screen.Bounds.Left, Screen.Bounds.Top, Screen.Bounds.Width, Screen.Bounds.Height);
-            HandleDeviceContext = GetDC(BackgroundForm.Handle);
+            HandleDeviceContext = PlatformInvokeUser32.GetDC(BackgroundForm.Handle);
+
+            XDpi = PlatformInvokeGdi32.GetDeviceCaps(HandleDeviceContext, (int)PlatformInvokeGdi32.DeviceCap.LOGPIXELSX);
+            YDpi = PlatformInvokeGdi32.GetDeviceCaps(HandleDeviceContext, (int)PlatformInvokeGdi32.DeviceCap.LOGPIXELSY);
+
+            // 96 is the default dpi for windows 
+            // https://docs.microsoft.com/en-us/windows/desktop/directwrite/how-to-ensure-that-your-application-displays-properly-on-high-dpi-displays
+            var width = XDpi * Screen.Bounds.Width / 96f;
+            var height = YDpi * Screen.Bounds.Height / 96f;
+            WindowsInterop.SetWinFullScreen(BackgroundForm.Handle, Screen.Bounds.Left, Screen.Bounds.Top, (int) width, (int)height);
+
+            Log.Information("Blank screen resized {device} {bounds} xDpi {xDpi} yDpi {yDpi}", Screen.DeviceName, Screen.Bounds, XDpi, YDpi);
         }
 
         private void ReleaseDeviceContext()
