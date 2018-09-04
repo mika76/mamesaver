@@ -32,9 +32,17 @@ namespace Mamesaver
                 {
                     WindowsInterop.MinimizeWindow(process.MainWindowHandle);
                     process.CloseMainWindow();
+
+                    Log.Debug("Waiting for MAME to exit");
+                    if (!process.WaitForExit((int)TimeSpan.FromSeconds(5).TotalMilliseconds))
+                    {
+                        Log.Warning("Timeout waiting for MAME to exit; killing MAME");
+                        process.Kill();
+                    }
                 }
                 else
                 {
+                    Log.Debug("Killing MAME as no window handle");
                     process.Kill();
                 }
 
