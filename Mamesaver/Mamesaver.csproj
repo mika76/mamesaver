@@ -128,7 +128,7 @@
     <Compile Include="Windows\MonitorInterop.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Mamesaver.cs">
+    <Compile Include="MameOrchestrator.cs">
     </Compile>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
