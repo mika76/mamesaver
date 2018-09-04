@@ -201,7 +201,7 @@ namespace Mamesaver
 
             try
             {
-                // Start the first game
+                // Start MAME
                 GameProcess = RunGame();
             }
             catch (Exception ex)
