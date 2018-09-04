@@ -75,7 +75,7 @@ namespace Mamesaver
         /// </summary>
         private static void ConfigureErrorHandling()
         {
-            Application.SetUnhandledExceptionMode(UnhandledExceptionMode.ThrowException);
+            Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
 
             Application.ThreadException += OnThreadException;
             AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
