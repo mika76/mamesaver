@@ -52,8 +52,7 @@ namespace Mamesaver
 
         private readonly Random _random = new Random();
         private bool _initialised;
-        private Action _onClose;
-        private CancellationToken _token;
+        private CancellationTokenSource _cancellationTokenSource;
 
         /// <summary>
         ///     MAME process running the current game, or <c>null</c> if not started.
@@ -81,11 +80,10 @@ namespace Mamesaver
             _splashSettings = layoutSettings.SplashScreen;
         }
 
-        public void Initialise(Screen screen, CancellationToken token, Action onClose)
+        public void Initialise(Screen screen, CancellationTokenSource cancellationTokenSource)
         {
             base.Initialise(screen);
-            _token = token;
-            _onClose = onClose;
+            _cancellationTokenSource = cancellationTokenSource;
 
             _selectedGames = _gameList.SelectedGames.OrderBy(_ => _random.Next()).ToList();
             _hotKeyManager.HotKeyPressed += ProcessHotKey;
@@ -172,7 +170,7 @@ namespace Mamesaver
                     _invoker.Run(currentGame.Name).WaitForExit(int.MaxValue);
 
                     // Close screensaver after game has terminated
-                    _onClose();
+                    _cancellationTokenSource.Cancel();
                     break;
             }
         }
@@ -213,7 +211,7 @@ namespace Mamesaver
             catch (Exception ex)
             {
                 Log.Error(ex, "Unable to start game");
-                _onClose();
+                _cancellationTokenSource.Cancel();
 
                 throw;
             }
@@ -335,7 +333,7 @@ namespace Mamesaver
         private Process RunGame()
         {
             // Don't attempt to start MAME process if we are exiting
-            if (_token.IsCancellationRequested) return null;
+            if (_cancellationTokenSource.IsCancellationRequested) return null;
 
             var game = CurrentGame();
 

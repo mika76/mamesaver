@@ -55,6 +55,7 @@ namespace Mamesaver
             try
             {
                 _cancellationTokenSource = new CancellationTokenSource();
+                 _cancellationTokenSource.Token.Register(Stop);
 
                 var gameList = _gameList.SelectedGames;
                 Log.Information("{selected} selected games out of {available} games", gameList.Count, _gameList.Games.Count);
@@ -67,7 +68,7 @@ namespace Mamesaver
                 }
 
                 // Start listening for user input events
-                _screenManager.Initialise(_cancellationTokenSource.Token, Stop);
+                _screenManager.Initialise(_cancellationTokenSource);
                 _hotKeyManager.Initialise();            
 
                 // Start power management timer
@@ -80,7 +81,7 @@ namespace Mamesaver
                 var bestPrimaryScreen = Screen.AllScreens.OrderByDescending(screen => screen.Bounds.Height).First();
 
                 // Initialise primary MAME screen
-                _mameScreen.Initialise(bestPrimaryScreen, _cancellationTokenSource.Token, Stop);
+                _mameScreen.Initialise(bestPrimaryScreen, _cancellationTokenSource);
 
                 // Initialise all other screens
                 var clonedScreens = new List<BlankScreen>();
@@ -106,7 +107,11 @@ namespace Mamesaver
                     .ToList();
 
                 var context = new MultiFormApplicationContext(allForms);
-                Application.Run(context);
+
+                if (!_cancellationTokenSource.IsCancellationRequested)
+                {
+                    Application.Run(context);
+                }
             }
             catch (Exception ex)
             {
@@ -118,11 +123,11 @@ namespace Mamesaver
         /// <summary>
         ///     Stops the screensaver
         /// </summary>
-        public void Stop()
+        private void Stop()
         {
             try
             {
-                _cancellationTokenSource.Cancel();
+                Log.Information("Stopping screensaver");
                 Application.Exit();
             }
             catch (Exception e)

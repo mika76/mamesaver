@@ -21,9 +21,7 @@ namespace Mamesaver
         ///     List populated with screens cloned from <see cref="MameScreen"/>
         /// </summary>
         private readonly List<BlankScreen> _screens = new List<BlankScreen>();
-
-        private Action _onClose;
-        private CancellationToken _cancellationToken;
+        private CancellationTokenSource _cancellationTokenSource;
 
         public ScreenManager(ScreenCloner screenCloner, HotKeyManager hotKeyManager, IActivityHook activityHook)
         {
@@ -32,12 +30,11 @@ namespace Mamesaver
             _activityHook = activityHook;
         }
 
-        public void Initialise(CancellationToken cancellationToken, Action onClose)
+        public void Initialise(CancellationTokenSource cancellationTokenSource)
         {
             Log.Debug("Initialising screen manager");
 
-            _cancellationToken = cancellationToken;
-            _onClose = onClose;
+            _cancellationTokenSource = cancellationTokenSource;
 
             _hotKeyManager.HotKeyPressed += HotKeyHandler;
             _hotKeyManager.UnhandledKeyPressed += UnhandledKeyPressed;
@@ -61,9 +58,10 @@ namespace Mamesaver
         /// </summary>
         private void OnMouseActivity(object sender, MouseEventArgs e)
         {
-            // Log for first mouse activity
-            if (!_cancellationToken.IsCancellationRequested) Log.Debug("Exiting due to mouse activity");
-            _onClose();
+            _activityHook.OnMouseActivity -= OnMouseActivity;
+
+            Log.Debug("Exiting due to mouse activity");
+            _cancellationTokenSource.Cancel();
         }
 
         /// <summary>
@@ -71,9 +69,10 @@ namespace Mamesaver
         /// </summary>
         private void UnhandledKeyPressed(object sender, EventArgs e)
         {
-            // Log for first keypress
-            if (!_cancellationToken.IsCancellationRequested) Log.Debug("Exiting due to unhandled keypress");
-            _onClose();
+            _hotKeyManager.UnhandledKeyPressed -= UnhandledKeyPressed;
+
+            Log.Debug("Exiting due to unhandled keypress");
+            _cancellationTokenSource.Cancel();
         }
 
         /// <summary>
