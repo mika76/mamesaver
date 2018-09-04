@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Windows.Forms;
 using Mamesaver.Configuration;
 using Mamesaver.Configuration.Models;
@@ -10,6 +11,7 @@ using Mamesaver.Layout;
 using Mamesaver.Power;
 using Serilog;
 using LayoutSettings = Mamesaver.Configuration.Models.LayoutSettings;
+using Timer = System.Windows.Forms.Timer;
 
 namespace Mamesaver
 {
@@ -50,6 +52,8 @@ namespace Mamesaver
 
         private readonly Random _random = new Random();
         private bool _initialised;
+        private Action _onClose;
+        private CancellationToken _token;
 
         /// <summary>
         ///     MAME process running the current game, or <c>null</c> if not started.
@@ -77,9 +81,11 @@ namespace Mamesaver
             _splashSettings = layoutSettings.SplashScreen;
         }
 
-        public override void Initialise(Screen screen)
+        public void Initialise(Screen screen, CancellationToken token, Action onClose)
         {
             base.Initialise(screen);
+            _token = token;
+            _onClose = onClose;
 
             _selectedGames = _gameList.SelectedGames.OrderBy(_ => _random.Next()).ToList();
             _hotKeyManager.HotKeyPressed += ProcessHotKey;
@@ -166,7 +172,7 @@ namespace Mamesaver
                     _invoker.Run(currentGame.Name).WaitForExit(int.MaxValue);
 
                     // Close screensaver after game has terminated
-                    Application.Exit();
+                    _onClose();
                     break;
             }
         }
@@ -207,7 +213,7 @@ namespace Mamesaver
             catch (Exception ex)
             {
                 Log.Error(ex, "Unable to start game");
-                Application.Exit();
+                _onClose();
 
                 throw;
             }
@@ -328,6 +334,9 @@ namespace Mamesaver
         /// <returns>The <see cref="Process" /> running the game</returns>
         private Process RunGame()
         {
+            // Don't attempt to start MAME process if we are exiting
+            if (_token.IsCancellationRequested) return null;
+
             var game = CurrentGame();
 
             Log.Information("Running game {description} {year} {manufacturer} on display {display}",
