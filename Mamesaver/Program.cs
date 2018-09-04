@@ -21,6 +21,7 @@ namespace Mamesaver
         private static Container _container;
         private static bool _debug;
 
+
         [STAThread]
         public static void Main(string[] args)
         {
@@ -41,7 +42,7 @@ namespace Mamesaver
 
                 using (AsyncScopedLifestyle.BeginScope(_container))
                 {
-                    var saver = _container.GetInstance<Mamesaver>();
+                    var saver = _container.GetInstance<MameOrchestrator>();
 
                     switch (arguments[0].Trim().Substring(0, 2).ToLower())
                     {
@@ -84,7 +85,6 @@ namespace Mamesaver
         private static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             Log.Error(e.ExceptionObject as Exception, "Thread exception");
-            DisplayError();
 
             // Screensaver is in an unhandled state; force exit
             Environment.Exit(-1);
@@ -93,8 +93,7 @@ namespace Mamesaver
         private static void OnThreadException(object sender, ThreadExceptionEventArgs e)
         {
             Log.Error(e.Exception, "Thread exception");
-            DisplayError();
-            Application.Exit();
+            Environment.Exit(-1);
         }
 
         private static void DisplayError()
@@ -128,6 +127,9 @@ namespace Mamesaver
             Log.Logger = configuration.CreateLogger();
         }
 
+        /// <summary>
+        ///     Displays the screensaver configuration form.
+        /// </summary>
         public static void ShowConfig()
         {
             Application.EnableVisualStyles();
