@@ -34,7 +34,7 @@ namespace Mamesaver
             BackgroundForm.primaryLabel.Text = string.Empty;
             BackgroundForm.secondaryLabel.Text = string.Empty;
             BackgroundForm.mameLogo.Visible = false;
-            BackgroundForm.Disposed += (sender, args) => ReleaseDeviceContext();
+            BackgroundForm.FormClosing += (sender, args) => ReleaseDeviceContext();
 
             _powerManager.SleepTriggered += OnSleep;
 
