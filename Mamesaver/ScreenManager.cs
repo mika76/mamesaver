@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Windows.Forms;
 using Mamesaver.Hotkeys;
 using Mamesaver.Windows;
@@ -21,6 +22,9 @@ namespace Mamesaver
         /// </summary>
         private readonly List<BlankScreen> _screens = new List<BlankScreen>();
 
+        private Action _onClose;
+        private CancellationToken _cancellationToken;
+
         public ScreenManager(ScreenCloner screenCloner, HotKeyManager hotKeyManager, IActivityHook activityHook)
         {
             _screenCloner = screenCloner;
@@ -28,9 +32,12 @@ namespace Mamesaver
             _activityHook = activityHook;
         }
 
-        public void Initialise()
+        public void Initialise(CancellationToken cancellationToken, Action onClose)
         {
             Log.Debug("Initialising screen manager");
+
+            _cancellationToken = cancellationToken;
+            _onClose = onClose;
 
             _hotKeyManager.HotKeyPressed += HotKeyHandler;
             _hotKeyManager.UnhandledKeyPressed += UnhandledKeyPressed;
@@ -54,10 +61,9 @@ namespace Mamesaver
         /// </summary>
         private void OnMouseActivity(object sender, MouseEventArgs e)
         {
-            _activityHook.OnMouseActivity -= OnMouseActivity;
-
-            Log.Debug("Exiting due to mouse activity");
-            Application.Exit();
+            // Log for first mouse activity
+            if (!_cancellationToken.IsCancellationRequested) Log.Debug("Exiting due to mouse activity");
+            _onClose();
         }
 
         /// <summary>
@@ -65,10 +71,9 @@ namespace Mamesaver
         /// </summary>
         private void UnhandledKeyPressed(object sender, EventArgs e)
         {
-            _hotKeyManager.UnhandledKeyPressed -= UnhandledKeyPressed;
-
-            Log.Debug("Exiting due to unhandled keypress");
-            Application.Exit();
+            // Log for first keypress
+            if (!_cancellationToken.IsCancellationRequested) Log.Debug("Exiting due to unhandled keypress");
+            _onClose();
         }
 
         /// <summary>
