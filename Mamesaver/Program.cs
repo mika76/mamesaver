@@ -42,7 +42,7 @@ namespace Mamesaver
 
                 using (AsyncScopedLifestyle.BeginScope(_container))
                 {
-                    var saver = _container.GetInstance<MameOrchestrator>();
+                    var orchestrator = _container.GetInstance<MameOrchestrator>();
 
                     switch (arguments[0].Trim().Substring(0, 2).ToLower())
                     {
@@ -52,7 +52,7 @@ namespace Mamesaver
                             break;
 
                         case "/s":
-                            saver.Run();
+                            orchestrator.Run();
                             break;
 
                         case "/p":
