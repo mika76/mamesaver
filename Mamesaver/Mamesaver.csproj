@@ -85,10 +85,12 @@
     <Compile Include="BlankScreenFactory.cs" />
     <Compile Include="CaptureScreen.cs" />
     <Compile Include="ContainerFactory.cs" />
+    <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="Helper\StackHelper.cs" />
     <Compile Include="Hotkeys\HotKey.cs" />
     <Compile Include="Hotkeys\HotKeyEventArgs.cs" />
     <Compile Include="Hotkeys\HotKeyManager.cs" />
+    <Compile Include="MameErrorCodes.cs" />
     <Compile Include="MameScreen.cs" />
     <Compile Include="Configuration\Models\AdvancedSettings.cs" />
     <Compile Include="Configuration\Models\FontSettings.cs" />

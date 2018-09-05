@@ -6,6 +6,7 @@ using System.Threading;
 using System.Windows.Forms;
 using Mamesaver.Configuration;
 using Mamesaver.Configuration.Models;
+using Mamesaver.Extensions;
 using Mamesaver.Hotkeys;
 using Mamesaver.Layout;
 using Mamesaver.Power;
@@ -115,6 +116,51 @@ namespace Mamesaver
         }
 
         /// <summary>
+        ///     Hands control over to MAME to allow the user to play a game
+        /// </summary>
+        private void PlayGame(Game game)
+        {
+            // Unsubscribe from hotkey events as control is being handed over to MAME
+            _hotKeyManager.HotKeyPressed -= ProcessHotKey;
+
+            HideBackgroundForm();
+
+            _gameTimer.Stop();
+
+            // Close existing MAME instance running in screensaver
+            _invoker.Stop(GameProcess);
+
+            // Run MAME without screensaver options
+            _invoker.Run(game.Name).WaitForExit(int.MaxValue);
+
+            // Close screensaver after game has terminated
+            _cancellationTokenSource.Cancel();
+        }
+
+        /// <summary>
+        ///     Deselects a game, saving configuration and playing the next game
+        /// </summary>
+        private void DeselectGame(Game game)
+        {
+            // Sanity check that the user isn't attempting to deselect their last selected game
+            if (_selectedGames.Count == 1)
+            {
+                Log.Information("Attempting to deselect single remaining game; ignoring request");
+                return;
+            }
+
+            Log.Information("Deselecting {game}", game.Name);
+
+            // Update game selection and update store
+            _gameListStore.ChangeSelection(game.Name, false);
+            _selectedGames.Remove(game);
+            if (_gameIndex >= _selectedGames.Count) _gameIndex = 0;
+
+            // Start next game
+            StartGame();
+        }
+
+        /// <summary>
         ///     Handle a hot key event.
         /// </summary>
         private void ProcessHotKey(object sender, HotKeyEventArgs e)
@@ -136,41 +182,11 @@ namespace Mamesaver
                     break;
 
                 case HotKey.DeselectGame:
-                    // Sanity check that the user isn't attempting to deselect their last selected game
-                    if (_selectedGames.Count == 1)
-                    {
-                        Log.Information("Attempting to deselect single remaining game; ignoring request");
-                        return;
-                    }
-
-                    Log.Information("Deselecting {game}", currentGame.Name);
-
-                    // Update game selection and update store
-                    _gameListStore.ChangeSelection(currentGame.Name, false);
-                    _selectedGames.Remove(currentGame);
-                    if (_gameIndex >= _selectedGames.Count) _gameIndex = 0;
-
-                    // Start next game
-                    StartGame();
+                    DeselectGame(currentGame);
                     break;
 
                 case HotKey.PlayGame:
-
-                    // Unsubscribe from hotkey events as control is being handed over to MAME
-                    _hotKeyManager.HotKeyPressed -= ProcessHotKey;
-
-                   HideBackgroundForm();
-
-                    _gameTimer.Stop();
-
-                    // Close existing MAME instance running in screensaver
-                    _invoker.Stop(GameProcess);
-
-                    // Run MAME without screensaver options
-                    _invoker.Run(currentGame.Name).WaitForExit(int.MaxValue);
-
-                    // Close screensaver after game has terminated
-                    _cancellationTokenSource.Cancel();
+                    PlayGame(currentGame);
                     break;
             }
         }
@@ -201,12 +217,16 @@ namespace Mamesaver
         /// </summary>
         private void SplashTimerTick(object sender, EventArgs e)
         {
+            Log.Information("in splash timer tick!");
             _splashTimer.Stop();
 
             try
             {
                 // Start MAME
                 GameProcess = RunGame();
+                GameProcess.Exited += GameExited;
+                GameProcess.Start();
+                Log.Debug("MAME started; pid: {pid}", GameProcess.Id);
             }
             catch (Exception ex)
             {
@@ -214,6 +234,29 @@ namespace Mamesaver
                 _cancellationTokenSource.Cancel();
 
                 throw;
+            }
+        }
+
+        /// <summary>
+        ///     Event handler for MAME exiting
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void GameExited(object sender, EventArgs e)
+        {
+            GameProcess.Exited -= GameExited;
+
+            var process = (Process) sender;
+            if (process.ExitCode == 0) return;
+
+            // If MAME exited with an error, deselect the current game
+            if (process.ExitCode.In(MameErrorCodes.RequireFilesMissing, MameErrorCodes.UnknownSystem))
+            {
+                var game = CurrentGame();
+                Log.Warning("MAME exited unexpectedly playing {game}", game.Name);
+
+                // FIXME this isn't re-triggering the splash timer
+                DeselectGame(CurrentGame());
             }
         }
 
@@ -257,7 +300,7 @@ namespace Mamesaver
                 _gameTimer.Stop();
 
                 // End the currently playing game
-                _invoker.Stop(GameProcess);
+                if (!GameProcess.HasExited) _invoker.Stop(GameProcess);
 
                 // Display splash screen for next game if required
                 DisplaySplashText();
@@ -361,7 +404,7 @@ namespace Mamesaver
                 arguments.Add(artPath);
             }
 
-            return _invoker.Run(arguments.ToArray());
+            return _invoker.Run(false, arguments.ToArray());
         }
     }
 }
