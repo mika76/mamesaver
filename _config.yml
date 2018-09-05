@@ -1,0 +1,8 @@
+title: Mamesaver
+description: Mamesaver is a mame emulated screensaver - get all the good ol' games playing their demo modes while you procrastinate and enjoy!
+google_analytics: 
+show_downloads: true
+theme: jekyll-theme-minimal
+
+gems:
+  - jekyll-mentions
