@@ -25,6 +25,7 @@ namespace Mamesaver
         private readonly GameList _gameList;
         private readonly BlankScreenFactory _screenFactory;
         private readonly MameInvoker _invoker;
+        private readonly GamePlayManager _gamePlayManager;
         private readonly MameScreen _mameScreen;
         private CancellationTokenSource _cancellationTokenSource;
 
@@ -37,6 +38,7 @@ namespace Mamesaver
             PowerManager powerManager,
             BlankScreenFactory screenFactory,
             MameInvoker invoker,
+            GamePlayManager gamePlayManager,
             MameScreen mameScreen)
         {
             _settings = settings;
@@ -47,6 +49,7 @@ namespace Mamesaver
             _powerManager = powerManager;
             _screenFactory = screenFactory;
             _invoker = invoker;
+            _gamePlayManager = gamePlayManager;
             _mameScreen = mameScreen;
         }
 
@@ -81,7 +84,8 @@ namespace Mamesaver
                 var bestPrimaryScreen = Screen.AllScreens.OrderByDescending(screen => screen.Bounds.Height).First();
 
                 // Initialise primary MAME screen
-                _mameScreen.Initialise(bestPrimaryScreen, _cancellationTokenSource);
+                _gamePlayManager.Initialise(bestPrimaryScreen, _cancellationTokenSource);
+                _mameScreen.Initialise(bestPrimaryScreen);
 
                 // Initialise all other screens
                 var clonedScreens = new List<BlankScreen>();
