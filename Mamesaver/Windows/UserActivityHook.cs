@@ -479,19 +479,20 @@ namespace Mamesaver.Windows
             Start(InstallMouseHook, InstallKeyboardHook);
         }
 
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                Stop(true, true, false);
+            }
+        }
         public void Dispose()
         {
-            //uninstall hooks and do not throw exceptions
-            Stop(true, true, false); 
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
-        /// <summary>
-        /// Destruction.
-        /// </summary>
-        ~UserActivityHook()
-        {
-            Dispose();
-        }
+        ~UserActivityHook() => Dispose(false);
 
         /// <summary>
         /// Occurs when the user moves the mouse, presses any mouse button or scrolls the wheel

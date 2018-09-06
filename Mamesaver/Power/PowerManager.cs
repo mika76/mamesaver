@@ -76,7 +76,7 @@ namespace Mamesaver.Power
                 powerType.Value.ToString(), _sleepTimeout.TotalMinutes);
 
             // Create a timer which fires once when the display or computer should go to sleep
-            _sleepTimer = new Timer { Interval = (int)_sleepTimeout.TotalMilliseconds, AutoReset = false };
+            _sleepTimer = new Timer { Interval = Math.Min(_sleepTimeout.TotalMilliseconds, int.MaxValue), AutoReset = false };
 
             _sleepTimer.Elapsed += SleepTimerTick;
             _sleepTimer.Start();
@@ -125,7 +125,7 @@ namespace Mamesaver.Power
                 powerType.Value.ToString(), _sleepTimeout.TotalMinutes);
 
             // Update sleep timer on power state change due to different sleep configurations
-            _sleepTimer.Interval = (int)_sleepTimeout.TotalMilliseconds;
+            _sleepTimer.Interval = Math.Min(_sleepTimeout.TotalMilliseconds, int.MaxValue);
 
             _sleepTimer.Stop();
             _sleepTimer.Start();
