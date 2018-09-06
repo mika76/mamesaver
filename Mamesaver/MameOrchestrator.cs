@@ -15,6 +15,10 @@ using Serilog;
 
 namespace Mamesaver
 {
+    /// <summary>
+    ///     Orchestrates creation, initialisation, management and destruction of the screensaver 
+    ///     and dependent services.
+    /// </summary>
     internal class MameOrchestrator  : IDisposable
     {
         private readonly ScreenCloner _screenCloner;

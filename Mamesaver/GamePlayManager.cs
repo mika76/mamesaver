@@ -88,8 +88,9 @@ namespace Mamesaver
             _cancellationTokenSource = cancellationTokenSource;
 
             _powerManager.SleepTriggered += OnSleep;
-            _selectedGames = _gameList.SelectedGames.Shuffle();
             _hotKeyManager.HotKeyPressed += ProcessHotKey;
+
+            _selectedGames = _gameList.SelectedGames.Shuffle();
 
             _initialised = true;
         }

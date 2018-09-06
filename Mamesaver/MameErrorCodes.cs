@@ -1,7 +1,7 @@
 ﻿namespace Mamesaver
 {
     /// <summary>
-    ///     Error codes returned from MAME
+    ///     Error codes returned from MAME.
     /// </summary>
     public class MameErrorCodes
     {
