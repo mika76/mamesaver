@@ -35,6 +35,7 @@ namespace Mamesaver
 
             // Register components requiring explicit lifestyles
             container.Register<MameScreen>(Lifestyle.Scoped);
+            container.Register<GamePlayManager>(Lifestyle.Scoped);
             container.Register<CaptureScreen>(Lifestyle.Scoped);
             container.Register<ScreenCloner>(Lifestyle.Scoped);
             container.Register<ScreenManager>(Lifestyle.Scoped);

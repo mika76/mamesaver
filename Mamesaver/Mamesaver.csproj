@@ -86,6 +86,7 @@
     <Compile Include="CaptureScreen.cs" />
     <Compile Include="ContainerFactory.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />
+    <Compile Include="GamePlayManager.cs" />
     <Compile Include="Helper\StackHelper.cs" />
     <Compile Include="Hotkeys\HotKey.cs" />
     <Compile Include="Hotkeys\HotKeyEventArgs.cs" />
