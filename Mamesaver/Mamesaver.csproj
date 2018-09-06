@@ -85,10 +85,13 @@
     <Compile Include="BlankScreenFactory.cs" />
     <Compile Include="CaptureScreen.cs" />
     <Compile Include="ContainerFactory.cs" />
+    <Compile Include="Extensions\EnumerableExtensions.cs" />
+    <Compile Include="GamePlayManager.cs" />
     <Compile Include="Helper\StackHelper.cs" />
     <Compile Include="Hotkeys\HotKey.cs" />
     <Compile Include="Hotkeys\HotKeyEventArgs.cs" />
     <Compile Include="Hotkeys\HotKeyManager.cs" />
+    <Compile Include="MameErrorCodes.cs" />
     <Compile Include="MameScreen.cs" />
     <Compile Include="Configuration\Models\AdvancedSettings.cs" />
     <Compile Include="Configuration\Models\FontSettings.cs" />
@@ -128,7 +131,7 @@
     <Compile Include="Windows\MonitorInterop.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Mamesaver.cs">
+    <Compile Include="MameOrchestrator.cs">
     </Compile>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>

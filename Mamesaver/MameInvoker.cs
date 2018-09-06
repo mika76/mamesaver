@@ -32,9 +32,17 @@ namespace Mamesaver
                 {
                     WindowsInterop.MinimizeWindow(process.MainWindowHandle);
                     process.CloseMainWindow();
+
+                    Log.Debug("Waiting for MAME to exit");
+                    if (!process.WaitForExit((int)TimeSpan.FromSeconds(5).TotalMilliseconds))
+                    {
+                        Log.Warning("Timeout waiting for MAME to exit; killing MAME");
+                        process.Kill();
+                    }
                 }
                 else
                 {
+                    Log.Debug("Killing MAME as no window handle");
                     process.Kill();
                 }
 
@@ -47,10 +55,18 @@ namespace Mamesaver
         }
 
         /// <summary>
-        ///     Invokes MAME, returning the created process.
+        ///     Invokes and starts MAME, returning the created process.
         /// </summary>
         /// <param name="arguments">arguments to pass to Mame</param>
-        public Process Run(params string[] arguments)
+
+        public Process Run(params string[] arguments) => Run(true, arguments);
+
+        /// <summary>
+        ///     Invokes MAME, returning the created process.
+        /// </summary>
+        /// <param name="start">whether to start the MAME process</param>
+        /// <param name="arguments">arguments to pass to Mame</param>
+        public Process Run(bool start, params string[] arguments)
         {
             Log.Information("Invoking MAME with arguments: {arguments}", string.Join(" ", arguments));
 
@@ -67,11 +83,14 @@ namespace Mamesaver
 
             try
             {
-                var process = Process.Start(psi);
-                if (process == null) throw new InvalidOperationException($"MAME process not created: {psi.FileName} {psi.Arguments}");
+                var process = new Process { StartInfo = psi };
+                if (start)
+                {
+                    if (!process.Start()) throw new InvalidOperationException($"MAME process not started: {psi.FileName} {psi.Arguments}");
+                    Log.Debug("MAME started; pid: {pid}", process.Id);
+                }
 
-                Log.Debug("MAME started; pid: {pid}", process.Id);
-
+                process.EnableRaisingEvents = true;
                 return process;
             }
             catch (Exception e)

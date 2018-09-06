@@ -83,14 +83,14 @@ namespace Mamesaver
         {
             using (var stream = GetGameDetails(new List<string> { game }))
             {
-                return GetRomDetails(stream).First();
+                return GetRomDetails(stream, false).First();
             }
         }
 
         /// <summary>
         ///     Extracts ROM metadata for display from a XML stream from MAME.
         /// </summary>
-        private List<SelectableGame> GetRomDetails(StreamReader stream)
+        private List<SelectableGame> GetRomDetails(StreamReader stream, bool verify = true)
         {
             var games = new List<SelectableGame>();
             var validGameStatuses = ValidGameStatuses();
@@ -113,7 +113,7 @@ namespace Mamesaver
 
                     // Skip games which aren't sufficiently emulated
                     var status = driver.Attribute("status")?.Value;
-                    if (!validGameStatuses.Contains(status))
+                    if (verify && !validGameStatuses.Contains(status))
                     {
                         Log.Information("{name} not added to game list because it has a status of {status}", name, status);
                         continue;

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Windows.Forms;
 using Mamesaver.Hotkeys;
 using Mamesaver.Windows;
@@ -20,6 +21,7 @@ namespace Mamesaver
         ///     List populated with screens cloned from <see cref="MameScreen"/>
         /// </summary>
         private readonly List<BlankScreen> _screens = new List<BlankScreen>();
+        private CancellationTokenSource _cancellationTokenSource;
 
         public ScreenManager(ScreenCloner screenCloner, HotKeyManager hotKeyManager, IActivityHook activityHook)
         {
@@ -28,9 +30,11 @@ namespace Mamesaver
             _activityHook = activityHook;
         }
 
-        public void Initialise()
+        public void Initialise(CancellationTokenSource cancellationTokenSource)
         {
             Log.Debug("Initialising screen manager");
+
+            _cancellationTokenSource = cancellationTokenSource;
 
             _hotKeyManager.HotKeyPressed += HotKeyHandler;
             _hotKeyManager.UnhandledKeyPressed += UnhandledKeyPressed;
@@ -57,7 +61,7 @@ namespace Mamesaver
             _activityHook.OnMouseActivity -= OnMouseActivity;
 
             Log.Debug("Exiting due to mouse activity");
-            Application.Exit();
+            _cancellationTokenSource.Cancel();
         }
 
         /// <summary>
@@ -68,7 +72,7 @@ namespace Mamesaver
             _hotKeyManager.UnhandledKeyPressed -= UnhandledKeyPressed;
 
             Log.Debug("Exiting due to unhandled keypress");
-            Application.Exit();
+            _cancellationTokenSource.Cancel();
         }
 
         /// <summary>
