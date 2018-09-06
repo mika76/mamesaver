@@ -2,7 +2,7 @@
 
 - [Introduction](#introduction)
 - [Requirements](#requirements)
- - [Installation](#installation)
+- [Installation](#installation)
 - [Usage](#usage)
 - [Configuration](#configuration)
 - [Hotkeys](#hotkeys)
@@ -21,9 +21,8 @@ Licensed under The MIT License
 
 Mamesaver is a Windows screen saver that runs MAME with a random game for specified intervals of time.
 
-![General Settings](Resources/SettingsPanel1.png) 
-![Game List](Resources/SettingsPanel2.png)
-
+<img src="Resources/SettingsPanel1.png" width="250"> <img src="Resources/SettingsPanel2.png" width="250"> <img src="Resources/SettingsPanel3.png" width="250">
+<img src="Resources/SettingsPanel4.png" width="250"> <img src="Resources/SettingsPanel5.png" width="250">
 
 ### REQUIREMENTS
 * Microsoft .NET 4.6
