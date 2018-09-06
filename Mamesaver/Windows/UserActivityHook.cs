@@ -481,17 +481,20 @@ namespace Mamesaver.Windows
 
         public void Dispose()
         {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
             //uninstall hooks and do not throw exceptions
-            Stop(true, true, false); 
+            Stop(true, true, false);
         }
 
         /// <summary>
         /// Destruction.
         /// </summary>
-        ~UserActivityHook()
-        {
-            Dispose();
-        }
+        ~UserActivityHook() => Dispose(false);
 
         /// <summary>
         /// Occurs when the user moves the mouse, presses any mouse button or scrolls the wheel

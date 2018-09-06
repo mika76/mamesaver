@@ -21,7 +21,7 @@ namespace Mamesaver.Power
         private readonly PowerEventWatcher _eventWatcher;
         private Timer _sleepTimer;
 
-        public delegate void SleepTriggerManager(object sender, EventArgs args);
+        public delegate void SleepTriggerManager(object sender, EventArgs e);
 
         /// <summary>
         ///     Fired when the screensaver should turn the display to sleep.
@@ -165,7 +165,7 @@ namespace Mamesaver.Power
             GC.SuppressFinalize(this);
         }
 
-        public virtual void Dispose(bool disposing)
+        protected virtual void Dispose(bool disposing)
         {
             if (!disposing) return;
             _sleepTimer?.Dispose();
