@@ -32,7 +32,7 @@ namespace Mamesaver.Power
         ///     Time before a <see cref="SleepTriggered"/> event is published, based on the user's power management 
         ///     configuration.
         /// </summary>
-        private TimeSpan _sleepTimeout;
+        private TimeSpan? _sleepTimeout;
 
         /// <summary>
         ///     Current power source type.
@@ -72,14 +72,16 @@ namespace Mamesaver.Power
 
             // Identify policy for selected power type
             _sleepTimeout = GetSleepTimeout(powerType.Value);
-            Log.Information("Connected to {powerType} power; sleeping after {min} minutes", 
-                powerType.Value.ToString(), _sleepTimeout.TotalMinutes);
-
-            // Create a timer which fires once when the display or computer should go to sleep
-            _sleepTimer = new Timer { Interval = (int)_sleepTimeout.TotalMilliseconds, AutoReset = false };
-
-            _sleepTimer.Elapsed += SleepTimerTick;
-            _sleepTimer.Start();
+            if (_sleepTimeout == null)
+            {
+                Log.Information("Connected to {powerType} power; no sleep configured", powerType.Value.ToString());
+            }
+            else
+            {
+                // Create a timer which fires once when the display or computer should go to sleep
+                Log.Information("Connected to {powerType} power; sleeping after {min} minutes", powerType.Value.ToString(), _sleepTimeout.Value.TotalMinutes);
+                InitSleepTimer();
+            }
 
             // Receive notifications for power state changes so the timer can be updated
             _eventWatcher.Initialise();
@@ -87,9 +89,26 @@ namespace Mamesaver.Power
         }
 
         /// <summary>
+        ///     Either creates or updates the sleep timer.
+        /// </summary>
+        private void InitSleepTimer()
+        {
+            if (_sleepTimeout == null) throw new InvalidOperationException("Can't create a timer with no timeout specified");
+
+            if (_sleepTimer == null)
+            {
+                _sleepTimer = new Timer { AutoReset = false };
+                _sleepTimer.Elapsed += SleepTimerTick;
+            }
+
+            _sleepTimer.Interval = (int)_sleepTimeout.Value.TotalMilliseconds;
+            _sleepTimer.Start();
+        }
+
+        /// <summary>
         ///     Returns the lowest of screen and PC sleep settings for a given power type.
         /// </summary>
-        private static TimeSpan GetSleepTimeout(PowerType powerType)
+        private static TimeSpan? GetSleepTimeout(PowerType powerType)
         {
             var powerPolicy = PowerInterop.GetPowerPolicy(powerType);
             return new[] { powerPolicy.VideoTimeout, powerPolicy.IdleTimeout }.Min();
@@ -119,16 +138,20 @@ namespace Mamesaver.Power
             if (_currentPowerType == powerType) return;
             _currentPowerType = powerType.Value;
 
+            _sleepTimer?.Stop();
+
             // Identify policy for selected power type
             _sleepTimeout = GetSleepTimeout(powerType.Value);
-            Log.Information("Power changed to {powerType} power; sleeping after {min} minutes",
-                powerType.Value.ToString(), _sleepTimeout.TotalMinutes);
-
-            // Update sleep timer on power state change due to different sleep configurations
-            _sleepTimer.Interval = (int)_sleepTimeout.TotalMilliseconds;
-
-            _sleepTimer.Stop();
-            _sleepTimer.Start();
+            if (_sleepTimeout == null)
+            {
+                Log.Information("Power changed to {powerType} power; no sleep configured", powerType.Value.ToString());
+            }
+            else
+            {
+                // Update sleep timer on power state change due to different sleep configurations
+                Log.Information("Power changed to {powerType} power; sleeping after {min} minutes", powerType.Value.ToString(), _sleepTimeout.Value.TotalMinutes);
+                InitSleepTimer();
+            }
         }
 
         /// <summary>
