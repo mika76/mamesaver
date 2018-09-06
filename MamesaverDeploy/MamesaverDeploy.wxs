@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <Product Id="9ba27e17-63e0-4204-a7b9-5bc5231386e5" Name="Mamesaver" Language="1033" Version="1.0.0.0" Manufacturer="Mladen Mihajlovic" UpgradeCode="ffa9f413-26d4-4376-821f-57bcd6141175">
+  <Product Id="9ba27e17-63e0-4204-a7b9-5bc5231386e5" Name="Mamesaver" Language="1033" Version="2.0.0.0" Manufacturer="Mladen Mihajlovic" UpgradeCode="ffa9f413-26d4-4376-821f-57bcd6141175">
     <Package InstallerVersion="200" Compressed="yes" />
 
     <Media Id="1" Cabinet="Mamesaver.cab" EmbedCab="yes" CompressionLevel="high" />

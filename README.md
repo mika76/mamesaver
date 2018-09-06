@@ -12,7 +12,7 @@
 - [Open source](#open-source)
 
 
-v1.1
+v2.0
 Licensed under The MIT License
 
 [![Build status](https://ci.appveyor.com/api/projects/status/2b8n7te1bq8rf1pp?svg=true)](https://ci.appveyor.com/project/mmihajlovic/mamesaver)
