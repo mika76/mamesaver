@@ -139,7 +139,7 @@ namespace Mamesaver
         }
 
         /// <summary>
-        ///     Deselects a game, saving configuration and playing the next game
+        ///     Deselects a game, saving configuration and playing the next game.
         /// </summary>
         private void DeselectGame(Game game)
         {
