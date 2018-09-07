@@ -10,7 +10,7 @@ using LayoutSettings = Mamesaver.Configuration.Models.LayoutSettings;
 
 namespace Mamesaver
 {
-    internal class BlankScreen
+    internal class BlankScreen : IDisposable
     {
         private readonly PowerManager _powerManager;
         public BackgroundForm BackgroundForm { get; }
@@ -96,5 +96,21 @@ namespace Mamesaver
                 Log.Error(ex, "Error releasing device context for {screen}", Screen.DeviceName);
             }
         }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+       }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposing) return;
+
+            _powerManager?.Dispose();
+            BackgroundForm?.Dispose();
+        }
+
+        ~BlankScreen() => Dispose(false);
     }
 }

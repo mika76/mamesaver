@@ -37,10 +37,10 @@ namespace Mamesaver.Windows
                     {
                         IdleTimeout =
                             userPolicy.IdleTimeoutAc == 0 || userPolicy.IdleAc.Action == POWER_ACTION.PowerActionNone
-                                ? TimeSpan.MaxValue
+                                ? (TimeSpan?)null
                                 : TimeSpan.FromSeconds(userPolicy.IdleTimeoutAc),
                         VideoTimeout = userPolicy.VideoTimeoutAc == 0
-                            ? TimeSpan.MaxValue
+                            ? (TimeSpan?)null
                             : TimeSpan.FromSeconds(userPolicy.VideoTimeoutAc)
                     };
                 case PowerType.DC:
@@ -48,10 +48,10 @@ namespace Mamesaver.Windows
                     {
                         IdleTimeout =
                             userPolicy.IdleTimeoutDc == 0 || userPolicy.IdleDc.Action == POWER_ACTION.PowerActionNone
-                                ? TimeSpan.MaxValue
+                                ? (TimeSpan?)null
                                 : TimeSpan.FromSeconds(userPolicy.IdleTimeoutDc),
                         VideoTimeout = userPolicy.VideoTimeoutDc == 0
-                            ? TimeSpan.MaxValue
+                            ? (TimeSpan?)null
                             : TimeSpan.FromSeconds(userPolicy.VideoTimeoutDc)
                     };
                 default:
@@ -68,7 +68,14 @@ namespace Mamesaver.Windows
 
     public class PowerPolicy
     {
-        public TimeSpan VideoTimeout { get; set; }
-        public TimeSpan IdleTimeout { get; set; }
+        /// <summary>
+        ///     Timeout for screen to go to sleep, or <c>null</c> if no sleep is specified.
+        /// </summary>
+        public TimeSpan? VideoTimeout { get; set; }
+
+        /// <summary>
+        ///     Timeout for PC to go to sleep, or <c>null</c> if no sleep is specified.
+        /// </summary>
+        public TimeSpan? IdleTimeout { get; set; }
     }
 }

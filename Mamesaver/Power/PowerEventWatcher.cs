@@ -8,7 +8,7 @@ namespace Mamesaver.Power
     ///     Listens for power source change events, firing a <see cref="PowerStateChanged"/> event
     ///     if received.
     /// </summary>
-    public class PowerEventWatcher
+    public class PowerEventWatcher : IDisposable
     {
         /// <summary>
         ///     Value of event corresponding to a power state change.
@@ -21,7 +21,7 @@ namespace Mamesaver.Power
         private ManagementEventWatcher _managementEventWatcher;
         public event PowerEventHandler PowerStateChanged;
 
-        public delegate void PowerEventHandler(object sender, EventArgs args);
+        public delegate void PowerEventHandler(object sender, EventArgs e);
 
         /// <summary>
         ///     Initialises the power event watcher to fire <see cref="PowerStateChanged"/>
@@ -51,7 +51,7 @@ namespace Mamesaver.Power
             }
         }
 
-        public virtual void Dispose(bool disposing)
+        protected virtual void Dispose(bool disposing)
         {
             if (!disposing) return;
 

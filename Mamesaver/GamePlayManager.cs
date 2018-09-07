@@ -26,9 +26,9 @@ namespace Mamesaver
         private readonly PowerManager _powerManager;
         private readonly MameInvoker _invoker;
 
-        public delegate void PlayGameEventHandler(object sender, EventArgs args);
-        public delegate void StartGameEventHandler(object sender, EventArgs args);
-        public delegate void GameStartedEventHandler(object sender, EventArgs args);
+        public delegate void PlayGameEventHandler(object sender, EventArgs e);
+        public delegate void StartGameEventHandler(object sender, EventArgs e);
+        public delegate void GameStartedEventHandler(object sender, EventArgs e);
 
         /// <summary>
         ///     Game has been started by MAME.
@@ -139,7 +139,7 @@ namespace Mamesaver
         }
 
         /// <summary>
-        ///     Deselects a game, saving configuration and playing the next game
+        ///     Deselects a game, saving configuration and playing the next game.
         /// </summary>
         private void DeselectGame(Game game)
         {

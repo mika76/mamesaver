@@ -33,7 +33,7 @@ namespace Mamesaver
             GC.SuppressFinalize(this);
         }
 
-        public virtual void Dispose(bool disposing) => ReleaseUnmanagedResources();
+        protected virtual void Dispose(bool disposing) => ReleaseUnmanagedResources();
         ~CaptureScreen() => Dispose(false);
 
         private void ReleaseUnmanagedResources()

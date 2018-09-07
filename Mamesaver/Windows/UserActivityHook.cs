@@ -479,19 +479,20 @@ namespace Mamesaver.Windows
             Start(InstallMouseHook, InstallKeyboardHook);
         }
 
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                Stop(true, true, false);
-            }
-        }
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
 
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposing) return;
+
+            Stop(true, true, false);
+        }
+
+    
         ~UserActivityHook() => Dispose(false);
 
         /// <summary>

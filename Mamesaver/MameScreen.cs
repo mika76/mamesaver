@@ -12,7 +12,7 @@ namespace Mamesaver
     ///     A screen that will launch MAME with a random game from the list. If configured, this screen also handles hotkey events which
     ///     affect the MAME process.
     /// </summary>
-    internal class MameScreen : BlankScreen, IDisposable
+    internal class MameScreen : BlankScreen
     {
         private readonly Settings _settings;
         private readonly GamePlayManager _gamePlayManager;
@@ -163,8 +163,10 @@ namespace Mamesaver
         ///     Stop the timer, set cancelled flag, close any current process and close the background form.
         ///     Once this has all been done, the application should end.
         /// </summary>
-        public virtual void Dispose(bool disposing)
+        protected override void Dispose(bool disposing)
         {
+            base.Dispose(disposing);
+
             if (!disposing || !_initialised) return;
 
             Log.Information("Closing primary MAME screen {screen}", Screen.DeviceName);
@@ -185,12 +187,6 @@ namespace Mamesaver
             _gameTimer?.Stop();
             _splashTimer?.Stop();
             _gameTimer = _splashTimer = null;
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
         }
 
         ~MameScreen() => Dispose(false);
