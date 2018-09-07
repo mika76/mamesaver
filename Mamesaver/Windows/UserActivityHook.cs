@@ -487,13 +487,12 @@ namespace Mamesaver.Windows
 
         protected virtual void Dispose(bool disposing)
         {
-            //uninstall hooks and do not throw exceptions
+            if (!disposing) return;
+
             Stop(true, true, false);
         }
 
-        /// <summary>
-        /// Destruction.
-        /// </summary>
+    
         ~UserActivityHook() => Dispose(false);
 
         /// <summary>
