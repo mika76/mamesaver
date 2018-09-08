@@ -1,12 +1,12 @@
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
 <head>
   <!-- Global site tag (gtag.js) - Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-73902047-1"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
+    function gtag() { dataLayer.push(arguments); }
     gtag('js', new Date());
 
     gtag('config', 'UA-73902047-1');
@@ -17,16 +17,21 @@
   <meta name="author" content="Mladen Mihajlovic" />
   <link rel="stylesheet" type="text/css" href="style.css" media="screen, print" />
   <title>Mamesaver</title>
+  <script src="wa-mediabox.min.js"></script>
+  <link rel="stylesheet" href="wa-mediabox.min.css" />
 </head>
+
 <body>
-<div id="centerColumn">
-  <div id="header">
-    <h1>Mamesaver</h1>
-    <h2>A MAME Screen Saver</h2>
-    <div id="navtabs">
-      <ul>
-        <li><a href="/" title="Home"><span>Home</span></a></li>
-        <!--
+  <div id="centerColumn">
+    <div id="header">
+      <h1>Mamesaver</h1>
+      <h2>A MAME Screen Saver</h2>
+      <div id="navtabs">
+        <ul>
+          <li><a href="/" title="Home"><span>Home</span></a></li>
+          <li><a href="https://github.com/mika76/mamesaver" title="Github"><span>Github</span></a></li>
+          <li><a href="https://github.com/mika76/mamesaver/issues" title="Issues"><span>Issues</span></a></li>
+          <!--
         <li><a href="#" title="About"><span>About</span></a></li>
         <li><a href="#" title="Gallery"><span>Gallery</span></a></li>
         <li><a href="#" title="Contact"><span>Contact</span></a></li>
@@ -34,45 +39,99 @@
         <li><a href="#" title="Link 6"><span>Link 6</span></a></li>
         <li><a href="#" title="Link 7"><span>Link 7</span></a></li>
         -->
-      </ul>
+        </ul>
+      </div>
+      <!--//end #navtabs//-->
     </div>
-    <!--//end #navtabs//-->
-  </div>
-  <!--//end #headern//-->
-  <div id="fauxRightColumn">
-    <h2>Links &amp; Resources</h2>
-    <p>Be sure to visit these sites</p>
-    <p><a href="http://www.mame.net/" title="Multiple Arcade Machine Emulator">&#8250;&#8250; MAME</a><br />
-      <a href="http://www.mameworld.net/" title="Mame World">&#8250;&#8250; MAME World</a><br />
-      <a href="http://www.mamedev.com/" title="MameDev">&#8250;&#8250; MAMEDEV
-      Links</a></p>
-  </div>
-  <!--//end #fauxRightColumn//-->
-  
-  <h2>Mamesaver</h2>
-  <p>Mamesaver is a Windows screen saver which playes MAME ROMS for a specified time.</p>
-  
-  <h2>Requirements</h2>
-  <ul>
-	<li>Microsoft .NET 4.6 Framework</li>
-	<li>A working setup of <a href="http://www.mame.net/" title="Multiple Arcade Machine Emulator">MAME</a> (preferably <a href="http://www.mameui.info/" title="MAME32">MAME UI</a>)</li>
-	<li>Some <a href="http://www.mamedev.org/roms/" title="ROMS">ROMS</a></li>
-  </ul>
-  
-  <h2>Download</h2>
-  <ul>
-    <li><a href="https://github.com/mika76/mamesaver/releases/tag/1.1">Mamesaver v1.1</a></li>
-  </ul>
-  
-  <h2>Open Source</h2>
-  <p>You can check out the project page at <a href="https://github.com/mika76/mamesaver" title="GitHub Project Page">https://github.com/mika76/mamesaver</a></p>
-  
-  <h2>Screen shots</h2>
-  <p style="text-align:center;">
-	<img src="img/screenie-1.jpg" />
-	<img src="img/screenie-2.jpg" />
-  </p>
-  <!--
+    <!--//end #headern//-->
+    <div id="fauxRightColumn">
+      <h2>Links &amp; Resources</h2>
+      <p>Be sure to visit these sites</p>
+      <p>
+        <a href="http://www.mamedev.com/" title="Multiple Arcade Machine Emulator">&#8250;&#8250; MAME</a><br />
+        <a href="https://mameworld.info" title="Mame World">&#8250;&#8250; MAME World</a><br />
+        <a href="https://www.emulator-zone.com/arcade/mame" title="MameDev">&#8250;&#8250; Emulator Zone</a><br />
+        <a href="https://www.reddit.com/r/MAME/" title="MameDev">&#8250;&#8250; MAME Subreddit</a>
+      </p>
+
+    </div>
+    <!--//end #fauxRightColumn//-->
+
+    <h2>Mamesaver</h2>
+    <p>Mamesaver is a Windows screen saver which playes MAME ROMS for a specified time.</p>
+
+    <h2>Features</h2>
+    <ul>
+      <li>Choose which roms get played</li>
+      <li>Optional In-game game information and customization</li>
+      <li>Multi-monitor support and otional cloning</li>
+      <li>Optional in-game hotkeys - jump in and play the game, move back and forth or just remove from the list if you
+        don't wanna see it again</li>
+      <li>Optional splash screen with some customization features</li>
+    </ul>
+
+    <h2>Screen shots</h2>
+    <p style="text-align:center;">
+      <a href="https://raw.githubusercontent.com/mika76/mamesaver/master/Resources/SettingsPanel1.png" data-mediabox="screenshots"
+        data-title="General Settings">
+        <img src="https://raw.githubusercontent.com/mika76/mamesaver/master/Resources/SettingsPanel1.png" width="100" />
+      </a>
+      <a href="https://raw.githubusercontent.com/mika76/mamesaver/master/Resources/SettingsPanel2.png" data-mediabox="screenshots"
+        data-title="Game List">
+        <img src="https://raw.githubusercontent.com/mika76/mamesaver/master/Resources/SettingsPanel2.png" width="100" />
+      </a>
+      <a href="https://raw.githubusercontent.com/mika76/mamesaver/master/Resources/SettingsPanel3.png" data-mediabox="screenshots"
+        data-title="Layout Settings">
+        <img src="https://raw.githubusercontent.com/mika76/mamesaver/master/Resources/SettingsPanel3.png" width="100" />
+      </a>
+      <a href="https://raw.githubusercontent.com/mika76/mamesaver/master/Resources/SettingsPanel4.png" data-mediabox="screenshots"
+        data-title="Hotkey Settings">
+        <img src="https://raw.githubusercontent.com/mika76/mamesaver/master/Resources/SettingsPanel4.png" width="100" />
+      </a>
+      <a href="https://raw.githubusercontent.com/mika76/mamesaver/master/Resources/SettingsPanel5.png" data-mediabox="screenshots"
+        data-title="Advanced Settings">
+        <img src="https://raw.githubusercontent.com/mika76/mamesaver/master/Resources/SettingsPanel5.png" width="100" />
+      </a>
+
+      <a href="https://raw.githubusercontent.com/mika76/mamesaver/master/Resources/Splash.png" data-mediabox="screenshots"
+        data-title="Optional Splash Screen">
+        <img src="https://raw.githubusercontent.com/mika76/mamesaver/master/Resources/Splash.png" width="100" />
+      </a>
+
+      <a href="https://raw.githubusercontent.com/mika76/mamesaver/master/Resources/Game.jpg" data-mediabox="screenshots"
+        data-title="Game Playing with Optional Game Info">
+        <img src="https://raw.githubusercontent.com/mika76/mamesaver/master/Resources/Game.jpg" width="100" />
+      </a>
+    </p>
+
+    <h2>Requirements</h2>
+    <ul>
+      <li><a href="https://www.microsoft.com/net/download/dotnet-framework-runtime/net46">Microsoft .NET 4.6 Framework</a></li>
+      <li>A working setup of <a href="http://www.mame.net/" title="Multiple Arcade Machine Emulator">MAME</a></li>
+      <li>Some <a href="http://www.mamedev.org/roms/" title="ROMS">ROMS</a></li>
+    </ul>
+
+    <h2>Download</h2>
+    <ul>
+      <li><a href="https://github.com/mika76/mamesaver/releases/tag/2.0">Mamesaver v2.0</a></li>
+    </ul>
+
+    <h2>Contributors</h2>
+    <p>
+      Mamesaver was brought to you by the fantastic work of:
+
+      <ul class="user-list">
+        <li><img src="https://avatars2.githubusercontent.com/u/229311?s=16&v=4" style="vertical-align:middle"> Mladen Mihajlović</li>
+        <li><img src="https://avatars2.githubusercontent.com/u/1732347?s=16&v=4" style="vertical-align:middle"> Matt Painter</li>
+        <li><img src="https://avatars2.githubusercontent.com/u/1904424?s=16&v=4" style="vertical-align:middle"> Andy van Stokkum</li>
+      </ul>
+    </p>
+
+    <h2>Open Source</h2>
+    <p>You can check out the project page at <a href="https://github.com/mika76/mamesaver" title="GitHub Project Page">https://github.com/mika76/mamesaver</a></p>
+
+    
+    <!--
   <blockquote class="question">
     <p><strong>What The Hell Is That?</strong><br />
       If you have any questions or comments about this design, feel free to contact
@@ -80,22 +139,27 @@
         my <a href="http://www.raykdesign.net" title="rayk web design">web site</a>.</p>
   </blockquote>
   -->
-  <div id="footer">
-    <p>Copyright, 2006 <a href="http://mika76.wordpress.com/" title="Mika's Blog">Mladen Mihajlovic</a> | <a href="http://validator.w3.org/" title="W3C HTML Validation">XHTML</a> | <a href="http://jigsaw.w3.org/css-validator/validator-uri.html" title="W3C CSS Validation">CSS</a> | <a href="http://www.w3.org/TR/WCAG10/" title="Web Content Accessibility Guidelines">WCAG</a> | <a href="http://www.csstinderbox.com">The
-        CSS Tinderbox</a></p>
+    <div id="footer">
+      <p>Copyright, 2006 <a href="http://mika76.wordpress.com/" title="Mika's Blog">Mladen Mihajlovic</a> | <a href="http://validator.w3.org/"
+          title="W3C HTML Validation">XHTML</a> | <a href="http://jigsaw.w3.org/css-validator/validator-uri.html" title="W3C CSS Validation">CSS</a>
+        | <a href="http://www.w3.org/TR/WCAG10/" title="Web Content Accessibility Guidelines">WCAG</a> | <a href="http://www.csstinderbox.com">The
+          CSS Tinderbox</a></p>
+    </div>
+    <!--//end #footer//-->
   </div>
-  <!--//end #footer//-->
-</div>
-<!--//end #centerColumn//-->
-<script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  <!--//end #centerColumn//-->
+  <script>
+    (function (i, s, o, g, r, a, m) {
+    i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+      (i[r].q = i[r].q || []).push(arguments)
+    }, i[r].l = 1 * new Date(); a = s.createElement(o),
+      m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+    })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
 
-  ga('create', 'UA-73902047-1', 'auto');
-  ga('send', 'pageview');
+    ga('create', 'UA-73902047-1', 'auto');
+    ga('send', 'pageview');
 
-</script>
+  </script>
 </body>
+
 </html>

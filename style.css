@@ -221,3 +221,11 @@ font-size:.7em;
 background-color:#ffffff;
 border-top:1px solid #eeeeee;
 }
+
+.user-list {
+    padding-left: 2em;
+}
+.user-list li {
+    list-style-type: none;
+    padding: 2px 2px;
+}
