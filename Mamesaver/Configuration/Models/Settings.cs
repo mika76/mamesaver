@@ -16,6 +16,7 @@ namespace Mamesaver.Configuration.Models
             CommandLineOptions = "-skip_gameinfo -nowindow -noswitchres -sleep -triplebuffer -sound none";
             MinutesPerGame = 5;
             CloneScreen = true;
+            HotKeys = true;
             LayoutSettings = new LayoutSettings();
             AdvancedSettings = new AdvancedSettings();
         }
@@ -43,6 +44,12 @@ namespace Mamesaver.Configuration.Models
         /// </summary>
         [XmlElement("cloneScreen")]
         public bool CloneScreen { get; set; }
+
+        /// <summary>
+        ///     Whether hot keys should be enabled to interact with screensaver.
+        /// </summary>
+        [XmlElement("hotKeys")]
+        public bool HotKeys { get; set; } 
 
         [XmlElement("layoutSettings")]
         public LayoutSettings LayoutSettings { get; set; }

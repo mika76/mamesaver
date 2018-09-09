@@ -16,5 +16,11 @@ namespace Mamesaver.Windows
         {
             PlatformInvokeUser32.ShowWindow(hwnd, PlatformInvokeUser32.SW_MINIMIZE);
         }
+
+        public static void SetHighDpiAware()
+        {
+            if (Environment.OSVersion.Version.Major >= 6)
+                PlatformInvokeUser32.SetProcessDPIAware();
+        }
     }
 }

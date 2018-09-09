@@ -1,17 +1,31 @@
 # Mamesaver
 
-v1.1
+- [Introduction](#introduction)
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Configuration](#configuration)
+- [Hotkeys](#hotkeys)
+- [Comments](#comments)
+- [Logging](#logging)
+- [Contributors](#contributors)
+- [Open source](#open-source)
+
+
+v2.0
 Licensed under The MIT License
 
 [![Build status](https://ci.appveyor.com/api/projects/status/2b8n7te1bq8rf1pp?svg=true)](https://ci.appveyor.com/project/mmihajlovic/mamesaver)
+[![Gitter](https://badges.gitter.im/mika76/mamesaver.svg)](https://gitter.im/mika76/mamesaver?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 ### INTRODUCTION
 
 Mamesaver is a Windows screen saver that runs MAME with a random game for specified intervals of time.
 
-![General Settings](Resources/SettingsPanel1.png) 
-![Game List](Resources/SettingsPanel2.png)
+<img src="Resources/SettingsPanel1.png" width="250" title="General Setting"> <img src="Resources/SettingsPanel2.png" width="250" title="Game List"> <img src="Resources/SettingsPanel3.png" width="250" title="Layout Settings">
+<img src="Resources/SettingsPanel4.png" width="250" title="Hotkey Settings"> <img src="Resources/SettingsPanel5.png" width="250" title="Advanced Settings">
 
+<img src="Resources/Splash.png" width="250" title="Splash Screen with caption"> <img src="Resources/Game.jpg" width="250" title="Game Playing with caption">
 
 ### REQUIREMENTS
 * Microsoft .NET 4.6
@@ -39,11 +53,21 @@ Other than those main settings, you can also:
 * Enable and configure the splash screen with game information
 * Enable and configure in-game game information
 * Enable multi-monitor cloning
-* Disable game validation
+* Include games with imperfect emulation
+* Enable in-game hotkeys
+
+### HOTKEYS
+
+When enabled, the following hotkeys are enabled in-game:
+
+* <kbd>←</kbd> show previous game 
+* <kbd>→</kbd> show next game
+* <kbd>enter</kbd> exit screensaver and play game
+* <kbd>del</kbd> deselect game
 
 ### COMMENTS
 
-* Game validation should only be bypassed for custom builds of MAME. Unless game validation has been skpped, the game list will only contain games which have passed the MAME ROM audit and have drivers with a status of good. This means that games, which might be partially working but maybe have no sound or some other part of the driver is not working, will not be displayed in this list. The main reason for this is that MAME shows a dialog which expects user input at the beginning of the game, which is the exact opposite of what you would want a screen saver to do.
+* Including games with imperfect emulation should only be enabled for custom builds of MAME. Unless this is enabled, the game list will only contain games which have passed the MAME ROM audit and have drivers with a status of good. This means that games, which might be partially working but maybe have no sound or some other part of the driver is not working, will not be displayed in this list. The main reason for this is that MAME shows a dialog which expects user input at the beginning of the game, which is the exact opposite of what you would want a screen saver to do.
 
 ### LOGGING
 

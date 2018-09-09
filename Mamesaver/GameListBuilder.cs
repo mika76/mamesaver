@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
 using Mamesaver.Configuration.Models;
+using Serilog;
 
 namespace Mamesaver
 {
@@ -82,16 +83,17 @@ namespace Mamesaver
         {
             using (var stream = GetGameDetails(new List<string> { game }))
             {
-                return GetRomDetails(stream).First();
+                return GetRomDetails(stream, false).First();
             }
         }
 
         /// <summary>
         ///     Extracts ROM metadata for display from a XML stream from MAME.
         /// </summary>
-        private List<SelectableGame> GetRomDetails(StreamReader stream)
+        private List<SelectableGame> GetRomDetails(StreamReader stream, bool verify = true)
         {
             var games = new List<SelectableGame>();
+            var validGameStatuses = ValidGameStatuses();
 
             using (var reader = XmlReader.Create(stream, _readerSettings))
             {
@@ -109,11 +111,12 @@ namespace Mamesaver
                     var driver = element.Element("driver");
                     if (driver == null) continue;
 
-                    // Skip games which aren't fully emulated, unless check disabled in configuration
-                    if (!_advancedSettings.SkipGameValidation)
+                    // Skip games which aren't sufficiently emulated
+                    var status = driver.Attribute("status")?.Value;
+                    if (verify && !validGameStatuses.Contains(status))
                     {
-                        var status = driver.Attribute("status")?.Value;
-                        if (status != "good") continue;
+                        Log.Information("{name} not added to game list because it has a status of {status}", name, status);
+                        continue;
                     }
 
                     var year = element.Element("year")?.Value ?? "";
@@ -121,7 +124,7 @@ namespace Mamesaver
                     var description = element.Element("description")?.Value ?? "";
                     var rotation = element.Element("display")?.Attribute("rotate")?.Value ?? "";
 
-                    games.Add(new SelectableGame(name, description, year, manufacturer, rotation));
+                    games.Add(new SelectableGame(name, description, year, manufacturer, rotation, false));
                 }
             }
 
@@ -224,6 +227,8 @@ namespace Mamesaver
         /// <returns>list of absolute paths</returns>
         public List<string>GetConfigPaths(string key)
         {
+            Log.Debug("Getting MAME {key}", key);
+
             // Configuration in the MAME ini file which indicates path to ROMs
             var regex = new Regex($@"{key}\s+(.*)");
 
@@ -261,6 +266,17 @@ namespace Mamesaver
             }
 
             throw new InvalidOperationException("Unable to retrieve ROM paths");
+        }
+
+        /// <summary>
+        ///     Emulation status of games which are added to the game list.
+        /// </summary>
+        private List<string> ValidGameStatuses()
+        {
+            var statuses = new List<string> { "good" };
+            if (_advancedSettings.IncludeImperfectEmulation) statuses.Add("imperfect");
+
+            return statuses;
         }
 
         /// <summary>

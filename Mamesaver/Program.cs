@@ -10,6 +10,7 @@ using System.Threading;
 using System.Windows.Forms;
 using Mamesaver.Configuration.Models;
 using Serilog;
+using Serilog.Events;
 using SimpleInjector;
 using SimpleInjector.Lifestyles;
 
@@ -19,6 +20,7 @@ namespace Mamesaver
     {
         private static Container _container;
         private static bool _debug;
+
 
         [STAThread]
         public static void Main(string[] args)
@@ -33,9 +35,6 @@ namespace Mamesaver
                 SetDebugFlag();
                 ConfigureLogging();
 
-                // Perform a sanity check on component installation
-                _container.Verify(VerificationOption.VerifyAndDiagnose);
-
                 // Default to config if no options passed
                 var arguments = args.Length != 0 ? args : new[] { "/c" };
 
@@ -43,7 +42,7 @@ namespace Mamesaver
 
                 using (AsyncScopedLifestyle.BeginScope(_container))
                 {
-                    var saver = _container.GetInstance<Mamesaver>();
+                    var orchestrator = _container.GetInstance<MameOrchestrator>();
 
                     switch (arguments[0].Trim().Substring(0, 2).ToLower())
                     {
@@ -53,7 +52,7 @@ namespace Mamesaver
                             break;
 
                         case "/s":
-                            saver.Run();
+                            orchestrator.Run();
                             break;
 
                         case "/p":
@@ -61,6 +60,9 @@ namespace Mamesaver
                             break;
                     }
                 }
+
+                _container.Dispose();
+                Log.Debug("Container disposed");
             }
             catch(Exception ex)
             {
@@ -74,7 +76,7 @@ namespace Mamesaver
         /// </summary>
         private static void ConfigureErrorHandling()
         {
-            Application.SetUnhandledExceptionMode(UnhandledExceptionMode.ThrowException);
+            Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
 
             Application.ThreadException += OnThreadException;
             AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
@@ -83,7 +85,6 @@ namespace Mamesaver
         private static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             Log.Error(e.ExceptionObject as Exception, "Thread exception");
-            DisplayError();
 
             // Screensaver is in an unhandled state; force exit
             Environment.Exit(-1);
@@ -92,8 +93,7 @@ namespace Mamesaver
         private static void OnThreadException(object sender, ThreadExceptionEventArgs e)
         {
             Log.Error(e.Exception, "Thread exception");
-            DisplayError();
-            Application.Exit();
+            Environment.Exit(-1);
         }
 
         private static void DisplayError()
@@ -101,49 +101,42 @@ namespace Mamesaver
             MessageBox.Show(@"Error running screensaver. Verify that your MAME path and and arguments are correct.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
-        [Conditional("DEBUG")]
-        private static void SetDebugFlag()
-        {
-            _debug = true;
-        }
-
         /// <summary>
-        ///     Release logging to the event log.  If debug logging is configured, then release logging will not be configured
+        ///     Configures event log and filesystem logging. 
         /// </summary>
+        /// <remarks>
+        ///     Logging is written to the filesystem in debug builds and when enabled by the user.
+        /// </remarks>
         public static void ConfigureLogging()
         {
-            ConfigureDebugLogging();
+            var configuration = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .WriteTo.EventLog("Mamesaver", restrictedToMinimumLevel: LogEventLevel.Warning);
 
-            if (Log.Logger == null)
+            // Configure debug logging if requested by the user or if we are running a debug build
+            var advancedSettings = _container.GetInstance<AdvancedSettings>();
+            if (advancedSettings.DebugLogging || _debug)
             {
-                Log.Logger = new LoggerConfiguration()
-                    .WriteTo.EventLog("Mamesaver")
-                    .CreateLogger();
+                configuration.WriteTo.File(Path.Combine(Path.GetTempPath(), "Mamesaver", "Logs", "Mamesaver-.txt"),
+                      rollingInterval: RollingInterval.Day,
+                      restrictedToMinimumLevel: LogEventLevel.Debug,
+                      fileSizeLimitBytes: 100000,
+                      retainedFileCountLimit: 5);
             }
+
+            Log.Logger = configuration.CreateLogger();
         }
 
         /// <summary>
-        ///     Debug logging will go to a file.
+        ///     Displays the screensaver configuration form.
         /// </summary>
-        public static void ConfigureDebugLogging()
-        {
-            // Configure debug logging if requested by the user or if we are running a debug build
-            var advancedSettings = _container.GetInstance<AdvancedSettings>();
-            if (!advancedSettings.DebugLogging && !_debug) return;
-
-            Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Debug()
-                .WriteTo.File(Path.Combine(Path.GetTempPath(), "MameSaver", "Logs", "MameSaver-.txt"),
-                    rollingInterval: RollingInterval.Day,
-                    fileSizeLimitBytes: 100000,
-                    retainedFileCountLimit: 5)
-                .CreateLogger();
-        }
-
         public static void ShowConfig()
         {
             Application.EnableVisualStyles();
             Application.Run(_container.GetInstance<ConfigForm>());
         }
+
+        [Conditional("DEBUG")]
+        private static void SetDebugFlag() => _debug = true;
     }
 }

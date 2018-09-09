@@ -1,113 +1,116 @@
 ﻿using System;
 using System.Windows.Forms;
+using Mamesaver.Power;
 using Mamesaver.Windows;
 using Serilog;
+using static Mamesaver.Windows.MonitorInterop;
+using static Mamesaver.Windows.PlatformInvokeUser32;
+using static Mamesaver.Windows.PlatformInvokeGdi32;
+using LayoutSettings = Mamesaver.Configuration.Models.LayoutSettings;
 
 namespace Mamesaver
 {
     internal class BlankScreen : IDisposable
     {
+        private readonly PowerManager _powerManager;
         public BackgroundForm BackgroundForm { get; }
 
-        private bool _disposed;
-        private Action _onClosed;
-        private UserActivityHook _actHook;
-        private bool _cancelled;
-        private readonly object _syncLock = new object();
         public Screen Screen { get; private set; }
         public IntPtr HandleDeviceContext { get; private set; } = IntPtr.Zero;
 
-        public BlankScreen(BackgroundForm backgroundForm) => BackgroundForm = backgroundForm;
+        private int _xDpi, _yDpi;
 
-        public virtual void Initialise(Screen screen, Action onClosed)
+        public BlankScreen(LayoutSettings layoutSettings, PowerManager powerManager)
+        {
+            _powerManager = powerManager;
+            BackgroundForm = new BackgroundForm(layoutSettings);
+        }
+
+        public virtual void Initialise(Screen screen)
         {
             Screen = screen;
-            _onClosed = onClosed;
 
             BackgroundForm.Load += BackgroundForm_Load;
             BackgroundForm.primaryLabel.Text = string.Empty;
             BackgroundForm.secondaryLabel.Text = string.Empty;
             BackgroundForm.mameLogo.Visible = false;
+            BackgroundForm.FormClosing += (sender, args) => ReleaseDeviceContext();
+
+            _powerManager.SleepTriggered += OnSleep;
 
             Cursor.Hide();
+        }
 
-            // Set up the global hooks
-            _actHook = new UserActivityHook();
-            _actHook.OnMouseActivity += actHook_OnMouseActivity;
-            _actHook.KeyDown += actHook_KeyDown;
+        /// <summary>
+        ///     Hide the background form elements to provide seamless transition between games or after MAME termination.
+        /// </summary>
+        protected void HideBackgroundForm()
+        {
+            BackgroundForm.HideAll();
+
+            // Force an immediate refresh to avoid flicker of the MAME logo
+            BackgroundForm.Refresh();
+        }
+
+        private void OnSleep(object sender, EventArgs e)
+        {
+            Log.Information("Sleeping screen {screen}", Screen.DeviceName);
+            SetMonitorState(BackgroundForm.Handle, MonitorState.MonitorStateOff);
         }
 
         private void BackgroundForm_Load(object sender, EventArgs e)
         {
-            WindowsInterop.SetWinFullScreen(BackgroundForm.Handle, Screen.Bounds.Left, Screen.Bounds.Top, Screen.Bounds.Width, Screen.Bounds.Height);
-            HandleDeviceContext = PlatformInvokeUser32.GetDC(BackgroundForm.Handle);
+            HandleDeviceContext = GetDC(BackgroundForm.Handle);
+
+            _xDpi = GetDeviceCaps(HandleDeviceContext, (int)DeviceCap.LOGPIXELSX);
+            _yDpi = GetDeviceCaps(HandleDeviceContext, (int)DeviceCap.LOGPIXELSY);
+
+            // 96 is the default dpi for windows 
+            // https://docs.microsoft.com/en-us/windows/desktop/directwrite/how-to-ensure-that-your-application-displays-properly-on-high-dpi-displays
+            var width = _xDpi * Screen.Bounds.Width / 96f;
+            var height = _yDpi * Screen.Bounds.Height / 96f;
+            WindowsInterop.SetWinFullScreen(BackgroundForm.Handle, Screen.Bounds.Left, Screen.Bounds.Top, (int) width, (int)height);
+
+            Log.Information("Blank screen resized {device} {bounds} xDpi {xDpi} yDpi {yDpi}", Screen.DeviceName, Screen.Bounds, _xDpi, _yDpi);
         }
 
-        void actHook_KeyDown(object sender, KeyEventArgs e) => Close();
-        void actHook_OnMouseActivity(object sender, MouseEventArgs e) => Close();
-
-        public virtual void Close()
+        private void ReleaseDeviceContext()
         {
+            HideBackgroundForm();
 
-            lock (_syncLock)
+            try
             {
-                try
+                if (HandleDeviceContext == IntPtr.Zero)
                 {
-                    if (_cancelled) return;
-                    Log.Information("Closing screen {screen}", Screen.DeviceName);
-
-                    _actHook?.Stop();
-                    Cursor.Show();
-
-                    ReleaseUnmanagedResources();
-                    BackgroundForm?.Close();
-
-                    _cancelled = true;
+                    Log.Debug("No device context to release for {screen}", Screen.DeviceName);
+                    return;
                 }
-                catch (Exception ex)
-                {
-                    Log.Error(ex, "Error closing");
-                }
+
+                Log.Debug("Releasing device context for {screen}", Screen.DeviceName);
+
+                ReleaseDC(BackgroundForm.Handle, HandleDeviceContext);
+                HandleDeviceContext = IntPtr.Zero;
             }
-
-            _onClosed();
-        }
-
-        public virtual void Dispose(bool disposing)
-        {
-            if (_disposed) return;
-            ReleaseUnmanagedResources();
-
-            _disposed = true;
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error releasing device context for {screen}", Screen.DeviceName);
+            }
         }
 
         public void Dispose()
         {
-            Log.Debug("{class} Dispose()", GetType().Name);
-
             Dispose(true);
             GC.SuppressFinalize(this);
+       }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposing) return;
+
+            _powerManager?.Dispose();
+            BackgroundForm?.Dispose();
         }
 
-        ~BlankScreen()
-        {
-            Dispose(false);
-        }
-
-        private void ReleaseUnmanagedResources()
-        {
-            try
-            {
-                if (HandleDeviceContext != IntPtr.Zero)
-                {
-                    PlatformInvokeUser32.ReleaseDC(BackgroundForm.Handle, HandleDeviceContext);
-                    HandleDeviceContext = IntPtr.Zero;
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex, "Error releasing unmanaged resources");
-            }
-        }
+        ~BlankScreen() => Dispose(false);
     }
 }

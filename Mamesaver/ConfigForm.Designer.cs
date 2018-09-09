@@ -76,9 +76,21 @@ namespace Mamesaver
             this.label10 = new System.Windows.Forms.Label();
             this.displayInGameTitles = new System.Windows.Forms.CheckBox();
             this.label9 = new System.Windows.Forms.Label();
+            this.tabPage5 = new System.Windows.Forms.TabPage();
+            this.label17 = new System.Windows.Forms.Label();
+            this.label18 = new System.Windows.Forms.Label();
+            this.label19 = new System.Windows.Forms.Label();
+            this.label20 = new System.Windows.Forms.Label();
+            this.label16 = new System.Windows.Forms.Label();
+            this.label15 = new System.Windows.Forms.Label();
+            this.label14 = new System.Windows.Forms.Label();
+            this.label13 = new System.Windows.Forms.Label();
+            this.label21 = new System.Windows.Forms.Label();
+            this.label22 = new System.Windows.Forms.Label();
+            this.hotKeys = new System.Windows.Forms.CheckBox();
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.debugLogging = new System.Windows.Forms.CheckBox();
-            this.skipGameValidation = new System.Windows.Forms.CheckBox();
+            this.includeImperfectEmulation = new System.Windows.Forms.CheckBox();
             this.resetToDefaults = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -88,6 +100,7 @@ namespace Mamesaver
             this.splashScreenOptions.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splashDuration)).BeginInit();
             this.inGameTitleOptions.SuspendLayout();
+            this.tabPage5.SuspendLayout();
             this.tabPage4.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -112,9 +125,9 @@ namespace Mamesaver
             // btnExecBrowse
             // 
             this.btnExecBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnExecBrowse.Location = new System.Drawing.Point(393, 30);
+            this.btnExecBrowse.Location = new System.Drawing.Point(393, 33);
             this.btnExecBrowse.Name = "btnExecBrowse";
-            this.btnExecBrowse.Size = new System.Drawing.Size(41, 23);
+            this.btnExecBrowse.Size = new System.Drawing.Size(38, 20);
             this.btnExecBrowse.TabIndex = 2;
             this.btnExecBrowse.Text = "...";
             this.btnExecBrowse.UseVisualStyleBackColor = true;
@@ -232,6 +245,7 @@ namespace Mamesaver
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Controls.Add(this.tabPage3);
+            this.tabControl1.Controls.Add(this.tabPage5);
             this.tabControl1.Controls.Add(this.tabPage4);
             this.tabControl1.Location = new System.Drawing.Point(12, 12);
             this.tabControl1.Name = "tabControl1";
@@ -544,10 +558,130 @@ namespace Mamesaver
             this.label9.Size = new System.Drawing.Size(400, 2);
             this.label9.TabIndex = 16;
             // 
+            // tabPage5
+            // 
+            this.tabPage5.Controls.Add(this.label17);
+            this.tabPage5.Controls.Add(this.label18);
+            this.tabPage5.Controls.Add(this.label19);
+            this.tabPage5.Controls.Add(this.label20);
+            this.tabPage5.Controls.Add(this.label16);
+            this.tabPage5.Controls.Add(this.label15);
+            this.tabPage5.Controls.Add(this.label14);
+            this.tabPage5.Controls.Add(this.label13);
+            this.tabPage5.Controls.Add(this.label21);
+            this.tabPage5.Controls.Add(this.label22);
+            this.tabPage5.Controls.Add(this.hotKeys);
+            this.tabPage5.Location = new System.Drawing.Point(4, 22);
+            this.tabPage5.Name = "tabPage5";
+            this.tabPage5.Size = new System.Drawing.Size(440, 337);
+            this.tabPage5.TabIndex = 4;
+            this.tabPage5.Text = "Hotkeys";
+            this.tabPage5.UseVisualStyleBackColor = true;
+            // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Location = new System.Drawing.Point(85, 161);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(78, 13);
+            this.label17.TabIndex = 33;
+            this.label17.Text = "Deselect game";
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Location = new System.Drawing.Point(85, 135);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(56, 13);
+            this.label18.TabIndex = 32;
+            this.label18.Text = "Play game";
+            // 
+            // label19
+            // 
+            this.label19.AutoSize = true;
+            this.label19.Location = new System.Drawing.Point(85, 109);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(58, 13);
+            this.label19.TabIndex = 31;
+            this.label19.Text = "Next game";
+            // 
+            // label20
+            // 
+            this.label20.AutoSize = true;
+            this.label20.Location = new System.Drawing.Point(85, 83);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(77, 13);
+            this.label20.TabIndex = 30;
+            this.label20.Text = "Previous game";
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(38, 161);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(38, 13);
+            this.label16.TabIndex = 29;
+            this.label16.Text = "Delete";
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(44, 135);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(32, 13);
+            this.label15.TabIndex = 28;
+            this.label15.Text = "Enter";
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(15, 109);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(61, 13);
+            this.label14.TabIndex = 27;
+            this.label14.Text = "Right arrow";
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(22, 83);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(54, 13);
+            this.label13.TabIndex = 26;
+            this.label13.Text = "Left arrow";
+            // 
+            // label21
+            // 
+            this.label21.AutoSize = true;
+            this.label21.Location = new System.Drawing.Point(6, 52);
+            this.label21.Name = "label21";
+            this.label21.Size = new System.Drawing.Size(67, 13);
+            this.label21.TabIndex = 25;
+            this.label21.Text = "Key bindings";
+            // 
+            // label22
+            // 
+            this.label22.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.label22.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.label22.Location = new System.Drawing.Point(18, 59);
+            this.label22.Name = "label22";
+            this.label22.Size = new System.Drawing.Size(400, 2);
+            this.label22.TabIndex = 24;
+            // 
+            // hotKeys
+            // 
+            this.hotKeys.AutoSize = true;
+            this.hotKeys.Location = new System.Drawing.Point(17, 17);
+            this.hotKeys.Name = "hotKeys";
+            this.hotKeys.Size = new System.Drawing.Size(99, 17);
+            this.hotKeys.TabIndex = 9;
+            this.hotKeys.Text = "Enable hotkeys";
+            this.hotKeys.UseVisualStyleBackColor = true;
+            // 
             // tabPage4
             // 
             this.tabPage4.Controls.Add(this.debugLogging);
-            this.tabPage4.Controls.Add(this.skipGameValidation);
+            this.tabPage4.Controls.Add(this.includeImperfectEmulation);
             this.tabPage4.Location = new System.Drawing.Point(4, 22);
             this.tabPage4.Name = "tabPage4";
             this.tabPage4.Size = new System.Drawing.Size(440, 337);
@@ -558,22 +692,22 @@ namespace Mamesaver
             // debugLogging
             // 
             this.debugLogging.AutoSize = true;
-            this.debugLogging.Location = new System.Drawing.Point(9, 40);
+            this.debugLogging.Location = new System.Drawing.Point(17, 40);
             this.debugLogging.Name = "debugLogging";
             this.debugLogging.Size = new System.Drawing.Size(95, 17);
             this.debugLogging.TabIndex = 1;
             this.debugLogging.Text = "Debug logging";
             this.debugLogging.UseVisualStyleBackColor = true;
             // 
-            // skipGameValidation
+            // includeImperfectEmulation
             // 
-            this.skipGameValidation.AutoSize = true;
-            this.skipGameValidation.Location = new System.Drawing.Point(9, 17);
-            this.skipGameValidation.Name = "skipGameValidation";
-            this.skipGameValidation.Size = new System.Drawing.Size(124, 17);
-            this.skipGameValidation.TabIndex = 0;
-            this.skipGameValidation.Text = "Skip game validation";
-            this.skipGameValidation.UseVisualStyleBackColor = true;
+            this.includeImperfectEmulation.AutoSize = true;
+            this.includeImperfectEmulation.Location = new System.Drawing.Point(17, 17);
+            this.includeImperfectEmulation.Name = "includeImperfectEmulation";
+            this.includeImperfectEmulation.Size = new System.Drawing.Size(211, 17);
+            this.includeImperfectEmulation.TabIndex = 0;
+            this.includeImperfectEmulation.Text = "Include games with imperfect emulation";
+            this.includeImperfectEmulation.UseVisualStyleBackColor = true;
             // 
             // resetToDefaults
             // 
@@ -620,6 +754,8 @@ namespace Mamesaver
             ((System.ComponentModel.ISupportInitialize)(this.splashDuration)).EndInit();
             this.inGameTitleOptions.ResumeLayout(false);
             this.inGameTitleOptions.PerformLayout();
+            this.tabPage5.ResumeLayout(false);
+            this.tabPage5.PerformLayout();
             this.tabPage4.ResumeLayout(false);
             this.tabPage4.PerformLayout();
             this.ResumeLayout(false);
@@ -673,6 +809,18 @@ namespace Mamesaver
         private System.Windows.Forms.ProgressBar gameListProgress;
         private System.Windows.Forms.TabPage tabPage4;
         private System.Windows.Forms.CheckBox debugLogging;
-        private System.Windows.Forms.CheckBox skipGameValidation;
+        private System.Windows.Forms.CheckBox includeImperfectEmulation;
+        private System.Windows.Forms.TabPage tabPage5;
+        private System.Windows.Forms.CheckBox hotKeys;
+        private System.Windows.Forms.Label label21;
+        private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.Label label19;
+        private System.Windows.Forms.Label label20;
+        private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.Label label22;
     }
 }

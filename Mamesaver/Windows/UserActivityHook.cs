@@ -8,15 +8,39 @@ using System.ComponentModel;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using Serilog;
 
 namespace Mamesaver.Windows
 {
+    public interface IActivityHook
+    {
+        /// <summary>
+        ///     Occurs when the user moves the mouse, presses any mouse button or scrolls the wheel
+        /// </summary>
+        event MouseEventHandler OnMouseActivity;
+
+        /// <summary>
+        ///     Occurs when the user presses a key
+        /// </summary>
+        event KeyEventHandler KeyDown;
+
+        /// <summary>
+        ///     Occurs when the user presses and releases
+        /// </summary>
+        event KeyPressEventHandler KeyPress;
+
+        /// <summary>
+        ///     Occurs when the user releases a key
+        /// </summary>
+        event KeyEventHandler KeyUp;
+    }
+
     /// <summary>
     /// This class allows you to tap keyboard and mouse and / or to detect their activity even when an 
     /// application runes in background or does not have any user interface at all. This class raises 
     /// common .NET events with KeyEventArgs and MouseEventArgs so you can easily retrive any information you need.
     /// </summary>
-    public class UserActivityHook
+    public class UserActivityHook : IActivityHook, IDisposable
     {
         #region Windows structure definitions
 
@@ -455,14 +479,21 @@ namespace Mamesaver.Windows
             Start(InstallMouseHook, InstallKeyboardHook);
         }
 
-        /// <summary>
-        /// Destruction.
-        /// </summary>
-        ~UserActivityHook()
+        public void Dispose()
         {
-            //uninstall hooks and do not throw exceptions
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposing) return;
+
             Stop(true, true, false);
         }
+
+    
+        ~UserActivityHook() => Dispose(false);
 
         /// <summary>
         /// Occurs when the user moves the mouse, presses any mouse button or scrolls the wheel
@@ -586,6 +617,8 @@ namespace Mamesaver.Windows
         /// <exception cref="Win32Exception">Any windows problem.</exception>
         public void Stop(bool UninstallMouseHook, bool UninstallKeyboardHook, bool ThrowExceptions)
         {
+            Log.Debug("Stopping activity hook");
+
             //if mouse hook set and must be uninstalled
             if (hMouseHook != 0 && UninstallMouseHook)
             {

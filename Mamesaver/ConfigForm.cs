@@ -89,6 +89,7 @@ namespace Mamesaver
             txtCommandLineOptions.Text = _settings.CommandLineOptions;
             txtMinutes.Value = _settings.MinutesPerGame;
             cloneScreen.Checked = _settings.CloneScreen;
+            hotKeys.Checked = _settings.HotKeys;
 
             // Layout
             var splashSettings = _layoutSettings.SplashScreen;
@@ -103,7 +104,7 @@ namespace Mamesaver
 
             // Advanced
             debugLogging.Checked = _advancedSettings.DebugLogging;
-            skipGameValidation.Checked = _advancedSettings.SkipGameValidation;
+            includeImperfectEmulation.Checked = _advancedSettings.IncludeImperfectEmulation;
         }
 
         private void ResetToDefaults(object sender, EventArgs e)
@@ -334,6 +335,7 @@ namespace Mamesaver
             _settings.CommandLineOptions = txtCommandLineOptions.Text;
             _settings.MinutesPerGame = Convert.ToInt32(txtMinutes.Value);
             _settings.CloneScreen = cloneScreen.Checked;
+            _settings.HotKeys = hotKeys.Checked;
 
             // Layout
             _layoutSettings.SplashScreen.Enabled = displaySplash.Checked;
@@ -346,7 +348,7 @@ namespace Mamesaver
 
             // Advanced
             _advancedSettings.DebugLogging = debugLogging.Checked;
-            _advancedSettings.SkipGameValidation = skipGameValidation.Checked;
+            _advancedSettings.IncludeImperfectEmulation = includeImperfectEmulation.Checked;
         }
 
         /**
