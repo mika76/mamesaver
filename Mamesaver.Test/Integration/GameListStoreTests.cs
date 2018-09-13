@@ -9,7 +9,7 @@ using NUnit.Framework;
 namespace Mamesaver.Test.Integration
 {
     [TestFixture]
-    public class GameListStoreTest : MamesaverTests
+    public class GameListStoreTests : MamesaverTests
     {
         private TestGameListStore _store;
 

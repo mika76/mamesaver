@@ -84,8 +84,10 @@
     <Compile Include="BlankScreen.cs" />
     <Compile Include="BlankScreenFactory.cs" />
     <Compile Include="CaptureScreen.cs" />
+    <Compile Include="MamePathManager.cs" />
     <Compile Include="ContainerFactory.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />
+    <Compile Include="Extensions\ExceptionExtensions.cs" />
     <Compile Include="GamePlayManager.cs" />
     <Compile Include="Helper\StackHelper.cs" />
     <Compile Include="Hotkeys\HotKey.cs" />

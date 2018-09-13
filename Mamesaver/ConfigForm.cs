@@ -9,9 +9,12 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using System.Configuration;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using Mamesaver.Configuration;
 using Mamesaver.Configuration.Models;
+using Mamesaver.Extensions;
+using Serilog;
 using LayoutSettings = Mamesaver.Configuration.Models.LayoutSettings;
 
 namespace Mamesaver
@@ -232,9 +235,16 @@ namespace Mamesaver
                 var gamesList = _gameListBuilder.GetGameList(percentageComplete => ListBuilder.ReportProgress(percentageComplete));
                 e.Result = gamesList;
             }
-            catch (Exception)
+            catch (DirectoryNotFoundException de)
             {
-                MessageBox.Show(@"Error running MAME; verify that the executable path is correct.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($@"Directory {de.GetPath()} not found.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Log.Error(de, "Unable to read directory");
+                e.Result = new List<SelectableGame>();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(@"Error running MAME; verify that the executable path and configuration is correct.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Log.Error(ex, "Unable to construct game list");
                 e.Result = new List<SelectableGame>();
             }
         }
