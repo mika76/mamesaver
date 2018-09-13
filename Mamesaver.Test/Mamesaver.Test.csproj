@@ -58,7 +58,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Integration\GameListStoreTest.cs" />
+    <Compile Include="Integration\GameListStoreTests.cs" />
     <Compile Include="Integration\PowerTests.cs" />
     <Compile Include="Unit\HotKeyManagerTests.cs" />
     <Compile Include="Integration\SettingsStoreTests.cs" />
