@@ -59,6 +59,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Integration\GameListStoreTests.cs" />
+    <Compile Include="Integration\MamePathManagerTests.cs" />
     <Compile Include="Integration\PowerTests.cs" />
     <Compile Include="Unit\HotKeyManagerTests.cs" />
     <Compile Include="Integration\SettingsStoreTests.cs" />

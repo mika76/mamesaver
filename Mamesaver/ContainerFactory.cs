@@ -48,6 +48,7 @@ namespace Mamesaver
             container.Register<LayoutFactory>(Lifestyle.Singleton);
             container.Register<MameInvoker>(Lifestyle.Singleton);
             container.Register<PowerEventWatcher>(Lifestyle.Singleton);
+            container.Register<MamePathManager>(Lifestyle.Singleton);
 
             container.Register<IActivityHook>(() => new UserActivityHook(), Lifestyle.Singleton);
 

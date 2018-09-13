@@ -15,6 +15,7 @@ namespace Mamesaver
         private readonly Settings _settings;
         private readonly AdvancedSettings _advancedSettings;
         private readonly MameInvoker _invoker;
+        private readonly MamePathManager _pathManager;
 
         /// <summary>
         ///     Number of ROMs to process per batch. Rom files are batched when passing as arguments to Mame both 
@@ -27,11 +28,12 @@ namespace Mamesaver
         /// </summary>
         private readonly XmlReaderSettings _readerSettings;
        
-        public GameListBuilder(Settings settings, AdvancedSettings advancedSettings, MameInvoker invoker)
+        public GameListBuilder(Settings settings, AdvancedSettings advancedSettings, MameInvoker invoker, MamePathManager pathManager)
         {
             _settings = settings;
             _advancedSettings = advancedSettings;
             _invoker = invoker;
+            _pathManager = pathManager;
 
             _readerSettings = new XmlReaderSettings { DtdProcessing = DtdProcessing.Parse };
         }
@@ -229,37 +231,13 @@ namespace Mamesaver
         {
             Log.Debug("Getting MAME {key}", key);
 
-            // Configuration in the MAME ini file which indicates path to ROMs
-            var regex = new Regex($@"{key}\s+(.*)");
-
             using (var stream = _invoker.GetOutput("-showconfig"))
             {
                 string line;
                 while ((line = stream.ReadLine()) != null)
                 {
-                    if (!regex.IsMatch(line)) continue;
-
-                    var match = regex.Match(line);
-                    var paths = match.Groups[1].Value.Split(';');
-
-                    // Construct list of absolute paths
-                    var absolutePaths = new List<string>();
-                    foreach (var path in paths.Select(p => p.Trim()))
-                    {
-                        // If path is absolute, add raw path
-                        if (Path.IsPathRooted(path))
-                        {
-                            absolutePaths.Add(path);
-                        }
-                        else
-                        {
-                            // If path is relative, construct absolute path relative to Mame executable
-                            var execPath = _settings.ExecutablePath;
-                            var workingDirectory = Directory.GetParent(execPath).ToString();
-
-                            absolutePaths.Add(Path.Combine(workingDirectory, path));
-                        }
-                    }
+                    var absolutePaths = _pathManager.ExtractConfigPaths(key, line);
+                    if (absolutePaths == null) continue;
 
                     return absolutePaths;
                 }
