@@ -234,7 +234,8 @@ namespace Mamesaver
             }
             catch (Exception)
             {
-                MessageBox.Show(@"Error running MAME; verify that the executable path is correct.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(@"Error running MAME; verify that the executable path and configuration is correct.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Log.Error(ex, "Unable to construct game list");
                 e.Result = new List<SelectableGame>();
             }
         }
