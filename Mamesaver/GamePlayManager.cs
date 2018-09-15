@@ -266,7 +266,9 @@ namespace Mamesaver
 
             try
             {
-                // Start MAME
+                // Start MAME, verifying that we aren't in the process of shutting down
+                if (_cancellationTokenSource.IsCancellationRequested) return;
+
                 _mameProcess = _invoker.Run(false, arguments.ToArray());
                 _mameProcess.Exited += OnMameExited;
                 _mameProcess.Start();
