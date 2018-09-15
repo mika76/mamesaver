@@ -266,7 +266,9 @@ namespace Mamesaver
 
             try
             {
-                // Start MAME
+                // Start MAME, verifying that we aren't in the process of shutting down
+                if (_cancellationTokenSource.IsCancellationRequested) return;
+
                 _mameProcess = _invoker.Run(false, arguments.ToArray());
                 _mameProcess.Exited += OnMameExited;
                 _mameProcess.Start();
@@ -289,7 +291,14 @@ namespace Mamesaver
             if (!disposing || !_initialised) return;
 
             // Stop MAME and wait for it to terminate
-            if (_mameProcess != null && !_mameProcess.HasExited) _invoker.Stop(_mameProcess);
+            try
+            {
+                if (_mameProcess != null && !_mameProcess.HasExited) _invoker.Stop(_mameProcess);
+            }
+            catch (InvalidOperationException)
+            {
+                Log.Warning("Unable to stop MAME; it may not have fully started.");
+            }
         }
 
         public void Dispose()

@@ -82,7 +82,16 @@ namespace Mamesaver
                 _powerManager.Initialise();
 
                 // Verify that MAME can be run so we can return immediately if there are errors
-                _invoker.Run("-showconfig");
+                try
+                {
+                    _invoker.Run("-showconfig");
+                }
+                catch (Exception e)
+                {
+                    Log.Error(e, "Failure verifying MAME");
+                    MessageBox.Show(@"Error running screensaver. Verify that your MAME path and and arguments are correct.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
 
                 // Find the best primary screen for MAME. As games are largely vertical and screens are wide, select the one with the greatest Y axis
                 var bestPrimaryScreen = Screen.AllScreens.OrderByDescending(screen => screen.Bounds.Height).First();

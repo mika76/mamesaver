@@ -66,8 +66,7 @@ namespace Mamesaver
             }
             catch(Exception ex)
             {
-                Log.Error(ex, "Main");
-                DisplayError();
+                Log.Error(ex, "Unhandled exception");
             }
         }
 
@@ -94,11 +93,6 @@ namespace Mamesaver
         {
             Log.Error(e.Exception, "Thread exception");
             Environment.Exit(-1);
-        }
-
-        private static void DisplayError()
-        {
-            MessageBox.Show(@"Error running screensaver. Verify that your MAME path and and arguments are correct.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         /// <summary>
