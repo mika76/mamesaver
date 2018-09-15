@@ -295,7 +295,7 @@ namespace Mamesaver
             }
             catch (InvalidOperationException)
             {
-                // Ignore; MAME may not have fully started when we are exiting.
+                Log.Warning("Unable to stop MAME; it may not have fully started.");
             }
         }
 
