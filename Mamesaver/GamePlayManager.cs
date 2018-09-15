@@ -289,7 +289,14 @@ namespace Mamesaver
             if (!disposing || !_initialised) return;
 
             // Stop MAME and wait for it to terminate
-            if (_mameProcess != null && !_mameProcess.HasExited) _invoker.Stop(_mameProcess);
+            try
+            {
+                if (_mameProcess != null && !_mameProcess.HasExited) _invoker.Stop(_mameProcess);
+            }
+            catch (InvalidOperationException)
+            {
+                // Ignore; MAME may not have fully started when we are exiting.
+            }
         }
 
         public void Dispose()
