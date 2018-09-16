@@ -88,12 +88,15 @@ namespace Mamesaver
             DisplaySplashChanged(displaySplash, null);
         }
 
+        /// <summary>
+        ///     Sets the version number label, based on the assembly file version.
+        /// </summary>
         private void SetVersion()
         {
             var assembly = System.Reflection.Assembly.GetExecutingAssembly();
-            var fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
+            var fileVersion = FileVersionInfo.GetVersionInfo(assembly.Location);
 
-            version.Text = $@"{fvi.FileVersion}";
+            version.Text = $@"{fileVersion.FileVersion}";
         }
 
         private void SetFieldsFromSettings()
