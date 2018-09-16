@@ -12,10 +12,11 @@
 - [Open source](#open-source)
 
 
-v2.0
+v2.0.1
 Licensed under The MIT License
 
 [![Build status](https://ci.appveyor.com/api/projects/status/2b8n7te1bq8rf1pp?svg=true)](https://ci.appveyor.com/project/mmihajlovic/mamesaver)
+![Downloads](https://img.shields.io/github/downloads/mika76/mamesaver/total.svg?colorB=green)
 [![Gitter](https://badges.gitter.im/mika76/mamesaver.svg)](https://gitter.im/mika76/mamesaver?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 ### INTRODUCTION
@@ -74,7 +75,7 @@ When enabled, the following hotkeys are enabled in-game:
 If enabled, debug logging is written to `%TEMP%\MameSaver\Logs`. This can be useful to diagnose why Mamesaver may not be running as it should. 
 
 ### CONTRIBUTORS
-![](https://avatars2.githubusercontent.com/u/229311?s=44&v=4) Mladen Mihajlovic
+![](https://avatars2.githubusercontent.com/u/229311?s=44&v=4) Mladen Mihajlović
 
 ![](https://avatars2.githubusercontent.com/u/1732347?s=44&v=4) Matt Painter
 
