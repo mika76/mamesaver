@@ -129,15 +129,15 @@ namespace Mamesaver
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtExec.Location = new System.Drawing.Point(9, 37);
             this.txtExec.Name = "txtExec";
-            this.txtExec.Size = new System.Drawing.Size(378, 23);
+            this.txtExec.Size = new System.Drawing.Size(243, 23);
             this.txtExec.TabIndex = 1;
             // 
             // btnExecBrowse
             // 
             this.btnExecBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnExecBrowse.Location = new System.Drawing.Point(393, 37);
+            this.btnExecBrowse.Location = new System.Drawing.Point(258, 36);
             this.btnExecBrowse.Name = "btnExecBrowse";
-            this.btnExecBrowse.Size = new System.Drawing.Size(38, 23);
+            this.btnExecBrowse.Size = new System.Drawing.Size(38, 24);
             this.btnExecBrowse.TabIndex = 2;
             this.btnExecBrowse.Text = "...";
             this.btnExecBrowse.UseVisualStyleBackColor = true;
@@ -342,7 +342,7 @@ namespace Mamesaver
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtCommandLineOptions.Location = new System.Drawing.Point(9, 90);
             this.txtCommandLineOptions.Name = "txtCommandLineOptions";
-            this.txtCommandLineOptions.Size = new System.Drawing.Size(378, 23);
+            this.txtCommandLineOptions.Size = new System.Drawing.Size(422, 23);
             this.txtCommandLineOptions.TabIndex = 4;
             // 
             // label2
