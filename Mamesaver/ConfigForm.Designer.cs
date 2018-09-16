@@ -421,7 +421,7 @@ namespace Mamesaver
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(3, 1);
+            this.label7.Location = new System.Drawing.Point(9, 1);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(56, 15);
             this.label7.TabIndex = 10;
@@ -429,7 +429,7 @@ namespace Mamesaver
             // 
             // splashDuration
             // 
-            this.splashDuration.Location = new System.Drawing.Point(3, 22);
+            this.splashDuration.Location = new System.Drawing.Point(9, 22);
             this.splashDuration.Maximum = new decimal(new int[] {
             30,
             0,
@@ -454,7 +454,7 @@ namespace Mamesaver
             this.splashScreenFont.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
             this.splashScreenFont.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.splashScreenFont.FormattingEnabled = true;
-            this.splashScreenFont.Location = new System.Drawing.Point(3, 74);
+            this.splashScreenFont.Location = new System.Drawing.Point(9, 74);
             this.splashScreenFont.Name = "splashScreenFont";
             this.splashScreenFont.Size = new System.Drawing.Size(332, 23);
             this.splashScreenFont.TabIndex = 9;
@@ -462,7 +462,7 @@ namespace Mamesaver
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(89, 26);
+            this.label6.Location = new System.Drawing.Point(95, 26);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(50, 15);
             this.label6.TabIndex = 9;
@@ -471,7 +471,7 @@ namespace Mamesaver
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(3, 54);
+            this.label8.Location = new System.Drawing.Point(9, 54);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(34, 15);
             this.label8.TabIndex = 8;
@@ -482,7 +482,7 @@ namespace Mamesaver
             this.inGameTitleOptions.Controls.Add(this.label5);
             this.inGameTitleOptions.Controls.Add(this.inGameFont);
             this.inGameTitleOptions.Controls.Add(this.inGameFontSize);
-            this.inGameTitleOptions.Location = new System.Drawing.Point(8, 61);
+            this.inGameTitleOptions.Location = new System.Drawing.Point(14, 61);
             this.inGameTitleOptions.Name = "inGameTitleOptions";
             this.inGameTitleOptions.Size = new System.Drawing.Size(345, 58);
             this.inGameTitleOptions.TabIndex = 20;
@@ -536,7 +536,7 @@ namespace Mamesaver
             // displaySplash
             // 
             this.displaySplash.AutoSize = true;
-            this.displaySplash.Location = new System.Drawing.Point(11, 149);
+            this.displaySplash.Location = new System.Drawing.Point(17, 149);
             this.displaySplash.Name = "displaySplash";
             this.displaySplash.Size = new System.Drawing.Size(61, 19);
             this.displaySplash.TabIndex = 5;
@@ -557,7 +557,7 @@ namespace Mamesaver
             this.displayInGameTitles.AutoSize = true;
             this.displayInGameTitles.Checked = true;
             this.displayInGameTitles.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.displayInGameTitles.Location = new System.Drawing.Point(11, 39);
+            this.displayInGameTitles.Location = new System.Drawing.Point(17, 39);
             this.displayInGameTitles.Name = "displayInGameTitles";
             this.displayInGameTitles.Size = new System.Drawing.Size(61, 19);
             this.displayInGameTitles.TabIndex = 13;
