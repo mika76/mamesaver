@@ -13,6 +13,8 @@ namespace Mamesaver.Test.Integration
         public event KeyPressEventHandler KeyPress;
         public event KeyEventHandler KeyUp;
 
+        public void SendKeyPress(char key) => KeyPress?.Invoke(this, new KeyPressEventArgs(key));
+        public void SendKeyUp(Keys key) => KeyUp?.Invoke(this, new KeyEventArgs(key));
         public void SendKey(Keys key) => KeyDown?.Invoke(this, new KeyEventArgs(key));
         public void MoveMouse() => OnMouseActivity?.Invoke(this, new MouseEventArgs(MouseButtons.Left, 0, 0, 0, 0));
     }
