@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
 using System.Configuration;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -61,6 +62,8 @@ namespace Mamesaver
         #region Event Handlers
         private void configForm_Load(object sender, EventArgs e)
         {
+            SetVersion();
+
             // Load game list
             LoadList(_gameList.Games);
             LoadFonts();
@@ -83,6 +86,17 @@ namespace Mamesaver
             // Set initial game layout state
             DisplayInGameTitlesChanged(displayInGameTitles, null);
             DisplaySplashChanged(displaySplash, null);
+        }
+
+        /// <summary>
+        ///     Sets the version number label, based on the assembly file version.
+        /// </summary>
+        private void SetVersion()
+        {
+            var assembly = System.Reflection.Assembly.GetExecutingAssembly();
+            var fileVersion = FileVersionInfo.GetVersionInfo(assembly.Location);
+
+            version.Text = $@"{fileVersion.FileVersion}";
         }
 
         private void SetFieldsFromSettings()
@@ -382,5 +396,8 @@ namespace Mamesaver
             lblNoGames.Text = $@"Num Games: {gamesList.Count}";
         }
         #endregion
+
+        private void OpenSiteInBrowser(object sender, LinkLabelLinkClickedEventArgs e) => Process.Start("https://github.com/mika76/mamesaver");
+
     }
 }
