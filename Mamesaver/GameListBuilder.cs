@@ -6,13 +6,13 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
 using Mamesaver.Configuration.Models;
+using Mamesaver.Extensions;
 using Serilog;
 
 namespace Mamesaver
 {
     internal class GameListBuilder
     {
-        private readonly Settings _settings;
         private readonly AdvancedSettings _advancedSettings;
         private readonly MameInvoker _invoker;
         private readonly MamePathManager _pathManager;
@@ -28,9 +28,8 @@ namespace Mamesaver
         /// </summary>
         private readonly XmlReaderSettings _readerSettings;
        
-        public GameListBuilder(Settings settings, AdvancedSettings advancedSettings, MameInvoker invoker, MamePathManager pathManager)
+        public GameListBuilder(AdvancedSettings advancedSettings, MameInvoker invoker, MamePathManager pathManager)
         {
-            _settings = settings;
             _advancedSettings = advancedSettings;
             _invoker = invoker;
             _pathManager = pathManager;
@@ -110,8 +109,16 @@ namespace Mamesaver
                     var name = element.Attribute("name")?.Value;
                     if (name == null) continue;
 
+                    // Perform initial validity checks
+                    if (!IsGameValid(element, name)) continue;
+
+                    // Retrieve and verify driver and emulation status
                     var driver = element.Element("driver");
-                    if (driver == null) continue;
+                    if (driver == null)
+                    {
+                        Log.Information("{name} not added to game list as it has no driver specified", name);
+                        continue;
+                    }
 
                     // Skip games which aren't sufficiently emulated
                     var status = driver.Attribute("status")?.Value;
@@ -131,6 +138,40 @@ namespace Mamesaver
             }
 
             return games;
+        }
+
+        /// <summary>
+        ///     Performs preliminary validation checks against a game, verifying that it's runnable, isn't a BIOS
+        ///     or mechanical.
+        /// </summary>
+        /// <param name="element">Machine element from MAME's <c>-listxml</c> output</param>
+        /// <param name="name">name of game being evaluated</param>
+        private static bool IsGameValid(XElement element, string name)
+        {
+            if (element.ToBoolean("isdevice") == true) return false;
+
+            // Verify that the ROM isn't a BIOS
+            if (element.ToBoolean("isbios") == true)
+            {
+                Log.Information("{name} not added to game list as it is a BIOS", name);
+                return false;
+            }
+
+            // Verify that the game isn't mechanical
+            if (element.ToBoolean("ismechanical") == true)
+            {
+                Log.Information("{name} not added to game list as it is mechanical", name);
+                return false;
+            }
+
+            // Verify that the game is runnable
+            if (element.ToBoolean("runnable") == false)
+            {
+                Log.Information("{name} not added to game list as it is not runnable", name);
+                return false;
+            }
+
+            return true;
         }
 
         /// <summary>

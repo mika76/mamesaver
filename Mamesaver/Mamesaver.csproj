@@ -84,6 +84,7 @@
     <Compile Include="BlankScreen.cs" />
     <Compile Include="BlankScreenFactory.cs" />
     <Compile Include="CaptureScreen.cs" />
+    <Compile Include="Extensions\XmlExtensions.cs" />
     <Compile Include="MamePathManager.cs" />
     <Compile Include="ContainerFactory.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />
