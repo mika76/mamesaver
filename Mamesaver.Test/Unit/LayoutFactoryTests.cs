@@ -1,8 +1,8 @@
 ﻿using System.IO;
-using System.Text;
-using System.Text.RegularExpressions;
+using System.Xml.Serialization;
 using FluentAssertions;
 using Mamesaver.Layout;
+using Mamesaver.Layout.Models;
 using NUnit.Framework;
 
 namespace Mamesaver.Test.Unit
@@ -16,11 +16,13 @@ namespace Mamesaver.Test.Unit
         private const int MonitorHeight = 1080;
 
         private const int BezelHeight = 60;
+        private XmlSerializer _serializer;
 
         [SetUp]
         public void SetUp()
         {
             _layoutFactory = GetInstance<LayoutFactory>();
+            _serializer = new XmlSerializer(typeof(MameLayout));
         }
 
         [Test]
@@ -79,12 +81,14 @@ namespace Mamesaver.Test.Unit
             var stream = new MemoryStream();
             _layoutFactory.Serialize(layout, stream);
             stream.Position = 0;
-            var reader = new StreamReader(stream);
-            var text = reader.ReadToEnd();
+            
+            // Sanity check that the expected XML deserializes to the same object
+            var target = _serializer.Deserialize(new MemoryStream(Resources.horizontal));
+            layout.Should().BeEquivalentTo(target);
 
-            var target = Encoding.UTF8.GetString(Resources.horizontal);
-            StripControlChars(text).Should().Be(StripControlChars(target));
- 
+            // Verify the layout serialization 
+            var source = _serializer.Deserialize(stream);
+            source.Should().BeEquivalentTo(target);
         }
 
         [Test]
@@ -95,16 +99,14 @@ namespace Mamesaver.Test.Unit
             var stream = new MemoryStream();
             _layoutFactory.Serialize(layout, stream);
             stream.Position = 0;
-            var reader = new StreamReader(stream);
-            var text = reader.ReadToEnd();
+            
+            // Sanity check that the expected XML deserializes to the same object
+            var target = _serializer.Deserialize(new MemoryStream(Resources.vertical));
+            layout.Should().BeEquivalentTo(target);
 
-            var target = Encoding.UTF8.GetString(Resources.vertical);
-            StripControlChars(text).Should().Be(StripControlChars(target));
+            // Verify the layout serialization 
+            var source = _serializer.Deserialize(stream);
+            source.Should().BeEquivalentTo(target);
         }
-
-        /// <summary>
-        ///     Removes control characters to prevent test failures for non-structural components
-        /// </summary>
-        private string StripControlChars(string text) => Regex.Replace(text, @"[^\u0009\u000A\u000D\u0020-\u007E]", "");
     }
 }
