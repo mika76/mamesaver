@@ -1,0 +1,46 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:config="clr-namespace:Mamesaver.Config"
+    xmlns:mvvm="http://prismlibrary.com/"
+    mvvm:ViewModelLocator.AutoWireViewModel="True"
+    x:Class="Mamesaver.Config.ConfigForm"
+        mc:Ignorable="d"
+        Title="Mamesaver Config" Icon="Resources/mame.ico" 
+    ResizeMode="NoResize" SizeToContent="WidthAndHeight">
+
+    <Window.Resources>
+        <ResourceDictionary Source="Styles.xaml"/>
+   </Window.Resources>
+
+    <DockPanel LastChildFill="False" Margin="10">
+        <TabControl DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="0,0,0,10" HorizontalContentAlignment="Stretch" Width="800" Height="600">
+            <TabItem Header="General">
+                <config:GeneralTab/>
+            </TabItem>
+            <TabItem Header="Game List">
+                <config:GameListTab/>
+            </TabItem>
+            <TabItem Header="Layout">
+                <config:LayoutTab/>
+            </TabItem>
+            <TabItem Header="Hotkeys">
+                <config:HotkeysTab/>
+            </TabItem>
+            <TabItem Header="Advanced">
+                <config:AdvancedTab/>
+            </TabItem>
+            <TabItem Header="About">
+                <config:AboutTab/>
+            </TabItem>
+        </TabControl>
+        <Button Command="{Binding ResetToDefaultsClick}" DockPanel.Dock="Left" Width="120" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="0,5,5,0">_Reset to Defaults</Button>
+
+        <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
+            <Button Command="{Binding OkClick}" Width="90" IsCancel="True" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="5,5,5,0">_OK</Button>
+            <Button Command="{Binding CancelClick}" Width="90" IsDefault="True" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="5,5,0,0">_Cancel</Button>
+        </StackPanel>
+    </DockPanel>
+</Window>

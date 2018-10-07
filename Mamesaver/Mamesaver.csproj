@@ -49,6 +49,16 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\CommonServiceLocator.1.3\lib\portable-net4+sl5+netcore45+wpa81+wp8\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationFramework" />
+    <Reference Include="Prism, Version=6.3.0.0, Culture=neutral, PublicKeyToken=40ee6c3a2184dc59, processorArchitecture=MSIL">
+      <HintPath>..\packages\Prism.Core.6.3.0\lib\net45\Prism.dll</HintPath>
+    </Reference>
+    <Reference Include="Prism.Wpf, Version=6.3.0.0, Culture=neutral, PublicKeyToken=40ee6c3a2184dc59, processorArchitecture=MSIL">
+      <HintPath>..\packages\Prism.Wpf.6.3.0\lib\net45\Prism.Wpf.dll</HintPath>
+    </Reference>
     <Reference Include="Serilog, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
       <HintPath>..\packages\Serilog.2.5.0\lib\net46\Serilog.dll</HintPath>
     </Reference>
@@ -70,11 +80,17 @@
     <Reference Include="System.Management" />
     <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Prism.Wpf.6.3.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
     <Compile Include="BackgroundForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -96,13 +112,6 @@
     <Compile Include="Hotkeys\HotKeyManager.cs" />
     <Compile Include="MameErrorCodes.cs" />
     <Compile Include="MameScreen.cs" />
-    <Compile Include="Configuration\Models\AdvancedSettings.cs" />
-    <Compile Include="Configuration\Models\FontSettings.cs" />
-    <Compile Include="Configuration\Models\GameList.cs" />
-    <Compile Include="Configuration\Models\InGameTitles.cs" />
-    <Compile Include="Configuration\Models\LayoutSettings.cs" />
-    <Compile Include="Configuration\Models\SplashScreen.cs" />
-    <Compile Include="Configuration\GameListStore.cs" />
     <Compile Include="MultiFormApplicationContext.cs" />
     <Compile Include="Power\PowerEventWatcher.cs" />
     <Compile Include="Power\PowerManager.cs" />
@@ -113,7 +122,6 @@
     <Compile Include="ConfigForm.Designer.cs">
       <DependentUpon>ConfigForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Game.cs" />
     <Compile Include="Layout\LayoutBuilder.cs" />
     <Compile Include="Layout\LayoutConstants.cs" />
     <Compile Include="Layout\LayoutFactory.cs" />
@@ -128,8 +136,6 @@
     <Compile Include="Layout\Models\MameLayout.cs" />
     <Compile Include="Layout\Models\Screen.cs" />
     <Compile Include="Layout\Models\View.cs" />
-    <Compile Include="Configuration\GeneralSettingsStore.cs" />
-    <Compile Include="Configuration\SettingsStore.cs" />
     <Compile Include="ScreenManager.cs" />
     <Compile Include="Windows\MonitorInterop.cs" />
     <Compile Include="Program.cs" />
@@ -141,8 +147,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="SelectableGame.cs" />
-    <Compile Include="Configuration\Models\Settings.cs" />
     <Compile Include="Windows\PlatformInvokeGdi32.cs" />
     <Compile Include="Windows\PlatformInvokePowrprof.cs" />
     <Compile Include="Windows\PlatformInvokeKernel32.cs" />
@@ -178,12 +182,31 @@
   <ItemGroup>
     <None Include="key.snk" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+  </ItemGroup>
   <ItemGroup>
     <Content Include="ILMergeOrder.txt" />
     <Content Include="Resources\mame-icon.png" />
     <Content Include="Resources\mame.ico" />
     <Content Include="Resources\MAMELogoTM.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Mamesaver.Config\Mamesaver.Config.csproj">
+      <Project>{42a11ee9-5aea-4ead-a264-5f3966bdd487}</Project>
+      <Name>Mamesaver.Config</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Mamesaver.Models\Mamesaver.Models.csproj">
+      <Project>{A15AA0A1-6644-46C0-AC9C-991DF3861C87}</Project>
+      <Name>Mamesaver.Models</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Mamesaver.Services\Mamesaver.Services.csproj">
+      <Project>{52e0efc7-fdb1-4b4f-9555-3d2ca30a7675}</Project>
+      <Name>Mamesaver.Services</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -204,5 +227,5 @@
     <Error Condition="!Exists('..\packages\MSBuild.ILMerge.Task.1.0.5\build\MSBuild.ILMerge.Task.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MSBuild.ILMerge.Task.1.0.5\build\MSBuild.ILMerge.Task.props'))" />
     <Error Condition="!Exists('..\packages\MSBuild.ILMerge.Task.1.0.5\build\MSBuild.ILMerge.Task.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MSBuild.ILMerge.Task.1.0.5\build\MSBuild.ILMerge.Task.targets'))" />
   </Target>
-  <Import Project="..\packages\MSBuild.ILMerge.Task.1.0.5\build\MSBuild.ILMerge.Task.targets" Condition="Exists('..\packages\MSBuild.ILMerge.Task.1.0.5\build\MSBuild.ILMerge.Task.targets')" />
+  <!-- <Import Project="..\packages\MSBuild.ILMerge.Task.1.0.5\build\MSBuild.ILMerge.Task.targets" Condition="Exists('..\packages\MSBuild.ILMerge.Task.1.0.5\build\MSBuild.ILMerge.Task.targets')" /> -->
 </Project>

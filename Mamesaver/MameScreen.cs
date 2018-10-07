@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Windows.Forms;
-using Mamesaver.Configuration.Models;
+using Mamesaver.Models.Configuration;
 using Mamesaver.Power;
 using Serilog;
-using LayoutSettings = Mamesaver.Configuration.Models.LayoutSettings;
+using LayoutSettings = Mamesaver.Models.Configuration.LayoutSettings;
 using Timer = System.Timers.Timer;
 
 namespace Mamesaver

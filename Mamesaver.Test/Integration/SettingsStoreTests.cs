@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using FluentAssertions;
 using Mamesaver.Configuration;
+using Mamesaver.Models;
 using Mamesaver.Test.Unit;
 using NUnit.Framework;
 

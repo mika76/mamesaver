@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using Mamesaver.Configuration.Models;
+using Mamesaver.Models.Configuration;
 using Mamesaver.Power;
 using Mamesaver.Windows;
 using Serilog;

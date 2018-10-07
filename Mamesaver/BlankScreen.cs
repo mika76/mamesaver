@@ -6,7 +6,7 @@ using Serilog;
 using static Mamesaver.Windows.MonitorInterop;
 using static Mamesaver.Windows.PlatformInvokeUser32;
 using static Mamesaver.Windows.PlatformInvokeGdi32;
-using LayoutSettings = Mamesaver.Configuration.Models.LayoutSettings;
+using LayoutSettings = Mamesaver.Models.Configuration.LayoutSettings;
 
 namespace Mamesaver
 {

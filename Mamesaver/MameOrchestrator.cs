@@ -8,8 +8,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
-using Mamesaver.Configuration.Models;
 using Mamesaver.Hotkeys;
+using Mamesaver.Models.Configuration;
 using Mamesaver.Power;
 using Serilog;
 

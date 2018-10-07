@@ -12,11 +12,12 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using Mamesaver.Configuration;
-using Mamesaver.Configuration.Models;
 using Mamesaver.Extensions;
+using Mamesaver.Models;
+using Mamesaver.Models.Configuration;
+using Mamesaver.Services.Configuration;
 using Serilog;
-using LayoutSettings = Mamesaver.Configuration.Models.LayoutSettings;
+using LayoutSettings = Mamesaver.Models.Configuration.LayoutSettings;
 
 namespace Mamesaver
 {

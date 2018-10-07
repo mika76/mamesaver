@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using Mamesaver.Configuration.Models;
+using Mamesaver.Models.Configuration;
 using Mamesaver.Windows;
 using Serilog;
 

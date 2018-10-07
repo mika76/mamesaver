@@ -1,0 +1,133 @@
+﻿<UserControl x:Class="Mamesaver.Config.GameListTab"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:dgx="urn:tom-englert.de/DataGridExtensions"
+             xmlns:infrastructure="clr-namespace:Mamesaver.Config.Infrastructure"
+             xmlns:filters="clr-namespace:Mamesaver.Config.Filters"
+             mc:Ignorable="d"
+             d:DesignHeight="450" d:DesignWidth="800">
+
+    <UserControl.Resources>
+        <ControlTemplate x:Key="NullFilter">
+            <filters:NullFilter/>
+        </ControlTemplate>
+
+        <ControlTemplate x:Key="MultipleChoiceFilter">
+            <filters:MultipleChoiceFilter Filter="{Binding Path=Filter, 
+                RelativeSource={RelativeSource Mode=FindAncestor, 
+                AncestorType=dgx:DataGridFilterColumnControl}}"/>
+        </ControlTemplate>
+
+        <ControlTemplate x:Key="MultipleChoiceDecadeFilter">
+            <filters:MultipleChoiceDecadeFilter Filter="{Binding Path=Filter, 
+                RelativeSource={RelativeSource Mode=FindAncestor, 
+                AncestorType=dgx:DataGridFilterColumnControl}}"/>
+        </ControlTemplate>
+    </UserControl.Resources>
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+
+        <DockPanel Margin="0,4" Grid.ColumnSpan="2" LastChildFill="False">
+            <Button Content="_Rebuild List" Width="90" Command="{Binding RebuildListClick}" DockPanel.Dock="Left" Margin="0,5,5,5" />
+            <Label Content="{Binding GameCount}" DockPanel.Dock="Left" VerticalAlignment="Center" />
+            <Button Content="_Clear Filters" Width="90" Click="ClearFilters" DockPanel.Dock="Right" VerticalAlignment="Bottom" Margin="5,5,0,5" />
+        </DockPanel>
+
+        <!--
+                          dgx:DataGridFilter.FilterEvaluationDelay="00:00:00"
+                  dgx:DataGridFilter.IsAutoFilterEnabled="False"
+                  VirtualizingStackPanel.IsVirtualizing="True"
+                  VirtualizingStackPanel.VirtualizationMode="Recycling"
+ -->
+
+        <DataGrid x:Name="GameList" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" IsReadOnly="True"
+                  CanUserReorderColumns="False" CanUserResizeRows="False"
+                 EnableRowVirtualization="True"
+                  EnableColumnVirtualization="True"
+                  GridLinesVisibility="None" AutoGenerateColumns="False"
+                  ItemsSource="{Binding Games, Mode=TwoWay}">
+
+            <DataGrid.Resources>
+                
+                <!-- Sort on mouse press to increase responsiveness -->
+                <Style TargetType="DataGridColumnHeader">
+                    <Setter Property="ClickMode" Value="Press"/>
+                </Style>
+
+                <infrastructure:BindingProxy x:Key="Proxy" Data="{Binding}" />
+            </DataGrid.Resources>
+
+            <DataGrid.CellStyle>
+
+                <!-- Disable highlighting -->
+                <Style TargetType="{x:Type DataGridCell}">
+                    <Setter Property="BorderBrush" Value="Transparent" />
+                    <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" />
+                    <Setter Property="Background" Value="Transparent" />
+
+                    <!-- Increase cell padding -->
+                    <Setter Property="Padding" Value="3" />
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type DataGridCell}">
+                                <Border Padding="{TemplateBinding Padding}" BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                        Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+                                    <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </DataGrid.CellStyle>
+            <DataGrid.Columns>
+                <!-- Game selection header -->
+                <DataGridTemplateColumn dgx:DataGridFilterColumn.Template="{StaticResource NullFilter}"
+                                        CanUserResize="False" Width="40">
+                    <DataGridTemplateColumn.Header>
+                        <CheckBox
+                            HorizontalAlignment="Center"
+                            IsChecked="{Binding Path=Data.AllSelected,
+                                        UpdateSourceTrigger=PropertyChanged, Mode=TwoWay,
+                                        Source={StaticResource Proxy}}" />
+                    </DataGridTemplateColumn.Header>
+
+                    <!-- Game selection -->
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <CheckBox HorizontalAlignment="Center"
+                                      Command="{Binding Path=DataContext.GameSelectionClick,
+                                            RelativeSource={RelativeSource FindAncestor,
+                                            AncestorType={x:Type Window}}}"
+                                      IsChecked="{Binding Path=Selected, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTextColumn x:Name="Description" Binding="{Binding Description}" Header="Name" MinWidth="100"
+                                    Width="200"
+                                    SortDirection="Ascending"
+                                    dgx:DataGridFilterColumn.Template="{StaticResource NullFilter}" />
+
+                <DataGridTextColumn Binding="{Binding Year}" Header="Year" Width="60" CanUserResize="False"
+                                    dgx:DataGridFilterColumn.Template="{StaticResource MultipleChoiceDecadeFilter}" />
+
+                <DataGridTextColumn Binding="{Binding Manufacturer}" Header="Manufacturer" MinWidth="100" Width="200"
+                                    dgx:DataGridFilterColumn.Template="{StaticResource MultipleChoiceFilter}" />
+
+                <DataGridTextColumn Binding="{Binding Category}" Header="Category" MinWidth="100" Width="200"
+                                    dgx:DataGridFilterColumn.Template="{StaticResource MultipleChoiceFilter}" />
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</UserControl>

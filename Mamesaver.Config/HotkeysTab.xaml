@@ -1,0 +1,58 @@
+﻿<UserControl x:Class="Mamesaver.Config.HotkeysTab"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+
+    <UserControl.Resources>
+        <ResourceDictionary Source="Styles.xaml"/>
+    </UserControl.Resources>
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Orientation="Horizontal">
+            <CheckBox IsChecked="{Binding HotkeysEnabled}" VerticalContentAlignment="Center">
+                <Label Style="{StaticResource Inline}">Enable hotkeys</Label>
+            </CheckBox>
+        </StackPanel>
+
+        <StackPanel Grid.Row="2" Margin="0,10,0,0">
+            <DockPanel Height="Auto">
+                <Label  Style="{StaticResource Divider}" DockPanel.Dock="Left" Content="Key bindings" />
+                <Separator/>
+            </DockPanel>
+        </StackPanel>
+
+        <Grid Grid.Row="3" Margin="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Label Style="{StaticResource Inline}" Grid.Row="0" Grid.Column="0" FontWeight="DemiBold" HorizontalAlignment="Right">Left arrow</Label>
+            <Label Style="{StaticResource Inline}" Grid.Row="1" Grid.Column="0" FontWeight="DemiBold" HorizontalAlignment="Right">Right arrow</Label>
+            <Label Style="{StaticResource Inline}" Grid.Row="2" Grid.Column="0" FontWeight="DemiBold" HorizontalAlignment="Right">Enter</Label>
+            <Label Style="{StaticResource Inline}" Grid.Row="3" Grid.Column="0" FontWeight="DemiBold" HorizontalAlignment="Right">Delete</Label>
+
+            <Label Style="{StaticResource Inline}" Grid.Row="0" Grid.Column="1">Previous game</Label>
+            <Label Style="{StaticResource Inline}" Grid.Row="1" Grid.Column="1">Next game</Label>
+            <Label Style="{StaticResource Inline}" Grid.Row="2" Grid.Column="1">Play game</Label>
+            <Label Style="{StaticResource Inline}" Grid.Row="3" Grid.Column="1">Deselect game</Label>
+        </Grid>
+    </Grid>
+</UserControl>

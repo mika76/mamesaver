@@ -1,8 +1,11 @@
-using Mamesaver.Configuration;
-using Mamesaver.Configuration.Models;
+using Mamesaver.Config.Filters.ViewModels;
+using Mamesaver.Config.ViewModels;
 using Mamesaver.Hotkeys;
 using Mamesaver.Layout;
+using Mamesaver.Models.Configuration;
 using Mamesaver.Power;
+using Mamesaver.Services;
+using Mamesaver.Services.Configuration;
 using Mamesaver.Windows;
 using SimpleInjector;
 using SimpleInjector.Lifestyles;
@@ -49,8 +52,15 @@ namespace Mamesaver
             container.Register<MameInvoker>(Lifestyle.Singleton);
             container.Register<PowerEventWatcher>(Lifestyle.Singleton);
             container.Register<MamePathManager>(Lifestyle.Singleton);
+            container.Register<ServiceResolver>(Lifestyle.Singleton);
+
+            container.Register<Config.ConfigForm>();
+            container.Register<ConfigFormViewModel>(Lifestyle.Singleton);
+            container.Register<DecadeFilterViewModel>(Lifestyle.Singleton);
 
             container.Register<IActivityHook>(() => new UserActivityHook(), Lifestyle.Singleton);
+
+            container.Verify();
 
             return container;
         }

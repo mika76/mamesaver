@@ -5,8 +5,9 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
-using Mamesaver.Configuration.Models;
 using Mamesaver.Extensions;
+using Mamesaver.Models;
+using Mamesaver.Models.Configuration;
 using Serilog;
 
 namespace Mamesaver

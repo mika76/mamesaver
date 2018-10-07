@@ -1,4 +1,4 @@
-﻿using Mamesaver.Configuration.Models;
+﻿using Mamesaver.Models.Configuration;
 using Mamesaver.Power;
 
 namespace Mamesaver

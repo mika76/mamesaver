@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Windows.Forms;
-using Mamesaver.Configuration;
-using Mamesaver.Configuration.Models;
 using Mamesaver.Extensions;
 using Mamesaver.Hotkeys;
 using Mamesaver.Layout;
+using Mamesaver.Models.Configuration;
 using Mamesaver.Power;
+using Mamesaver.Services.Configuration;
 using Serilog;
 
 namespace Mamesaver
