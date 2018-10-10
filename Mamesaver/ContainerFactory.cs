@@ -1,9 +1,13 @@
-using Mamesaver.Configuration;
-using Mamesaver.Configuration.Models;
+using Mamesaver.Config.Filters.ViewModels;
+using Mamesaver.Config.ViewModels;
 using Mamesaver.Hotkeys;
 using Mamesaver.Layout;
+using Mamesaver.Models.Configuration;
 using Mamesaver.Power;
-using Mamesaver.Windows;
+using Mamesaver.Services;
+using Mamesaver.Services.Configuration;
+using Mamesaver.Services.Mame;
+using Mamesaver.Services.Windows;
 using SimpleInjector;
 using SimpleInjector.Lifestyles;
 
@@ -41,6 +45,8 @@ namespace Mamesaver
             container.Register<ScreenManager>(Lifestyle.Scoped);
             container.Register<PowerManager>(Lifestyle.Scoped);
             container.Register<HotKeyManager>(Lifestyle.Scoped);
+            container.Register<MameOrchestrator>(Lifestyle.Scoped);
+            container.Register<BlankScreenFactory>(Lifestyle.Scoped);
 
             container.Register<GameListBuilder>(Lifestyle.Singleton);
             container.Register<TitleFactory>(Lifestyle.Singleton);
@@ -49,8 +55,13 @@ namespace Mamesaver
             container.Register<MameInvoker>(Lifestyle.Singleton);
             container.Register<PowerEventWatcher>(Lifestyle.Singleton);
             container.Register<MamePathManager>(Lifestyle.Singleton);
+            container.Register<ServiceResolver>(Lifestyle.Singleton);
 
-            container.Register<IActivityHook>(() => new UserActivityHook(), Lifestyle.Singleton);
+            container.Register<Config.ConfigForm>();
+            container.Register<ConfigFormViewModel>(Lifestyle.Singleton);
+            container.Register<DecadeFilterViewModel>(Lifestyle.Singleton);
+
+            container.Register<IActivityHook>(() => new UserActivityHook(typeof(Program).Assembly), Lifestyle.Singleton);
 
             return container;
         }

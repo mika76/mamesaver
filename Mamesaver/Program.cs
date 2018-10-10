@@ -8,7 +8,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
-using Mamesaver.Configuration.Models;
+using Mamesaver.Models.Configuration;
 using Serilog;
 using Serilog.Events;
 using SimpleInjector;
@@ -126,8 +126,10 @@ namespace Mamesaver
         /// </summary>
         public static void ShowConfig()
         {
-            Application.EnableVisualStyles();
-            Application.Run(_container.GetInstance<ConfigForm>());
+            var application = new App();
+
+            var configForm = _container.GetInstance<Config.ConfigForm>();
+            application.Run(configForm);
         }
 
         [Conditional("DEBUG")]

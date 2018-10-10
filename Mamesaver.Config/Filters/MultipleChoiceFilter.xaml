@@ -1,0 +1,84 @@
+﻿<Control x:Class="Mamesaver.Config.Filters.MultipleChoiceFilter"
+         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" mc:Ignorable="d" d:DesignHeight="150" d:DesignWidth="150"
+         xmlns:dgx="urn:tom-englert.de/DataGridExtensions"
+         x:Name="Control">
+    <Control.Template>
+        <ControlTemplate>
+            <StackPanel Orientation="Vertical">
+                <ToggleButton x:Name="ToggleButton" BorderThickness="0" Background="Transparent">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock x:Name="IsFilterActiveMarker" Text="." Margin="0,0,-4,0" 
+                                   Foreground="{Binding ElementName=FilterSymbol, Path=Foreground}" FontWeight="Bold" Visibility="Hidden" />
+                        <Control x:Name="FilterSymbol" Style="{DynamicResource {x:Static dgx:DataGridFilter.IconStyleKey}}" />
+                    </StackPanel>
+                </ToggleButton>
+                <Popup d:DataContext="{d:DesignInstance dgx:DataGridFilterColumnControl}"
+                    x:Name="Popup" IsOpen="{Binding Path=IsChecked, ElementName=ToggleButton, Mode=TwoWay}"  
+               Placement="Left" 
+                       VerticalOffset="{Binding ElementName=Toggle, Path=ActualHeight}"
+                       HorizontalOffset="{Binding ElementName=Toggle, Path=ActualWidth}" AllowsTransparency="True" StaysOpen="False">
+                    <Border 
+                        BorderThickness="1" 
+                        Margin="5"
+                        CornerRadius="6">
+                        <Border.Effect>
+                            <DropShadowEffect BlurRadius="5" Opacity="0.2" ShadowDepth="0" RenderingBias="Quality" />
+                        </Border.Effect>
+                        <Border BorderThickness="1" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}">
+                            <StackPanel Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}">
+
+                                <StackPanel Orientation="Horizontal" Margin="10,10,10,0">
+                                    <Button Margin="0,0,0,0" Name="btnSelectAll" Click="SelectAllClick">
+                                        <Button.Template>
+                                            <ControlTemplate>
+                                                <TextBlock Text="Select All" Foreground="{DynamicResource {x:Static SystemColors.MenuHighlightBrushKey}}" Cursor="Hand" />
+                                            </ControlTemplate>
+                                        </Button.Template>
+                                    </Button>
+
+                                    <Button Margin="10,0,0,0" Name="btnUnselectAll" Click="UnselectAllClick">
+                                        <Button.Template>
+                                            <ControlTemplate>
+                                                <TextBlock Text="Select None" Foreground="{DynamicResource {x:Static SystemColors.MenuHighlightBrushKey}}" Cursor="Hand" />
+                                            </ControlTemplate>
+                                        </Button.Template>
+                                    </Button>
+                                </StackPanel>
+                                <!--<ScrollViewer>-->
+                                <ListView Margin="5" x:Name="FilterList" ItemsSource="{Binding SelectableValues}" SelectionMode="Extended" 
+                                          SelectionChanged="ListBox_SelectionChanged" BorderBrush="Transparent"
+                                          MaxHeight="400">
+                                    <ListView.ItemContainerStyle>
+                                        <Style TargetType="ListBoxItem">
+                                            <Setter Property="IsSelected" Value="{Binding Content.IsSelected, Mode=TwoWay, RelativeSource={RelativeSource Self}}"/>
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="ListBoxItem">
+                                                        <ContentPresenter/>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </ListView.ItemContainerStyle>
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <DockPanel>
+                                                <CheckBox DockPanel.Dock="Left" Margin="3,2" IsChecked="{Binding IsSelected, RelativeSource={RelativeSource FindAncestor, AncestorType=ListBoxItem}}">
+                                                    <TextBlock Margin="3,2" Text="{Binding}" VerticalAlignment="Center"/>
+                                                </CheckBox>
+                                            </DockPanel>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListView>
+                                    <!--</ScrollViewer>-->
+                            </StackPanel>
+                        </Border>
+                    </Border>
+                </Popup>
+            </StackPanel>
+        </ControlTemplate>
+    </Control.Template>
+</Control>

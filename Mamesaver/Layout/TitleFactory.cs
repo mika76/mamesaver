@@ -5,8 +5,9 @@ using System.Drawing.Imaging;
 using System.Drawing.Text;
 using System.IO;
 using System.Windows.Forms;
-using Mamesaver.Configuration.Models;
 using Mamesaver.Layout.Models;
+using Mamesaver.Models;
+using Mamesaver.Models.Configuration;
 using Serilog;
 
 namespace Mamesaver.Layout

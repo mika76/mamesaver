@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Windows.Forms;
-using Mamesaver.Configuration.Models;
+using Mamesaver.Models.Configuration;
 using Mamesaver.Power;
+using Mamesaver.Services.Windows;
 using Serilog;
-using LayoutSettings = Mamesaver.Configuration.Models.LayoutSettings;
+using LayoutSettings = Mamesaver.Models.Configuration.LayoutSettings;
 using Timer = System.Timers.Timer;
 
 namespace Mamesaver
@@ -16,6 +17,7 @@ namespace Mamesaver
     {
         private readonly Settings _settings;
         private readonly GamePlayManager _gamePlayManager;
+        private readonly IActivityHook _activityHook;
         private readonly PowerManager _powerManager;
         private readonly SplashScreen _splashSettings;
 
@@ -35,10 +37,12 @@ namespace Mamesaver
             Settings settings,
             LayoutSettings layoutSettings,
             GamePlayManager gamePlayManager,
+            IActivityHook activityHook,
             PowerManager powerManager) : base(layoutSettings, powerManager)
         {
             _settings = settings;
             _gamePlayManager = gamePlayManager;
+            _activityHook = activityHook;
             _powerManager = powerManager;
 
             _splashSettings = layoutSettings.SplashScreen;
@@ -58,6 +62,9 @@ namespace Mamesaver
 
             InitGameTimer();
             InitSplashTimer();
+
+            // Start listening for mouse and keyboard activity
+            _activityHook.Start();
 
             _initialised = true;
 

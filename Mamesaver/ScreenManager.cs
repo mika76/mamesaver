@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Windows.Forms;
 using Mamesaver.Hotkeys;
-using Mamesaver.Windows;
+using Mamesaver.Services.Windows;
 using Serilog;
 
 namespace Mamesaver

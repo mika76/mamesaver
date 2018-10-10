@@ -1,0 +1,67 @@
+﻿<UserControl x:Class="Mamesaver.Config.LayoutTab"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+
+    <UserControl.Resources>
+        <ResourceDictionary Source="Styles.xaml"/>
+    </UserControl.Resources>
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <StackPanel>
+            <DockPanel Height="Auto">
+                <Label Style="{StaticResource Divider}" DockPanel.Dock="Left" Content="In-game titles"/>
+                <Separator/>
+            </DockPanel>
+
+            <StackPanel Orientation="Horizontal">
+                <CheckBox IsChecked="{Binding InGameTitlesEnabled}" VerticalContentAlignment="Center">
+                    <Label Style="{StaticResource Inline}">Enable</Label>
+                </CheckBox>
+            </StackPanel>
+            <Label>Font:</Label>
+        </StackPanel>
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal" IsEnabled="{Binding InGameTitlesEnabled}">
+            <ComboBox SelectedValue="{Binding InGameFont}" ItemsSource="{Binding Fonts}" Width="250" Margin="0,0,5,0" IsEditable="true"/>
+            <ComboBox SelectedValue="{Binding InGameFontSize}" ItemsSource="{Binding FontSizes}" Width="50" IsEditable="true"/>
+        </StackPanel>
+
+        <DockPanel Grid.Row="2" Height="Auto" Margin="0,20,0,0">
+            <Label Style="{StaticResource Divider}" DockPanel.Dock="Left" Content="Splash screen"/>
+            <Separator/>
+        </DockPanel>
+
+        <StackPanel Grid.Row="3">
+            <StackPanel Orientation="Horizontal">
+                <CheckBox IsChecked="{Binding SplashEnabled}" VerticalContentAlignment="Center">
+                    <Label Style="{StaticResource Inline}">Enable</Label>
+                </CheckBox>
+            </StackPanel>
+            <Label IsEnabled="{Binding SplashEnabled}">Duration:</Label>
+        </StackPanel>
+
+        <StackPanel IsEnabled="{Binding SplashEnabled}" Grid.Row="4">
+            <StackPanel Orientation="Horizontal">
+                <TextBox Text="{Binding SplashDuration}" Width="50" VerticalAlignment="Center"/>
+                <Label Style="{StaticResource Inline}">seconds</Label>
+            </StackPanel>
+
+            <StackPanel HorizontalAlignment="Left">
+                <Label>Font:</Label>
+                <ComboBox SelectedValue="{Binding SplashFont}" ItemsSource="{Binding Fonts}" Width="305" IsEditable="True" />
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</UserControl>

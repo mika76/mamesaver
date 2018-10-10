@@ -2,8 +2,8 @@
 using System.Threading;
 using System.Windows.Forms;
 using FluentAssertions;
-using Mamesaver.Configuration.Models;
 using Mamesaver.Hotkeys;
+using Mamesaver.Models.Configuration;
 using Mamesaver.Power;
 using Mamesaver.Test.Integration;
 using NUnit.Framework;
