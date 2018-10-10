@@ -1,7 +1,8 @@
 ﻿using System.Runtime.InteropServices;
+
 // ReSharper disable InconsistentNaming
 
-namespace Mamesaver.Windows
+namespace Mamesaver.Services.Windows
 {
     internal static class PlatformInvokeKernel32
     {

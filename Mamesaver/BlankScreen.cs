@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Windows.Forms;
 using Mamesaver.Power;
-using Mamesaver.Windows;
+using Mamesaver.Services.Windows;
 using Serilog;
-using static Mamesaver.Windows.MonitorInterop;
-using static Mamesaver.Windows.PlatformInvokeUser32;
-using static Mamesaver.Windows.PlatformInvokeGdi32;
+using static Mamesaver.Services.Windows.MonitorInterop;
+using static Mamesaver.Services.Windows.PlatformInvokeUser32;
+using static Mamesaver.Services.Windows.PlatformInvokeGdi32;
 using LayoutSettings = Mamesaver.Models.Configuration.LayoutSettings;
 
 namespace Mamesaver

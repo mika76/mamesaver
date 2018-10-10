@@ -12,10 +12,11 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using Mamesaver.Extensions;
 using Mamesaver.Models;
 using Mamesaver.Models.Configuration;
+using Mamesaver.Models.Extensions;
 using Mamesaver.Services.Configuration;
+using Mamesaver.Services.Mame;
 using Serilog;
 using LayoutSettings = Mamesaver.Models.Configuration.LayoutSettings;
 

@@ -1,9 +1,7 @@
 ﻿using System;
 
-using static Mamesaver.Windows.PlatformInvokeUser32;
-
 // ReSharper disable InconsistentNaming
-namespace Mamesaver.Windows
+namespace Mamesaver.Services.Windows
 {
     public static class MonitorInterop
     {
@@ -12,7 +10,7 @@ namespace Mamesaver.Windows
 
         public static void SetMonitorState(IntPtr handle, MonitorState state)
         {
-            SendMessage(handle, WM_SYSCOMMAND, SC_MONITORPOWER, new IntPtr((int)state));
+            PlatformInvokeUser32.SendMessage(handle, WM_SYSCOMMAND, SC_MONITORPOWER, new IntPtr((int)state));
         }
     }
 

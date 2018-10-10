@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Mamesaver.Windows
+namespace Mamesaver.Services.Windows
 {
     public static class WindowsInterop
     {

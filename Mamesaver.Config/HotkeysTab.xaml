@@ -26,7 +26,7 @@
 
         <StackPanel Grid.Row="2" Margin="0,10,0,0">
             <DockPanel Height="Auto">
-                <Label  Style="{StaticResource Divider}" DockPanel.Dock="Left" Content="Key bindings" />
+                <Label Style="{StaticResource Divider}" DockPanel.Dock="Left" Content="Key bindings" />
                 <Separator/>
             </DockPanel>
         </StackPanel>

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Mamesaver.Models.Configuration;
 
-namespace Mamesaver
+namespace Mamesaver.Services.Mame
 {
    public class MamePathManager
     {

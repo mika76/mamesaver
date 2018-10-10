@@ -68,6 +68,8 @@
     <Compile Include="ConfigForm.xaml.cs">
       <DependentUpon>ConfigForm.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converters\InvertedBooleanConverter.cs" />
+    <Compile Include="Converters\InvertedBooleanToVisibilityConverter.cs" />
     <Compile Include="Extensions\DependencyObjectExtensions.cs" />
     <Compile Include="Filters\MultipleChoiceDecadeFilter.xaml.cs">
       <DependentUpon>MultipleChoiceDecadeFilter.xaml</DependentUpon>
@@ -93,7 +95,7 @@
     <Compile Include="LayoutTab.xaml.cs">
       <DependentUpon>LayoutTab.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Models\Game.cs" />
+    <Compile Include="Models\GameViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>

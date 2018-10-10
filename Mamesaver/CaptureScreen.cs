@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Drawing;
 using Serilog;
-using static Mamesaver.Windows.PlatformInvokeUser32;
-using static Mamesaver.Windows.PlatformInvokeGdi32;
+using static Mamesaver.Services.Windows.PlatformInvokeUser32;
+using static Mamesaver.Services.Windows.PlatformInvokeGdi32;
 
 namespace Mamesaver
 {

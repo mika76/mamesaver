@@ -6,7 +6,7 @@
 using System;
 using System.Xml.Serialization;
 
-namespace Mamesaver
+namespace Mamesaver.Models
 {
     [Serializable, XmlRoot("game")]
     public class Game

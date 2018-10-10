@@ -22,7 +22,7 @@
         <StackPanel Grid.Row="0" Margin="0,0,0,10" HorizontalAlignment="Left">
             <Label>Path to MAME executable:</Label>
             <StackPanel Orientation="Horizontal">
-                <TextBox Name="MamePath" Text="{Binding MamePath}" Width="500" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                <TextBox Name="MamePath" Text="{Binding ExecutablePath}" Width="500" Margin="0,0,5,0" VerticalAlignment="Center"/>
                 <Button Width="30" Click="SelectMameExecutable" Height="{Binding ActualHeight,ElementName=MamePath}" Margin="0,5,5,5">…</Button>
             </StackPanel>
         </StackPanel>
@@ -37,14 +37,14 @@
         <StackPanel Grid.Row="2" Margin="0,0,0,10">
             <Label>Interval:</Label>
             <StackPanel Orientation="Horizontal">
-                <TextBox Text="{Binding Interval}" Width="50" VerticalAlignment="Center" />
+                <TextBox Text="{Binding MinutesPerGame}" Width="50" VerticalAlignment="Center" />
                 <Label  Style="{StaticResource Inline}">minutes</Label>
             </StackPanel>
         </StackPanel>
 
         <!-- Cloning -->
         <StackPanel Grid.Row="3" Orientation="Horizontal">
-            <CheckBox IsChecked="{Binding CloneToAllMonitors}" VerticalContentAlignment="Center" Padding="0">
+            <CheckBox IsChecked="{Binding CloneScreen}" VerticalContentAlignment="Center" Padding="0">
                 <Label Style="{StaticResource Inline}">Clone MAME to all monitors</Label>
             </CheckBox>
         </StackPanel>

@@ -6,6 +6,7 @@ using System.Drawing.Text;
 using System.IO;
 using System.Windows.Forms;
 using Mamesaver.Layout.Models;
+using Mamesaver.Models;
 using Mamesaver.Models.Configuration;
 using Serilog;
 

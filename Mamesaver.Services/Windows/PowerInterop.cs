@@ -1,7 +1,7 @@
 ﻿using System;
 using Serilog;
 
-namespace Mamesaver.Windows
+namespace Mamesaver.Services.Windows
 {
     public static class PowerInterop
     {

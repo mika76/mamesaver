@@ -1,4 +1,4 @@
-﻿using Mamesaver.Configuration;
+﻿using Mamesaver.Services.Configuration;
 using NUnit.Framework;
 using SimpleInjector;
 

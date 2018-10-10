@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using Mamesaver.Hotkeys;
 using Mamesaver.Models.Configuration;
 using Mamesaver.Power;
+using Mamesaver.Services.Mame;
 using Serilog;
 
 namespace Mamesaver

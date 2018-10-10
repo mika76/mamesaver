@@ -1,6 +1,6 @@
 ﻿using System.Xml.Linq;
 
-namespace Mamesaver.Extensions
+namespace Mamesaver.Models.Extensions
 {
     public static class XmlExtensions
     {

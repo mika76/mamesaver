@@ -2,6 +2,7 @@
 using System.IO;
 using FluentAssertions;
 using Mamesaver.Models.Configuration;
+using Mamesaver.Services.Mame;
 using Mamesaver.Test.Unit;
 using NUnit.Framework;
 

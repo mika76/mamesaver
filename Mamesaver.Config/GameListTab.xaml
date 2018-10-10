@@ -6,6 +6,7 @@
              xmlns:dgx="urn:tom-englert.de/DataGridExtensions"
              xmlns:infrastructure="clr-namespace:Mamesaver.Config.Infrastructure"
              xmlns:filters="clr-namespace:Mamesaver.Config.Filters"
+             xmlns:converters="clr-namespace:Mamesaver.Config.Converters"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
 
@@ -13,6 +14,10 @@
         <ControlTemplate x:Key="NullFilter">
             <filters:NullFilter/>
         </ControlTemplate>
+
+        <BooleanToVisibilityConverter x:Key="VisibilityConverter"/>
+        <converters:InvertedBooleanToVisibilityConverter x:Key="InvertedVisibilityConverter"/>
+        <converters:InvertedBooleanConverter x:Key="InvertedBooleanConverter"/>
 
         <ControlTemplate x:Key="MultipleChoiceFilter">
             <filters:MultipleChoiceFilter Filter="{Binding Path=Filter, 
@@ -38,9 +43,12 @@
         </Grid.ColumnDefinitions>
 
         <DockPanel Margin="0,4" Grid.ColumnSpan="2" LastChildFill="False">
-            <Button Content="_Rebuild List" Width="90" Command="{Binding RebuildListClick}" DockPanel.Dock="Left" Margin="0,5,5,5" />
+            <Button Content="_Rebuild List" Width="90" Command="{Binding RebuildListClick}" 
+                    IsEnabled="{Binding Path=Rebuilding, Converter={StaticResource InvertedBooleanConverter}}" DockPanel.Dock="Left" Margin="0,5,5,5" />
             <Label Content="{Binding GameCount}" DockPanel.Dock="Left" VerticalAlignment="Center" />
-            <Button Content="_Clear Filters" Width="90" Click="ClearFilters" DockPanel.Dock="Right" VerticalAlignment="Bottom" Margin="5,5,0,5" />
+            <Button Content="_Clear Filters" Width="90" Click="ClearFilters" 
+                    IsEnabled="{Binding Path=Rebuilding, Converter={StaticResource InvertedBooleanConverter}}" 
+                    DockPanel.Dock="Right" VerticalAlignment="Bottom" Margin="5,5,0,5" />
         </DockPanel>
 
         <!--
@@ -50,14 +58,20 @@
                   VirtualizingStackPanel.VirtualizationMode="Recycling"
  -->
 
+
+        <ProgressBar Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Height="20" Width="200" 
+                     Value="{Binding Progress}"
+                     Visibility="{Binding Rebuidling, Converter={StaticResource VisibilityConverter}}"/>
+
         <DataGrid x:Name="GameList" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" IsReadOnly="True"
                   CanUserReorderColumns="False" CanUserResizeRows="False"
-                 EnableRowVirtualization="True"
+                  EnableRowVirtualization="True"
                   EnableColumnVirtualization="True"
                   GridLinesVisibility="None" AutoGenerateColumns="False"
-                  ItemsSource="{Binding Games, Mode=TwoWay}">
+                  ItemsSource="{Binding Games, Mode=TwoWay}"
+                  Visibility="{Binding Path=Rebuilding, Converter={StaticResource InvertedVisibilityConverter}}">
 
-            <DataGrid.Resources>
+        <DataGrid.Resources>
                 
                 <!-- Sort on mouse press to increase responsiveness -->
                 <Style TargetType="DataGridColumnHeader">
@@ -120,13 +134,21 @@
                                     dgx:DataGridFilterColumn.Template="{StaticResource NullFilter}" />
 
                 <DataGridTextColumn Binding="{Binding Year}" Header="Year" Width="60" CanUserResize="False"
+                                    SortMemberPath="YearSort"
                                     dgx:DataGridFilterColumn.Template="{StaticResource MultipleChoiceDecadeFilter}" />
 
                 <DataGridTextColumn Binding="{Binding Manufacturer}" Header="Manufacturer" MinWidth="100" Width="200"
+                                    SortMemberPath="ManufacturerSort"
                                     dgx:DataGridFilterColumn.Template="{StaticResource MultipleChoiceFilter}" />
 
                 <DataGridTextColumn Binding="{Binding Category}" Header="Category" MinWidth="100" Width="200"
+                                    SortMemberPath="CategorySort"
                                     dgx:DataGridFilterColumn.Template="{StaticResource MultipleChoiceFilter}" />
+            
+                <DataGridTextColumn Binding="{Binding Rotation}" Header="Rotation" Width="100" CanUserReorder="False"
+                                    SortMemberPath="RotationSort"
+                                    dgx:DataGridFilterColumn.Template="{StaticResource MultipleChoiceFilter}" />
+ 
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

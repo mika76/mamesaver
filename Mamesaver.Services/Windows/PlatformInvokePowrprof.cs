@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 
 // ReSharper disable InconsistentNaming
-namespace Mamesaver.Windows
+namespace Mamesaver.Services.Windows
 {
     /// <summary>
     ///     Windows Power Management Configuration Tools invoker.

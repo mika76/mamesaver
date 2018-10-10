@@ -16,7 +16,7 @@ namespace Mamesaver.Config
                 Title = "Path to MAME executable"
             };
 
-            if (dialog.ShowDialog() == true) ViewModel.MamePath = dialog.FileName;
+            if (dialog.ShowDialog() == true) ViewModel.ExecutablePath = dialog.FileName;
         }
 
         private ConfigFormViewModel ViewModel => (ConfigFormViewModel) DataContext;

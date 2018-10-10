@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace Mamesaver.Extensions
+namespace Mamesaver.Models.Extensions
 {
     public static class ExceptionExtensions
     {

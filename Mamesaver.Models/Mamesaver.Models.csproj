@@ -54,6 +54,9 @@
     <Compile Include="Configuration\LayoutSettings.cs" />
     <Compile Include="Configuration\Settings.cs" />
     <Compile Include="Configuration\SplashScreen.cs" />
+    <Compile Include="Extensions\EnumerableExtensions.cs" />
+    <Compile Include="Extensions\ExceptionExtensions.cs" />
+    <Compile Include="Extensions\XmlExtensions.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

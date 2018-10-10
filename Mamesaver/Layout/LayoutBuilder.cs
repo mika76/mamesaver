@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Mamesaver.Layout.Models;
+using Mamesaver.Models;
+using Mamesaver.Services.Mame;
 using Serilog;
 
 namespace Mamesaver.Layout

@@ -100,11 +100,7 @@
     <Compile Include="BlankScreen.cs" />
     <Compile Include="BlankScreenFactory.cs" />
     <Compile Include="CaptureScreen.cs" />
-    <Compile Include="Extensions\XmlExtensions.cs" />
-    <Compile Include="MamePathManager.cs" />
     <Compile Include="ContainerFactory.cs" />
-    <Compile Include="Extensions\EnumerableExtensions.cs" />
-    <Compile Include="Extensions\ExceptionExtensions.cs" />
     <Compile Include="GamePlayManager.cs" />
     <Compile Include="Helper\StackHelper.cs" />
     <Compile Include="Hotkeys\HotKey.cs" />
@@ -127,8 +123,6 @@
     <Compile Include="Layout\LayoutFactory.cs" />
     <Compile Include="Layout\TitleFactory.cs" />
     <Compile Include="ListViewSorter.cs" />
-    <Compile Include="MameInvoker.cs" />
-    <Compile Include="GameListBuilder.cs" />
     <Compile Include="Layout\Models\Bezel.cs" />
     <Compile Include="Layout\Models\Bounds.cs" />
     <Compile Include="Layout\Models\Element.cs" />
@@ -137,7 +131,6 @@
     <Compile Include="Layout\Models\Screen.cs" />
     <Compile Include="Layout\Models\View.cs" />
     <Compile Include="ScreenManager.cs" />
-    <Compile Include="Windows\MonitorInterop.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="MameOrchestrator.cs">
@@ -147,13 +140,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Windows\PlatformInvokeGdi32.cs" />
-    <Compile Include="Windows\PlatformInvokePowrprof.cs" />
-    <Compile Include="Windows\PlatformInvokeKernel32.cs" />
-    <Compile Include="Windows\PlatformInvokeUser32.cs" />
-    <Compile Include="Windows\PowerInterop.cs" />
-    <Compile Include="Windows\UserActivityHook.cs" />
-    <Compile Include="Windows\WindowsInterop.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config">

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Timers;
-using Mamesaver.Windows;
+using Mamesaver.Services.Windows;
 using Serilog;
 
 namespace Mamesaver.Power

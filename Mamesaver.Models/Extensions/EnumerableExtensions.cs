@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Mamesaver.Extensions
+namespace Mamesaver.Models.Extensions
 {
     public static class EnumerableExtensions
     {
