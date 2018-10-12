@@ -101,7 +101,7 @@ namespace Mamesaver.Config.ViewModels
 
         private void SaveAndClose()
         {
-            _generalSettingsStore.Save();
+            _generalSettingsStore.Save(_settings);
             _gameListStore.Save(_gameList.Games);
 
             Close();
