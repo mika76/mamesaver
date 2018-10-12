@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using DataGridExtensions;
@@ -15,7 +16,12 @@ namespace Mamesaver.Config
             GameList.GetFilter().FilterChanged += FilterChanged;
         }
 
-        private void FilterChanged(object sender, EventArgs e) => ViewModel.FilteredGames = GameList.Items.OfType<GameViewModel>();
+        private void FilterChanged(object sender, EventArgs e)
+        {
+            ViewModel.FilteredGames.Clear();
+            ViewModel.FilteredGames.AddRange(GameList.Items.OfType<GameViewModel>());
+        }
+
         private void ClearFilters(object sender, RoutedEventArgs e) => GameList.GetFilter().Clear();
 
         private ConfigFormViewModel ViewModel => (ConfigFormViewModel) DataContext;

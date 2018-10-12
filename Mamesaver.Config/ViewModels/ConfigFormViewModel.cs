@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
@@ -11,9 +12,7 @@ using System.Windows;
 using System.Windows.Input;
 using JetBrains.Annotations;
 using Mamesaver.Config.Models;
-using Mamesaver.Models;
 using Mamesaver.Models.Configuration;
-using Mamesaver.Services.Categories;
 using Mamesaver.Services.Configuration;
 using Mamesaver.Services.Mame;
 using Prism.Commands;
@@ -32,7 +31,8 @@ namespace Mamesaver.Config.ViewModels
         private readonly GameListBuilder _gameListBuilder;
 
         private bool? _allSelected = true;
-        private IEnumerable<GameViewModel> _filteredGames;
+        private ObservableCollection<GameViewModel> _filteredGames;
+        private List<GameViewModel> _selectedGames;
 
         public ConfigFormViewModel(
             Settings settings,
@@ -51,12 +51,26 @@ namespace Mamesaver.Config.ViewModels
             _gameListStore = gameListStore;
             _gameListBuilder = gameListBuilder;
 
-            // TODO shift out of constructor plz
+            _games = new ObservableCollection<GameViewModel>();
+            _filteredGames = new ObservableCollection<GameViewModel>();
+        }
+
+        public void Initialise()
+        {
             LoadFonts();
             LoadGames();
         }
 
-        public List<GameViewModel> Games { get; set; }
+        public ObservableCollection<GameViewModel> Games
+        {
+            get => _games;
+            set
+            {
+                if (Equals(value, _games)) return;
+                _games = value;
+                OnPropertyChanged(nameof(GameCount));
+            }
+        }
 
         public bool? AllSelected
         {
@@ -64,7 +78,10 @@ namespace Mamesaver.Config.ViewModels
             set
             {
                 if (value != null)
+                {
                     foreach (var game in FilteredGames) game.Selected = value.Value;
+                }
+
                 _allSelected = value;
 
                 OnPropertyChanged();
@@ -75,13 +92,17 @@ namespace Mamesaver.Config.ViewModels
         public ICommand CancelClick => new DelegateCommand(Close);
         public ICommand ResetToDefaultsClick => new DelegateCommand(ResetToDefaults);
         public ICommand ClearFiltersClick => new DelegateCommand(ClearFilters);
-        public ICommand RebuildListClick => new DelegateCommand(RebuildList);
+        public ICommand RebuildListClick => new DelegateCommand(async () =>
+        {
+             await RebuildList();
+        });
+
         public ICommand GameSelectionClick => new DelegateCommand(GameSelectionChange);
 
         private void SaveAndClose()
         {
             _generalSettingsStore.Save();
-            _gameListStore.Save();
+            _gameListStore.Save(_gameList.Games);
 
             Close();
         }
@@ -104,7 +125,7 @@ namespace Mamesaver.Config.ViewModels
             OnPropertyChanged("");
         }
 
-        public IEnumerable<GameViewModel> FilteredGames
+        public ObservableCollection<GameViewModel> FilteredGames
         {
             get => _filteredGames;
             set
@@ -301,6 +322,7 @@ namespace Mamesaver.Config.ViewModels
 
         private int _progress;
         private bool _rebuilding;
+        private ObservableCollection<GameViewModel> _games;
 
         public int Progress
         {
@@ -313,37 +335,63 @@ namespace Mamesaver.Config.ViewModels
             }
         }
 
-        public void RebuildList()
+        public async Task RebuildList()
         {
+            // Set UI state
             Progress = 0;
             Rebuilding = true;
-            Games = new List<GameViewModel>();
-            OnPropertyChanged(nameof(GameCount));
 
-            Task.Run(() =>
+            // Identity games which are selected so we can reapply selections after rebuild
+            _selectedGames = GetSelectedGames();
+            Games.Clear();
+
+            // Build game list
+            try
             {
-                try
-                {
-                    Games = _gameListBuilder
-                        .GetGameList(progress => Progress = progress)
-                        .Select(ToViewModel)
-                        .ToList();
-                }
-                catch (FileNotFoundException fe)
-                {
-                    MessageBox.Show(@"Error running MAME; verify that the executable path is correct.", @"Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    Log.Error(fe, $"Unable to find MAME at {fe.FileName}");
- 
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(@"Error running MAME; verify that the configuration is correct.", @"Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    Log.Error(ex, "Unable to construct game list");
-                }
+                _gameList.Games = await Task.Run(() => _gameListBuilder
+                    .GetGameList(progress => Progress = progress)
+                    .ToList());
 
+                LoadGames();
+
+                // Select games based on any previous user selection
+                ApplySelectionState(Games);
+
+                OnPropertyChanged();
                 Rebuilding = false;
-            });
+            }
+            catch (FileNotFoundException fe)
+            {
+                Rebuilding = false;
+                MessageBox.Show(@"Error running MAME; verify that the executable path is correct.", @"Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                Log.Error(fe, $"Unable to find MAME at {fe.FileName}");
+            }
+            catch (Exception ex)
+            {
+                Rebuilding = false;
+                MessageBox.Show(@"Error running MAME; verify that the configuration is correct.", @"Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                Log.Error(ex, "Unable to construct game list");
+            }
         }
+
+        /// <summary>
+        ///     Selects games based on current user selection. This method preserves previous selections
+        ///     after a rebuild.
+        /// </summary>
+        /// <param name="availableGames">all available games</param>
+        private void ApplySelectionState(ObservableCollection<GameViewModel> availableGames)
+        {
+            if (_selectedGames == null) throw new InvalidOperationException("Selected games not initialised");
+
+            availableGames
+                .ToList()
+                .ForEach(game => game.Selected = _selectedGames.Any(selectedGame => selectedGame.Name == game.Name));
+        }
+
+        /// <summary>
+        ///     Returns a list of selected games.
+        /// </summary>
+        private List<GameViewModel> GetSelectedGames() => Games.Where(game => game.Selected).ToList();
 
         private void ClearFilters() => LoadGames();
 
@@ -358,46 +406,17 @@ namespace Mamesaver.Config.ViewModels
 
         private void LoadGames()
         {
-            Games = _gameList.Games.Select(ToViewModel).ToList();
+            Games.AddRange(_gameList.Games.Select(game => new GameViewModel(game)));
 
             //// TEMP performance testing
             //for(var i = 0; i < 5; i++) Games.AddRange(_gameList.Games);
 
-            //// Populate missing categories
-            Games
-                .Where(game => game.Category == null)
-                .ToList()
-                .ForEach(game => game.Category = CategoryParser.GetCategory(game.Name));
-
             // Maintain a separate list of games displayed by the current filter
-            FilteredGames = new List<GameViewModel>(Games).ToList();
-        }
+            FilteredGames.Clear();
+            FilteredGames.AddRange(Games);
 
-        private GameViewModel ToViewModel(SelectableGame game)
-        {
-            var viewModel = new GameViewModel
-            {
-                Selected = game.Selected,
-                Name = game.Name,
-                Year = game.Year,
-                Description = game.Description,
-                Manufacturer = game.Manufacturer,
-                Category = game.Category,
-            };
-
-            switch (game.Rotation)
-            {
-                case "0":
-                case "180":
-                    viewModel.Rotation = "Horizontal";
-                    break;
-                case "90":
-                case "270":
-                    viewModel.Rotation = "Vertical";
-                    break;
-            }
-
-            return viewModel;
+            // Set global selection state
+            GameSelectionChange();
         }
 
         [NotifyPropertyChangedInvocator]

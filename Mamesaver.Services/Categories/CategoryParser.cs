@@ -6,8 +6,7 @@ using System.Text.RegularExpressions;
 
 namespace Mamesaver.Services.Categories
 {
-
-    public static class CategoryParser
+    public class CategoryParser
     {
         private static readonly Regex SectionRegex = new Regex(@"\s*\[(.*)\]\s*");
         private static readonly Regex DetailRegex = new Regex(@"([^=]+)=(.+)");
@@ -16,7 +15,7 @@ namespace Mamesaver.Services.Categories
 
         private static readonly Dictionary<string, string> Categories = new Dictionary<string, string>();
 
-        public static string GetCategory(string game)
+        public string GetCategory(string game)
         {
             if (!Categories.Any())
             {

@@ -16,16 +16,6 @@ namespace Mamesaver.Models
     {
         private bool _selected;
 
-        public SelectableGame()
-        {
-        }
-
-        public SelectableGame(string name, string description, string year, string manufacturer, string rotation, bool selected)
-            : base(name, description, year, manufacturer, rotation)
-        {
-            Selected = selected;
-        }
-
     
         // FIXME this should be in a separate model
         // OR find a way to notify this has changed

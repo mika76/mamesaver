@@ -8,6 +8,7 @@ using System.Xml.Linq;
 using Mamesaver.Models;
 using Mamesaver.Models.Configuration;
 using Mamesaver.Models.Extensions;
+using Mamesaver.Services.Categories;
 using Serilog;
 
 namespace Mamesaver.Services.Mame
@@ -17,6 +18,7 @@ namespace Mamesaver.Services.Mame
         private readonly AdvancedSettings _advancedSettings;
         private readonly MameInvoker _invoker;
         private readonly MamePathManager _pathManager;
+        private readonly CategoryParser _categoryParser;
 
         /// <summary>
         ///     Number of ROMs to process per batch. Rom files are batched when passing as arguments to Mame both 
@@ -29,11 +31,16 @@ namespace Mamesaver.Services.Mame
         /// </summary>
         private readonly XmlReaderSettings _readerSettings;
        
-        public GameListBuilder(AdvancedSettings advancedSettings, MameInvoker invoker, MamePathManager pathManager)
+        public GameListBuilder(
+            AdvancedSettings advancedSettings, 
+            MameInvoker invoker, 
+            MamePathManager pathManager, 
+            CategoryParser categoryParser)
         {
             _advancedSettings = advancedSettings;
             _invoker = invoker;
             _pathManager = pathManager;
+            _categoryParser = categoryParser;
 
             _readerSettings = new XmlReaderSettings { DtdProcessing = DtdProcessing.Parse };
         }
@@ -134,7 +141,19 @@ namespace Mamesaver.Services.Mame
                     var description = element.Element("description")?.Value ?? "";
                     var rotation = element.Element("display")?.Attribute("rotate")?.Value ?? "";
 
-                    games.Add(new SelectableGame(name, description, year, manufacturer, rotation, false));
+                    // Read category
+                    var category = _categoryParser.GetCategory(name);
+
+                    games.Add(new SelectableGame
+                    {
+                        Name = name,
+                        Description = description,
+                        Year = year,
+                        Manufacturer = manufacturer,
+                        Rotation = rotation,
+                        Category = category,
+                        Selected = false
+                    });
                 }
             }
 

@@ -19,6 +19,11 @@
         <converters:InvertedBooleanToVisibilityConverter x:Key="InvertedVisibilityConverter"/>
         <converters:InvertedBooleanConverter x:Key="InvertedBooleanConverter"/>
 
+        <CollectionViewSource 
+            Source="{Binding Games}" 
+            IsLiveSortingRequested="True"
+            x:Key="Games" />
+
         <ControlTemplate x:Key="MultipleChoiceFilter">
             <filters:MultipleChoiceFilter Filter="{Binding Path=Filter, 
                 RelativeSource={RelativeSource Mode=FindAncestor, 
@@ -45,7 +50,10 @@
         <DockPanel Margin="0,4" Grid.ColumnSpan="2" LastChildFill="False">
             <Button Content="_Rebuild List" Width="90" Command="{Binding RebuildListClick}" 
                     IsEnabled="{Binding Path=Rebuilding, Converter={StaticResource InvertedBooleanConverter}}" DockPanel.Dock="Left" Margin="0,5,5,5" />
-            <Label Content="{Binding GameCount}" DockPanel.Dock="Left" VerticalAlignment="Center" />
+
+            <Label Content="{Binding GameCount}" DockPanel.Dock="Left" VerticalAlignment="Center" 
+                   Visibility="{Binding Path=Rebuilding, Converter={StaticResource InvertedVisibilityConverter}}"/>
+
             <Button Content="_Clear Filters" Width="90" Click="ClearFilters" 
                     IsEnabled="{Binding Path=Rebuilding, Converter={StaticResource InvertedBooleanConverter}}" 
                     DockPanel.Dock="Right" VerticalAlignment="Bottom" Margin="5,5,0,5" />
@@ -61,18 +69,18 @@
 
         <ProgressBar Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Height="20" Width="200" 
                      Value="{Binding Progress}"
-                     Visibility="{Binding Rebuidling, Converter={StaticResource VisibilityConverter}}"/>
+                     Visibility="{Binding Rebuilding, Converter={StaticResource VisibilityConverter}}"/>
 
         <DataGrid x:Name="GameList" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" IsReadOnly="True"
                   CanUserReorderColumns="False" CanUserResizeRows="False"
                   EnableRowVirtualization="True"
                   EnableColumnVirtualization="True"
                   GridLinesVisibility="None" AutoGenerateColumns="False"
-                  ItemsSource="{Binding Games, Mode=TwoWay}"
+                  ItemsSource="{Binding Source={StaticResource Games}}"
                   Visibility="{Binding Path=Rebuilding, Converter={StaticResource InvertedVisibilityConverter}}">
 
-        <DataGrid.Resources>
-                
+            <DataGrid.Resources>
+
                 <!-- Sort on mouse press to increase responsiveness -->
                 <Style TargetType="DataGridColumnHeader">
                     <Setter Property="ClickMode" Value="Press"/>
@@ -90,7 +98,7 @@
                     <Setter Property="Background" Value="Transparent" />
 
                     <!-- Increase cell padding -->
-                    <Setter Property="Padding" Value="3" />
+                    <Setter Property="Padding" Value="1,3,3,3" />
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate TargetType="{x:Type DataGridCell}">
@@ -104,6 +112,7 @@
                     </Setter>
                 </Style>
             </DataGrid.CellStyle>
+
             <DataGrid.Columns>
                 <!-- Game selection header -->
                 <DataGridTemplateColumn dgx:DataGridFilterColumn.Template="{StaticResource NullFilter}"
@@ -144,11 +153,11 @@
                 <DataGridTextColumn Binding="{Binding Category}" Header="Category" MinWidth="100" Width="200"
                                     SortMemberPath="CategorySort"
                                     dgx:DataGridFilterColumn.Template="{StaticResource MultipleChoiceFilter}" />
-            
+
                 <DataGridTextColumn Binding="{Binding Rotation}" Header="Rotation" Width="100" CanUserReorder="False"
                                     SortMemberPath="RotationSort"
                                     dgx:DataGridFilterColumn.Template="{StaticResource MultipleChoiceFilter}" />
- 
+
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

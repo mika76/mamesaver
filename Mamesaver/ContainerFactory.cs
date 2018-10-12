@@ -5,6 +5,7 @@ using Mamesaver.Layout;
 using Mamesaver.Models.Configuration;
 using Mamesaver.Power;
 using Mamesaver.Services;
+using Mamesaver.Services.Categories;
 using Mamesaver.Services.Configuration;
 using Mamesaver.Services.Mame;
 using Mamesaver.Services.Windows;
@@ -56,8 +57,9 @@ namespace Mamesaver
             container.Register<PowerEventWatcher>(Lifestyle.Singleton);
             container.Register<MamePathManager>(Lifestyle.Singleton);
             container.Register<ServiceResolver>(Lifestyle.Singleton);
+            container.Register<CategoryParser>(Lifestyle.Singleton);
 
-            container.Register<Config.ConfigForm>();
+            container.Register<Config.ConfigForm>(Lifestyle.Singleton);
             container.Register<ConfigFormViewModel>(Lifestyle.Singleton);
             container.Register<DecadeFilterViewModel>(Lifestyle.Singleton);
 
