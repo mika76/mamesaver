@@ -29,12 +29,6 @@
                 RelativeSource={RelativeSource Mode=FindAncestor, 
                 AncestorType=dgx:DataGridFilterColumnControl}}"/>
         </ControlTemplate>
-
-        <ControlTemplate x:Key="MultipleChoiceDecadeFilter">
-            <filters:MultipleChoiceDecadeFilter Filter="{Binding Path=Filter, 
-                RelativeSource={RelativeSource Mode=FindAncestor, 
-                AncestorType=dgx:DataGridFilterColumnControl}}"/>
-        </ControlTemplate>
     </UserControl.Resources>
 
     <Grid Margin="10">
@@ -59,14 +53,6 @@
                     DockPanel.Dock="Right" VerticalAlignment="Bottom" Margin="5,5,0,5" />
         </DockPanel>
 
-        <!--
-                          dgx:DataGridFilter.FilterEvaluationDelay="00:00:00"
-                  dgx:DataGridFilter.IsAutoFilterEnabled="False"
-                  VirtualizingStackPanel.IsVirtualizing="True"
-                  VirtualizingStackPanel.VirtualizationMode="Recycling"
- -->
-
-
         <ProgressBar Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Height="20" Width="200" 
                      Value="{Binding Progress}"
                      Visibility="{Binding Rebuilding, Converter={StaticResource VisibilityConverter}}"/>
@@ -76,7 +62,11 @@
                   EnableRowVirtualization="True"
                   EnableColumnVirtualization="True"
                   GridLinesVisibility="None" AutoGenerateColumns="False"
+                  VirtualizingStackPanel.IsVirtualizing="True"
+                  VirtualizingStackPanel.VirtualizationMode="Recycling"
                   ItemsSource="{Binding Source={StaticResource Games}}"
+                  dgx:DataGridFilter.FilterEvaluationDelay="00:00:00"
+                  dgx:DataGridFilter.IsAutoFilterEnabled="True"
                   Visibility="{Binding Path=Rebuilding, Converter={StaticResource InvertedVisibilityConverter}}">
 
             <DataGrid.Resources>
@@ -115,8 +105,7 @@
 
             <DataGrid.Columns>
                 <!-- Game selection header -->
-                <DataGridTemplateColumn dgx:DataGridFilterColumn.Template="{StaticResource NullFilter}"
-                                        CanUserResize="False" Width="40">
+                <DataGridTemplateColumn CanUserResize="False" Width="40" dgx:DataGridFilterColumn.Template="{StaticResource NullFilter}">
                     <DataGridTemplateColumn.Header>
                         <CheckBox
                             HorizontalAlignment="Center"
@@ -137,27 +126,11 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTextColumn x:Name="Description" Binding="{Binding Description}" Header="Name" MinWidth="100"
-                                    Width="200"
-                                    SortDirection="Ascending"
-                                    dgx:DataGridFilterColumn.Template="{StaticResource NullFilter}" />
-
-                <DataGridTextColumn Binding="{Binding Year}" Header="Year" Width="60" CanUserResize="False"
-                                    SortMemberPath="YearSort"
-                                    dgx:DataGridFilterColumn.Template="{StaticResource MultipleChoiceDecadeFilter}" />
-
-                <DataGridTextColumn Binding="{Binding Manufacturer}" Header="Manufacturer" MinWidth="100" Width="200"
-                                    SortMemberPath="ManufacturerSort"
-                                    dgx:DataGridFilterColumn.Template="{StaticResource MultipleChoiceFilter}" />
-
-                <DataGridTextColumn Binding="{Binding Category}" Header="Category" MinWidth="100" Width="200"
-                                    SortMemberPath="CategorySort"
-                                    dgx:DataGridFilterColumn.Template="{StaticResource MultipleChoiceFilter}" />
-
-                <DataGridTextColumn Binding="{Binding Rotation}" Header="Rotation" Width="100" CanUserReorder="False"
-                                    SortMemberPath="RotationSort"
-                                    dgx:DataGridFilterColumn.Template="{StaticResource MultipleChoiceFilter}" />
-
+                <DataGridTextColumn Binding="{Binding Description}" Header="Name" MinWidth="100" Width="200" SortDirection="Ascending" dgx:DataGridFilterColumn.Template="{StaticResource NullFilter}" />
+                <DataGridTextColumn Binding="{Binding Year}" Header="Year" Width="60" CanUserResize="False" SortMemberPath="YearSort" dgx:DataGridFilterColumn.Template="{StaticResource MultipleChoiceFilter}"/>
+                <DataGridTextColumn Binding="{Binding Manufacturer}" Header="Manufacturer" MinWidth="100" Width="200" dgx:DataGridFilterColumn.Template="{StaticResource MultipleChoiceFilter}" />
+                <DataGridTextColumn Binding="{Binding Category}" Header="Category" MinWidth="100" Width="200"  dgx:DataGridFilterColumn.Template="{StaticResource MultipleChoiceFilter}"/>
+                <DataGridTextColumn Binding="{Binding Rotation}" Header="Rotation" Width="100" CanUserReorder="False" dgx:DataGridFilterColumn.Template="{StaticResource MultipleChoiceFilter}"/>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

@@ -93,16 +93,8 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Mamesaver.Models\Mamesaver.Models.csproj">
-      <Project>{A15AA0A1-6644-46C0-AC9C-991DF3861C87}</Project>
-      <Name>Mamesaver.Models</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Mamesaver.Services\Mamesaver.Services.csproj">
-      <Project>{52E0EFC7-FDB1-4B4F-9555-3D2CA30A7675}</Project>
-      <Name>Mamesaver.Services</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Mamesaver\Mamesaver.csproj">
-      <Project>{720F7E49-8C21-43F8-8946-8D16D68BF839}</Project>
+      <Project>{720f7e49-8c21-43f8-8946-8d16d68bf839}</Project>
       <Name>Mamesaver</Name>
     </ProjectReference>
   </ItemGroup>

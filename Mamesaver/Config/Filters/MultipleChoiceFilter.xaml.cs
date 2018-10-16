@@ -13,7 +13,7 @@ namespace Mamesaver.Config.Filters
     public partial class MultipleChoiceFilter
     {
         private static readonly SolidColorBrush ActiveBrush = SystemColors.HighlightBrush;
-        private static readonly SolidColorBrush InactiveBrush =  new SolidColorBrush(Colors.Gray);
+        private static readonly SolidColorBrush InactiveBrush = new SolidColorBrush(Colors.Gray);
 
         /// <summary>
         ///     Identifies the <c>Filter</c> dependency property
@@ -22,7 +22,14 @@ namespace Mamesaver.Config.Filters
             DependencyProperty.Register("Filter", typeof(MultipleChoiceContentFilter), typeof(MultipleChoiceFilter),
                 new FrameworkPropertyMetadata(new MultipleChoiceContentFilter(null),
                     FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
-                    (sender, e) => ((MultipleChoiceFilter) sender).FilterChanged()));
+                    (sender, e) => ((MultipleChoiceFilter)sender).FilterChanged()));
+
+        /// <summary>
+        ///     Identifies the <c>Field</c> dependency property
+        /// </summary>
+        public static readonly DependencyProperty FieldProperty =
+            DependencyProperty.Register("Field", typeof(MultipleChoiceContentFilter), typeof(MultipleChoiceFilter),
+                new FrameworkPropertyMetadata(new MultipleChoiceContentFilter(null)));
 
         private ListView _listBox;
         private TextBlock _filterActiveMarker;
@@ -33,9 +40,18 @@ namespace Mamesaver.Config.Filters
             InitializeComponent();
         }
 
+        /// <summary>
+        ///     Field in the backing model that the filter sources data from.
+        /// </summary>
+        public string Field
+        {
+            get => (string)GetValue(FieldProperty);
+            set => SetValue(FieldProperty, value);
+        }
+
         public MultipleChoiceContentFilter Filter
         {
-            get => (MultipleChoiceContentFilter) GetValue(FilterProperty);
+            get => (MultipleChoiceContentFilter)GetValue(FilterProperty);
             set => SetValue(FilterProperty, value);
         }
 
@@ -43,9 +59,9 @@ namespace Mamesaver.Config.Filters
         {
             base.OnApplyTemplate();
 
-            _listBox = (ListView) Template.FindName("FilterList", this);
+            _listBox = (ListView)Template.FindName("FilterList", this);
             _filterActiveMarker = (TextBlock)Template.FindName("IsFilterActiveMarker", this);
-            _filterSymbol = (Control) Template.FindName("FilterSymbol", this);
+            _filterSymbol = (Control)Template.FindName("FilterSymbol", this);
 
             if (Filter?.ExcludedItems == null) _listBox?.SelectAll();
 

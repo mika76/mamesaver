@@ -1,8 +1,8 @@
-﻿using Mamesaver.Services.Properties;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Mamesaver.Properties;
 
 namespace Mamesaver.Services.Categories
 {
@@ -29,7 +29,7 @@ namespace Mamesaver.Services.Categories
         {
 
             var categorySection = false;
-            using (var reader = new StringReader(Resource.catver))
+            using (var reader = new StringReader(Resources.catver))
             {
                 string line;
                 while ((line = reader.ReadLine()) != null)

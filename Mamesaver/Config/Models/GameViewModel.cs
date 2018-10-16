@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using JetBrains.Annotations;
+using Mamesaver.Annotations;
 using Mamesaver.Models;
 
 namespace Mamesaver.Config.Models
@@ -46,10 +46,24 @@ namespace Mamesaver.Config.Models
         }
         public string Category => _game.Category;
 
-        public string ManufacturerSort => $"{Manufacturer}:{Description}";
-        public string CategorySort => $"{Category}:{Description}";
-        public string YearSort => $"{Year}:{Description}";
-        public string RotationSort => $"{Rotation}:{Description}";
+        //public string ManufacturerSort => $"{Manufacturer}:{Description}";
+        //public string CategorySort => $"{Category}:{Description}";
+        //public string YearSort => $"{Year}:{Description}";
+        //public string RotationSort => $"{Rotation}:{Description}";
+
+        public string YearSort
+        {
+            get
+            {
+                if (Year == null) return "Other";
+                var yearSort = Year;
+
+                // Normalise unknown years within a known decade
+                if (yearSort.EndsWith("?")) yearSort = $"{yearSort.TrimEnd('?')}0";
+
+                return !int.TryParse(yearSort, out var yearValue) ? "Other" : $"{yearValue / 10 * 10}s";
+            }
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
 

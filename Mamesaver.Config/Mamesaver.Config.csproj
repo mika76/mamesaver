@@ -59,108 +59,15 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AboutTab.xaml.cs">
-      <DependentUpon>AboutTab.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="AdvancedTab.xaml.cs">
-      <DependentUpon>AdvancedTab.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="ConfigForm.xaml.cs">
-      <DependentUpon>ConfigForm.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Converters\InvertedBooleanConverter.cs" />
-    <Compile Include="Converters\InvertedBooleanToVisibilityConverter.cs" />
-    <Compile Include="Extensions\DependencyObjectExtensions.cs" />
-    <Compile Include="Filters\MultipleChoiceDecadeFilter.xaml.cs">
-      <DependentUpon>MultipleChoiceDecadeFilter.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Filters\MultipleChoiceFilter.xaml.cs">
-      <DependentUpon>MultipleChoiceFilter.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Filters\NullFilter.xaml.cs">
-      <DependentUpon>NullFilter.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Filters\ViewModels\DecadeFilterViewModel.cs" />
-    <Compile Include="GameListTab.xaml.cs">
-      <DependentUpon>GameListTab.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="GeneralTab.xaml.cs">
-      <DependentUpon>GeneralTab.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="HotkeysTab.xaml.cs">
-      <DependentUpon>HotkeysTab.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Infrastructure\BindingProxy.cs" />
-    <Compile Include="Infrastructure\DebugDummyConverter.cs" />
-    <Compile Include="LayoutTab.xaml.cs">
-      <DependentUpon>LayoutTab.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Models\GameViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="ViewModels\ConfigFormViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
     <None Include="key.snk" />
-  </ItemGroup>
-  <ItemGroup>
-    <Page Include="AboutTab.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="AdvancedTab.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="ConfigForm.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Filters\MultipleChoiceDecadeFilter.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Filters\MultipleChoiceFilter.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Filters\NullFilter.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="GameListTab.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="GeneralTab.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="HotkeysTab.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="LayoutTab.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Styles.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\mame-icon.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\mame.ico">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -179,12 +86,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="DataGridExtensions">
-      <Version>1.0.39</Version>
-    </PackageReference>
-    <PackageReference Include="JetBrains.Annotations">
-      <Version>10.2.1</Version>
-    </PackageReference>
     <PackageReference Include="Prism.Wpf">
       <Version>6.3.0</Version>
     </PackageReference>

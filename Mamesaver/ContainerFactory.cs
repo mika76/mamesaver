@@ -1,4 +1,3 @@
-using Mamesaver.Config.Filters.ViewModels;
 using Mamesaver.Config.ViewModels;
 using Mamesaver.Hotkeys;
 using Mamesaver.Layout;
@@ -56,14 +55,13 @@ namespace Mamesaver
             container.Register<MameInvoker>(Lifestyle.Singleton);
             container.Register<PowerEventWatcher>(Lifestyle.Singleton);
             container.Register<MamePathManager>(Lifestyle.Singleton);
-            container.Register<ServiceResolver>(Lifestyle.Singleton);
             container.Register<CategoryParser>(Lifestyle.Singleton);
 
             container.Register<Config.ConfigForm>(Lifestyle.Singleton);
             container.Register<ConfigFormViewModel>(Lifestyle.Singleton);
-            container.Register<DecadeFilterViewModel>(Lifestyle.Singleton);
 
             container.Register<IActivityHook>(() => new UserActivityHook(typeof(Program).Assembly), Lifestyle.Singleton);
+            container.Register(() => new ServiceResolver(container), Lifestyle.Singleton);
 
             return container;
         }

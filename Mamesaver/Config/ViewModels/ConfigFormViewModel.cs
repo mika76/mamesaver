@@ -10,9 +10,10 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using JetBrains.Annotations;
+using Mamesaver.Annotations;
 using Mamesaver.Config.Models;
 using Mamesaver.Models.Configuration;
+using Mamesaver.Services;
 using Mamesaver.Services.Configuration;
 using Mamesaver.Services.Mame;
 using Prism.Commands;
@@ -35,6 +36,7 @@ namespace Mamesaver.Config.ViewModels
         private List<GameViewModel> _selectedGames;
 
         public ConfigFormViewModel(
+            ServiceResolver serviceResolver,
             Settings settings,
             LayoutSettings layoutSettings,
             AdvancedSettings advancedSettings,
@@ -53,6 +55,9 @@ namespace Mamesaver.Config.ViewModels
 
             _games = new ObservableCollection<GameViewModel>();
             _filteredGames = new ObservableCollection<GameViewModel>();
+
+            // Force initialisation of static resolver
+            _ = serviceResolver;
         }
 
         public void Initialise()

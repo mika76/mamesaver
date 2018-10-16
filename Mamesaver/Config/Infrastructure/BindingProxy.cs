@@ -5,7 +5,7 @@ namespace Mamesaver.Config.Infrastructure
     public class BindingProxy : Freezable
     {
         /// <summary>
-        ///     Use a <see cref="DependencyProperty" /> as the backing store for <see cref="Data" /> to enable amination, styling,
+        ///     Use a <see cref="DependencyProperty" /> as the backing store for <see cref="Data" /> to enable animation, styling,
         ///     binding etc.
         /// </summary>
         public static readonly DependencyProperty DataProperty =
