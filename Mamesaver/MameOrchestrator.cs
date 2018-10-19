@@ -1,8 +1,3 @@
-/**
- * Licensed under The MIT License
- * Redistributions of files must retain the above copyright notice.
- */
-
 using System;
 using System.Collections.Generic;
 using System.Linq;

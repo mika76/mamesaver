@@ -1,9 +1,4 @@
-﻿/**
- * Licensed under The MIT License
- * Redistributions of files must retain the above copyright notice.
- */
-
-using System.Reflection;
+﻿using System.Reflection;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
