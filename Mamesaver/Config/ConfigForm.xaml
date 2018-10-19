@@ -4,17 +4,20 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:config="clr-namespace:Mamesaver.Config"
-    xmlns:mvvm="http://prismlibrary.com/"
     xmlns:converters="clr-namespace:Mamesaver.Config.Converters"
-    mvvm:ViewModelLocator.AutoWireViewModel="True"
     x:Class="Mamesaver.Config.ConfigForm"
     mc:Ignorable="d"
     Title="Mamesaver Config" Icon="Resources/mame.ico" 
     ResizeMode="NoResize" SizeToContent="WidthAndHeight">
 
     <Window.Resources>
-        <converters:InvertedBooleanConverter x:Key="InvertedBooleanConverter"/>
-        <ResourceDictionary x:Key="Styles" Source="Styles.xaml"/>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <converters:InvertedBooleanConverter x:Key="InvertedBooleanConverter"/>
+        </ResourceDictionary>
     </Window.Resources>
 
     <DockPanel LastChildFill="False" Margin="10">

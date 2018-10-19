@@ -7,10 +7,13 @@
         <Setter Property="Padding" Value="0,5,0,2" />
     </Style>
 
+    <!-- Inline label -->
     <Style TargetType="Label" x:Key="Inline">
         <Setter Property="Padding" Value="5" />
+        <Setter Property="VerticalAlignment" Value="Center" />
     </Style>
 
+    <!-- Divider label -->
     <Style TargetType="Label" x:Key="Divider">
         <Setter Property="Padding" Value="0,5,5,5" />
     </Style>
@@ -19,10 +22,18 @@
     <Style TargetType="TextBox">
         <Setter Property="Padding" Value="2"/>
     </Style>
-    
+
     <!-- Button -->
     <Style TargetType="Button">
         <Setter Property="Margin" Value="5"/>
         <Setter Property="Padding" Value="2"/>
+        <Setter Property="Height" Value="25"/>
+    </Style>
+
+    <!-- ComboBox -->
+    <Style TargetType="ComboBox">
+        <Setter Property="Margin" Value="5"/>
+        <Setter Property="Height" Value="25"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
     </Style>
 </ResourceDictionary>

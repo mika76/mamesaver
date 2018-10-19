@@ -60,7 +60,7 @@
 
             <StackPanel HorizontalAlignment="Left">
                 <Label>Font:</Label>
-                <ComboBox SelectedValue="{Binding SplashFont}" ItemsSource="{Binding Fonts}" Width="305" IsEditable="True" />
+                <ComboBox SelectedValue="{Binding SplashFont}" ItemsSource="{Binding Fonts}" Width="305" Margin="0,0,5,0" IsEditable="True" />
             </StackPanel>
         </StackPanel>
     </Grid>
