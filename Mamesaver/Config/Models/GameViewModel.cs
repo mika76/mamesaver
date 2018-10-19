@@ -46,12 +46,12 @@ namespace Mamesaver.Config.Models
         }
         public string Category => _game.Category;
 
-        //public string ManufacturerSort => $"{Manufacturer}:{Description}";
-        //public string CategorySort => $"{Category}:{Description}";
-        //public string YearSort => $"{Year}:{Description}";
-        //public string RotationSort => $"{Rotation}:{Description}";
+        public string ManufacturerSort => $"{Manufacturer}:{Description}";
+        public string CategorySort => $"{Category}:{Description}";
+        public string YearSort => $"{Year}:{Description}";
+        public string RotationSort => $"{Rotation}:{Description}";
 
-        public string YearSort
+        public string YearFilter
         {
             get
             {

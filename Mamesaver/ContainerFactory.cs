@@ -1,3 +1,4 @@
+using Mamesaver.Config.Filters;
 using Mamesaver.Config.ViewModels;
 using Mamesaver.Hotkeys;
 using Mamesaver.Layout;
@@ -59,8 +60,10 @@ namespace Mamesaver
 
             container.Register<Config.ConfigForm>(Lifestyle.Singleton);
             container.Register<ConfigFormViewModel>(Lifestyle.Singleton);
+            container.Register<MultipleChoiceFilterViewModel>(Lifestyle.Transient);
 
-            container.Register<IActivityHook>(() => new UserActivityHook(typeof(Program).Assembly), Lifestyle.Singleton);
+            //container.Register<IActivityHook>(() => new UserActivityHook(typeof(Program).Assembly), Lifestyle.Singleton);
+            container.Register<IActivityHook>(() => new UserActivityHook(), Lifestyle.Singleton);
             container.Register(() => new ServiceResolver(container), Lifestyle.Singleton);
 
             return container;

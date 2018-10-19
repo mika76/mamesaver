@@ -1,19 +1,37 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using DataGridExtensions;
+using Mamesaver.Services;
 using SystemColors = System.Windows.SystemColors;
 
 namespace Mamesaver.Config.Filters
 {
-    // FIXME lots copied between here and the decade filter
     public partial class MultipleChoiceFilter
     {
         private static readonly SolidColorBrush ActiveBrush = SystemColors.HighlightBrush;
         private static readonly SolidColorBrush InactiveBrush = new SolidColorBrush(Colors.Gray);
+
+        private readonly MultipleChoiceFilterViewModel _viewModel;
+
+        public MultipleChoiceFilter()
+        {
+            _viewModel = ServiceResolver.GetInstance<MultipleChoiceFilterViewModel>();
+
+            InitializeComponent();
+        }
+
+        public override void BeginInit()
+        {
+            base.BeginInit();
+
+            _viewModel.Initialise();
+            DataContext = _viewModel;
+        }
 
         /// <summary>
         ///     Identifies the <c>Filter</c> dependency property
@@ -27,27 +45,11 @@ namespace Mamesaver.Config.Filters
         /// <summary>
         ///     Identifies the <c>Field</c> dependency property
         /// </summary>
-        public static readonly DependencyProperty FieldProperty =
-            DependencyProperty.Register("Field", typeof(MultipleChoiceContentFilter), typeof(MultipleChoiceFilter),
-                new FrameworkPropertyMetadata(new MultipleChoiceContentFilter(null)));
+        public static readonly DependencyProperty FieldProperty = DependencyProperty.Register("Field", typeof(string), typeof(MultipleChoiceFilter));
 
         private ListView _listBox;
         private TextBlock _filterActiveMarker;
         private Control _filterSymbol;
-
-        public MultipleChoiceFilter()
-        {
-            InitializeComponent();
-        }
-
-        /// <summary>
-        ///     Field in the backing model that the filter sources data from.
-        /// </summary>
-        public string Field
-        {
-            get => (string)GetValue(FieldProperty);
-            set => SetValue(FieldProperty, value);
-        }
 
         public MultipleChoiceContentFilter Filter
         {
@@ -55,9 +57,19 @@ namespace Mamesaver.Config.Filters
             set => SetValue(FilterProperty, value);
         }
 
+        public string Field
+        {
+            get => (string)GetValue(FieldProperty);
+            set => SetValue(FieldProperty, value);
+        }
+
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
+
+            var dataContext = (MultipleChoiceFilterViewModel)DataContext;
+            dataContext.FilterProperty = Field;
+            dataContext.BuildFilterValues();
 
             _listBox = (ListView)Template.FindName("FilterList", this);
             _filterActiveMarker = (TextBlock)Template.FindName("IsFilterActiveMarker", this);
@@ -67,11 +79,12 @@ namespace Mamesaver.Config.Filters
 
             if (!(_listBox?.Items is INotifyCollectionChanged items)) return;
             items.CollectionChanged += CollectionChanged;
-
-            // FIXME need to sort!
+            dataContext.SelectionChanged += ListBoxSelectionChanged;
         }
 
-        private void CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private void CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) => SetIconState();
+
+        private void SetIconState()
         {
             Brush iconBrush;
             if (Filter?.ExcludedItems == null || (bool)!Filter.ExcludedItems?.Any())
@@ -83,7 +96,11 @@ namespace Mamesaver.Config.Filters
             }
             else
             {
-                var checkedItems = _listBox.Items.Cast<string>().Except(Filter.ExcludedItems).ToList();
+                var checkedItems = _listBox.Items
+                    .Cast<FilterItemViewModel>()
+                    .Select(f => f.Value).Except(Filter.ExcludedItems)
+                    .ToList();
+
                 foreach (var item in checkedItems) _listBox.SelectedItems.Add(item);
 
                 _filterActiveMarker.Visibility = Visibility.Visible;
@@ -111,28 +128,49 @@ namespace Mamesaver.Config.Filters
             }
         }
 
-        private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void OnSelectionChanged()
         {
             var excludedItems = Filter?.ExcludedItems ?? new string[0];
 
-            var selectedItems = _listBox.SelectedItems.Cast<string>().ToArray();
-            var unselectedItems = _listBox.Items.Cast<string>().Except(selectedItems).ToArray();
+            var selectedItems = _listBox.SelectedItems
+                .Cast<FilterItemViewModel>()
+                .Where(filter => filter.Selected)
+                .Select(filter => filter.Value)
+                .ToArray();
+
+            var unselectedItems = _listBox.Items
+                .Cast<FilterItemViewModel>()
+                .Where(filter => !filter.Selected)
+                .Select(filter => filter.Value)
+                .Except(selectedItems)
+                .ToArray();
 
             excludedItems = excludedItems.Except(selectedItems).Concat(unselectedItems).Distinct().ToArray();
 
             Filter = new MultipleChoiceContentFilter(excludedItems);
+            SetIconState();
         }
 
-        private void UnselectAllClick(object sender, RoutedEventArgs e) => _listBox.UnselectAll();
-        private void SelectAllClick(object sender, RoutedEventArgs e) => _listBox.SelectAll();
+        private void FilterItemSelectionChanged(object sender, RoutedEventArgs e) => OnSelectionChanged();
+        private void ListBoxSelectionChanged(object sender, EventArgs e) => OnSelectionChanged();
     }
 
     public class MultipleChoiceContentFilter : IContentFilter
     {
-        public MultipleChoiceContentFilter(IEnumerable<string> excludedItems) => ExcludedItems = excludedItems?.ToArray();
-
+        // FIXME do we need this? We have a selection checkbox
         public IList<string> ExcludedItems { get; }
 
-        public bool IsMatch(object value) => ExcludedItems?.Contains(value as string) != true;
+        public MultipleChoiceContentFilter(IEnumerable<string> excludedItems) => ExcludedItems = excludedItems?.ToArray();
+
+        public bool IsMatch(object rawValue)
+        {
+            if (!(rawValue is string)) return false;
+
+            // FIXME filter icon not changing
+
+            // TODO comment and tidy plz
+            var value = ((string)rawValue).Split(':').FirstOrDefault();
+            return ExcludedItems?.Contains(value) != true;
+        }
     }
 }

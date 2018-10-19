@@ -21,6 +21,23 @@ using Serilog;
 
 namespace Mamesaver.Config.ViewModels
 {
+    public enum FilterMode
+    {
+        AllGames,
+        SelectedGames
+    }
+    public class FilterOption
+    {
+        public FilterOption(string text, FilterMode filterMode)
+        {
+            Text = text;
+            FilterMode = filterMode;
+        }
+
+        public string Text { get; }
+        public FilterMode FilterMode { get; }
+    }
+
     public class ConfigFormViewModel : INotifyPropertyChanged
     {
         private Settings _settings;
@@ -35,8 +52,11 @@ namespace Mamesaver.Config.ViewModels
         private ObservableCollection<GameViewModel> _filteredGames;
         private List<GameViewModel> _selectedGames;
 
+        public event EventHandler GameListRebuilt;
+        public event EventHandler FiltersCleared;
+
         public ConfigFormViewModel(
-            ServiceResolver serviceResolver,
+            ServiceResolver serviceResolver,    // TODO is this necessary?
             Settings settings,
             LayoutSettings layoutSettings,
             AdvancedSettings advancedSettings,
@@ -55,15 +75,31 @@ namespace Mamesaver.Config.ViewModels
 
             _games = new ObservableCollection<GameViewModel>();
             _filteredGames = new ObservableCollection<GameViewModel>();
-
-            // Force initialisation of static resolver
-            _ = serviceResolver;
         }
 
         public void Initialise()
         {
             LoadFonts();
             LoadGames();
+        }
+
+        private static readonly FilterOption AllGamesFilter = new FilterOption("All games", FilterMode.AllGames);
+        private static readonly FilterOption SelectedGamesFilter = new FilterOption("Selected games", FilterMode.SelectedGames);
+
+        public ObservableCollection<FilterOption> FilterOptions { get; set; } = new ObservableCollection<FilterOption>
+        {
+            AllGamesFilter, SelectedGamesFilter
+        };
+
+        public FilterOption GlobalFilter
+        {
+            get => _globalFilter;
+            set
+            {
+                if (Equals(value, _globalFilter)) return;
+                _globalFilter = value;
+                OnPropertyChanged();
+            }
         }
 
         public ObservableCollection<GameViewModel> Games
@@ -102,7 +138,7 @@ namespace Mamesaver.Config.ViewModels
              await RebuildList();
         });
 
-        public ICommand GameSelectionClick => new DelegateCommand(GameSelectionChange);
+        public ICommand GameSelectionClick => new DelegateCommand(SetGlobalSelectionState);
 
         private void SaveAndClose()
         {
@@ -130,6 +166,9 @@ namespace Mamesaver.Config.ViewModels
             OnPropertyChanged("");
         }
 
+        /// <summary>
+        ///     Games which are displayed by the current filter.
+        /// </summary>
         public ObservableCollection<GameViewModel> FilteredGames
         {
             get => _filteredGames;
@@ -138,7 +177,7 @@ namespace Mamesaver.Config.ViewModels
                 if (Equals(value, _filteredGames)) return;
                 _filteredGames = value;
                 OnPropertyChanged();
-                GameSelectionChange();
+                SetGlobalSelectionState();
             }
         }
 
@@ -304,7 +343,7 @@ namespace Mamesaver.Config.ViewModels
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private void GameSelectionChange()
+        private void SetGlobalSelectionState()
         {
             var allSelected = FilteredGames.Any() && FilteredGames.All(g => g.Selected);
             var allDeselected = !FilteredGames.Any() || FilteredGames.All(g => !g.Selected);
@@ -328,6 +367,7 @@ namespace Mamesaver.Config.ViewModels
         private int _progress;
         private bool _rebuilding;
         private ObservableCollection<GameViewModel> _games;
+        private FilterOption _globalFilter = AllGamesFilter;
 
         public int Progress
         {
@@ -358,12 +398,10 @@ namespace Mamesaver.Config.ViewModels
                     .ToList());
 
                 LoadGames();
-
-                // Select games based on any previous user selection
-                ApplySelectionState(Games);
-
                 OnPropertyChanged();
                 Rebuilding = false;
+
+                GameListRebuilt?.Invoke(this, new EventArgs());
             }
             catch (FileNotFoundException fe)
             {
@@ -386,7 +424,7 @@ namespace Mamesaver.Config.ViewModels
         /// <param name="availableGames">all available games</param>
         private void ApplySelectionState(ObservableCollection<GameViewModel> availableGames)
         {
-            if (_selectedGames == null) throw new InvalidOperationException("Selected games not initialised");
+            if (_selectedGames == null) return;
 
             availableGames
                 .ToList()
@@ -398,7 +436,11 @@ namespace Mamesaver.Config.ViewModels
         /// </summary>
         private List<GameViewModel> GetSelectedGames() => Games.Where(game => game.Selected).ToList();
 
-        private void ClearFilters() => LoadGames();
+        private void ClearFilters()
+        {
+            LoadGames();
+            FiltersCleared?.Invoke(this, new EventArgs());
+        }
 
         private void LoadFonts()
         {
@@ -411,6 +453,7 @@ namespace Mamesaver.Config.ViewModels
 
         private void LoadGames()
         {
+            Games.Clear();
             Games.AddRange(_gameList.Games.Select(game => new GameViewModel(game)));
 
             //// TEMP performance testing
@@ -420,8 +463,13 @@ namespace Mamesaver.Config.ViewModels
             FilteredGames.Clear();
             FilteredGames.AddRange(Games);
 
+            // Select games based on any previous user selection
+            ApplySelectionState(Games);
+
             // Set global selection state
-            GameSelectionChange();
+            SetGlobalSelectionState();
+
+            OnPropertyChanged(nameof(GameCount));
         }
 
         [NotifyPropertyChangedInvocator]

@@ -7,6 +7,8 @@
          x:Name="Control">
     <Control.Template>
         <ControlTemplate>
+            
+            <!-- Toggle -->
             <StackPanel Orientation="Vertical">
                 <ToggleButton x:Name="ToggleButton" BorderThickness="0" Background="Transparent">
                     <StackPanel Orientation="Horizontal">
@@ -15,9 +17,10 @@
                          <Control x:Name="FilterSymbol" Style="{DynamicResource {x:Static dgx:DataGridFilter.IconStyleKey}}" /> 
                     </StackPanel>
                 </ToggleButton>
+                
+                <!-- Filter -->
                 <Popup d:DataContext="{d:DesignInstance dgx:DataGridFilterColumnControl}"
-                    x:Name="Popup" IsOpen="{Binding Path=IsChecked, ElementName=ToggleButton, Mode=TwoWay}"  
-               Placement="Left" 
+                    x:Name="Popup" IsOpen="{Binding Path=IsChecked, ElementName=ToggleButton, Mode=TwoWay}" Placement="Left" 
                        VerticalOffset="{Binding ElementName=Toggle, Path=ActualHeight}"
                        HorizontalOffset="{Binding ElementName=Toggle, Path=ActualWidth}" AllowsTransparency="True" StaysOpen="False">
                     <Border 
@@ -30,8 +33,12 @@
                         <Border BorderThickness="1" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}">
                             <StackPanel Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}">
 
+                                <!-- Select all -->
                                 <StackPanel Orientation="Horizontal" Margin="10,10,10,0">
-                                    <Button Margin="0,0,0,0" Name="btnSelectAll" Click="SelectAllClick">
+                                    <Button Margin="0,0,0,0" 
+                                            Command="{Binding Path=DataContext.SelectAllClick,
+                                            RelativeSource={RelativeSource FindAncestor,
+                                            AncestorType={x:Type Control}}}">
                                         <Button.Template>
                                             <ControlTemplate>
                                                 <TextBlock Text="Select All" Foreground="{DynamicResource {x:Static SystemColors.MenuHighlightBrushKey}}" Cursor="Hand" />
@@ -39,7 +46,11 @@
                                         </Button.Template>
                                     </Button>
 
-                                    <Button Margin="10,0,0,0" Name="btnUnselectAll" Click="UnselectAllClick">
+                                    <!-- Select none -->
+                                    <Button Margin="10,0,0,0" 
+                                            Command="{Binding Path=DataContext.SelectNoneClick,
+                                            RelativeSource={RelativeSource FindAncestor,
+                                            AncestorType={x:Type Control}}}">
                                         <Button.Template>
                                             <ControlTemplate>
                                                 <TextBlock Text="Select None" Foreground="{DynamicResource {x:Static SystemColors.MenuHighlightBrushKey}}" Cursor="Hand" />
@@ -47,9 +58,8 @@
                                         </Button.Template>
                                     </Button>
                                 </StackPanel>
-                                <!--<ScrollViewer>-->
                                 <ListView Margin="5" x:Name="FilterList" ItemsSource="{Binding SelectableValues}" SelectionMode="Extended" 
-                                          SelectionChanged="ListBox_SelectionChanged" BorderBrush="Transparent"
+                                          SelectionChanged="ListBoxSelectionChanged" BorderBrush="Transparent"
                                           MaxHeight="400">
                                     <ListView.ItemContainerStyle>
                                         <Style TargetType="ListBoxItem">
@@ -66,14 +76,15 @@
                                     <ListBox.ItemTemplate>
                                         <DataTemplate>
                                             <DockPanel>
-                                                <CheckBox DockPanel.Dock="Left" Margin="3,2" IsChecked="{Binding IsSelected, RelativeSource={RelativeSource FindAncestor, AncestorType=ListBoxItem}}">
-                                                    <TextBlock Margin="3,2" Text="{Binding}" VerticalAlignment="Center"/>
+                                                <CheckBox DockPanel.Dock="Left" Margin="3,2" 
+                                                          Click="FilterItemSelectionChanged"
+                                                          IsChecked="{Binding Path=Selected, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" >
+                                                    <TextBlock Margin="3,2" Text="{Binding Value}" VerticalAlignment="Center"/>
                                                 </CheckBox>
                                             </DockPanel>
                                         </DataTemplate>
                                     </ListBox.ItemTemplate>
                                 </ListView>
-                                    <!--</ScrollViewer>-->
                             </StackPanel>
                         </Border>
                     </Border>
