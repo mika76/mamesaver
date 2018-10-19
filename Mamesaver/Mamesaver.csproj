@@ -47,6 +47,9 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="DataGridExtensions, Version=1.0.39.0, Culture=neutral, PublicKeyToken=43de855f87de903a, processorArchitecture=MSIL">
       <HintPath>..\packages\DataGridExtensions.1.0.39\lib\net45\DataGridExtensions.dll</HintPath>
@@ -119,6 +122,7 @@
     <Compile Include="Config\Filters\MultipleChoiceFilter.xaml.cs">
       <DependentUpon>MultipleChoiceFilter.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Config\Filters\MultipleChoiceFilterViewModel.cs" />
     <Compile Include="Config\Filters\NullFilter.xaml.cs">
       <DependentUpon>NullFilter.xaml</DependentUpon>
     </Compile>
@@ -205,6 +209,7 @@
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="ILRepack.targets" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
@@ -223,7 +228,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="key.snk" />
+    <None Include="Mamesaver.snk" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -286,18 +291,27 @@
     <Folder Include="Config\Filters\ViewModels\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>rem $(ProjectDir)\..\packages\ILRepack.2.0.16\tools\ilrepack.exe /union /internalize /union /parallel /wildcards /out:%25temp%25\$(TargetFileName) $(TargetFileName) *.dll
-rem del /Q *.*
-rem move %25temp%25\$(TargetFileName) .
-copy Mamesaver.exe Mamesaver.scr
-
-</PostBuildEvent>
-  </PropertyGroup>
+  <Target AfterTargets="ILRepack" Name="ClearOutput" Condition="$(Configuration.Contains('Release'))">
+    <Message Text="Clearing output" Importance="High" />
+    <Delete Files="@(ReferenceCopyLocalPaths->'$(OutDir)%(DestinationSubDirectory)%(Filename)%(Extension)')" />
+    <ItemGroup>
+      <Directories Include="$([System.IO.Directory]::GetDirectories('$(OutDir)%(DestinationSubDirectory)', '*', System.IO.SearchOption.AllDirectories))" />
+      <Directories>
+        <Files>$([System.IO.Directory]::GetFiles("%(Directories.Identity)", "*", System.IO.SearchOption.AllDirectories).get_Length())</Files>
+      </Directories>
+    </ItemGroup>
+    <RemoveDir Directories="@(Directories)" Condition="%(Files)=='0'" />
+  </Target>
+  <Target Name="CreateScreensaver" AfterTargets="CleanReferenceCopyLocalPaths">
+    <Message Text="Creating screensaver" Importance="High" />
+    <Exec Command="copy $(TargetPath) $(TargetDir)\$(TargetName).scr" />
+  </Target>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\ILRepack.2.0.16\build\ILRepack.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\ILRepack.2.0.16\build\ILRepack.props'))" />
+    <Error Condition="!Exists('..\packages\ILRepack.Lib.MSBuild.Task.2.0.16\build\ILRepack.Lib.MSBuild.Task.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\ILRepack.Lib.MSBuild.Task.2.0.16\build\ILRepack.Lib.MSBuild.Task.targets'))" />
   </Target>
+  <Import Project="..\packages\ILRepack.Lib.MSBuild.Task.2.0.16\build\ILRepack.Lib.MSBuild.Task.targets" Condition="Exists('..\packages\ILRepack.Lib.MSBuild.Task.2.0.16\build\ILRepack.Lib.MSBuild.Task.targets')" />
 </Project>
