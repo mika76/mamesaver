@@ -3,7 +3,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
+using Mamesaver.Config;
 using Mamesaver.Models.Configuration;
+using Mamesaver.Services;
 using Serilog;
 using Serilog.Events;
 using SimpleInjector;
@@ -121,10 +123,10 @@ namespace Mamesaver
         /// </summary>
         public static void ShowConfig()
         {
-            var application = new App();
+            // Initialise static service resolution in code behind
+            _container.GetInstance<ServiceResolver>().Initialise();
 
-            var configForm = _container.GetInstance<Config.ConfigForm>();
-            application.Run(configForm);
+            new App().Run(new ConfigForm());
         }
 
         [Conditional("DEBUG")]

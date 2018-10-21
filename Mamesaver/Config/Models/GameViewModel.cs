@@ -1,11 +1,9 @@
-﻿using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using Mamesaver.Annotations;
+﻿using Mamesaver.Config.ViewModels;
 using Mamesaver.Models;
 
 namespace Mamesaver.Config.Models
 {
-    public class GameViewModel  : INotifyPropertyChanged
+    public class GameViewModel : ViewModel
     {
         private readonly SelectableGame _game;
 
@@ -51,6 +49,7 @@ namespace Mamesaver.Config.Models
         public string YearSort => $"{Year}:{Description}";
         public string RotationSort => $"{Rotation}:{Description}";
 
+        public string SelectedFilter => $"{Selected}";
         public string YearFilter
         {
             get
@@ -64,13 +63,5 @@ namespace Mamesaver.Config.Models
                 return !int.TryParse(yearSort, out var yearValue) ? "Other" : $"{yearValue / 10 * 10}s";
             }
         }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
+   }
 }

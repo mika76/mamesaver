@@ -32,7 +32,7 @@
                 <config:LayoutTab/>
             </TabItem>
             <TabItem Header="Hotkeys">
-                <config:HotkeysTab/>
+                <config:HotKeysTab/>
             </TabItem>
             <TabItem Header="Advanced">
                 <config:AdvancedTab/>

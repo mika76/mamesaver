@@ -8,7 +8,8 @@
              xmlns:filters="clr-namespace:Mamesaver.Config.Filters"
              xmlns:converters="clr-namespace:Mamesaver.Config.Converters"
              mc:Ignorable="d"
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="800"
+             Background="White">
 
     <UserControl.Resources>
         <ResourceDictionary>
@@ -23,10 +24,12 @@
             <BooleanToVisibilityConverter x:Key="VisibilityConverter"/>
             <converters:InvertedBooleanToVisibilityConverter x:Key="InvertedVisibilityConverter"/>
 
-            <CollectionViewSource 
-            Source="{Binding Games}" 
-            IsLiveSortingRequested="True"
-            x:Key="Games" />
+            <ControlTemplate x:Key="SelectedFilter">
+                <filters:MultipleChoiceFilter Field="SelectedFilter" Visible="False" Filter="{Binding Path=Filter, 
+                RelativeSource={RelativeSource Mode=FindAncestor, 
+                AncestorType=dgx:DataGridFilterColumnControl}}"/>
+            </ControlTemplate>
+
 
             <ControlTemplate x:Key="ManufacturerFilter">
                 <filters:MultipleChoiceFilter Field="Manufacturer" Filter="{Binding Path=Filter, 
@@ -64,7 +67,7 @@
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
 
-        <DockPanel Margin="0,4" Grid.ColumnSpan="2" LastChildFill="False" Visibility="{Binding Path=Rebuilding, Converter={StaticResource InvertedVisibilityConverter}}">
+        <DockPanel Margin="0,4" Grid.ColumnSpan="2" LastChildFill="False" Visibility="{Binding Rebuilding, Converter={StaticResource InvertedVisibilityConverter}}">
             <Button Content="_Rebuild List" Width="90" Command="{Binding RebuildListClick}" x:Name="RebuildList"
                      DockPanel.Dock="Left" Margin="0,5,5,5" />
 
@@ -72,11 +75,10 @@
                    Visibility="{Binding Path=Rebuilding, Converter={StaticResource InvertedVisibilityConverter}}"/>
 
             <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
-                <ComboBox Width="150" Margin="0,0,10,0" 
-                          ItemsSource="{Binding FilterOptions}" DisplayMemberPath="Text" SelectedValue="{Binding GlobalFilter}"/>
+                <ComboBox Width="150" Margin="0,0,0,0" ItemsSource="{Binding FilterOptions}" DisplayMemberPath="Text" SelectedValue="{Binding GlobalFilter}" />
+                <Button Content="Apply" Width="60" Command="{Binding ApplyGlobalFilterClick}" VerticalAlignment="Bottom" Margin="5,5,10,5" />
 
-                <Button Content="_Clear Filters" Width="90" Click="ClearFilters" Command="{Binding ClearFiltersClick}" 
-                     VerticalAlignment="Bottom" Margin="5,5,0,5" />
+                <Button Content="_Clear Filters" Width="90" Click="ClearFilters" Command="{Binding ClearFiltersClick}" VerticalAlignment="Bottom" Margin="5,5,0,5" />
             </StackPanel>
         </DockPanel>
 
@@ -91,10 +93,10 @@
                   GridLinesVisibility="None" AutoGenerateColumns="False"
                   VirtualizingStackPanel.IsVirtualizing="True"
                   VirtualizingStackPanel.VirtualizationMode="Recycling"
-                  ItemsSource="{Binding Source={StaticResource Games}}"
                   dgx:DataGridFilter.FilterEvaluationDelay="00:00:00"
                   dgx:DataGridFilter.IsAutoFilterEnabled="True"
-                  Visibility="{Binding Path=Rebuilding, Converter={StaticResource InvertedVisibilityConverter}}">
+                  ItemsSource="{Binding GamesView}"
+                  Visibility="{Binding Rebuilding, Converter={StaticResource InvertedVisibilityConverter}}">
 
             <DataGrid.Resources>
 
@@ -132,7 +134,7 @@
 
             <DataGrid.Columns>
                 <!-- Game selection header -->
-                <DataGridTemplateColumn CanUserResize="False" Width="40" dgx:DataGridFilterColumn.Template="{StaticResource NullFilter}">
+                <DataGridTemplateColumn CanUserResize="False" SortMemberPath="SelectedFilter" Width="50" dgx:DataGridFilterColumn.Template="{StaticResource SelectedFilter}">
                     <DataGridTemplateColumn.Header>
                         <CheckBox
                             HorizontalAlignment="Center"

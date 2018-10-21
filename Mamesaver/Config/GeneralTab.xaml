@@ -4,7 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="800"
+             Background="White">
 
     <UserControl.Resources>
         <ResourceDictionary Source="Styles.xaml"/>
@@ -23,7 +24,7 @@
             <Label>Path to MAME executable:</Label>
             <StackPanel Orientation="Horizontal">
                 <TextBox Name="MamePath" Text="{Binding ExecutablePath}" Width="500" Margin="0,0,5,0" VerticalAlignment="Center"/>
-                <Button Width="30" Click="SelectMameExecutable" Height="{Binding ActualHeight,ElementName=MamePath}" Margin="0,5,5,5">…</Button>
+                <Button Width="30" Command="{Binding SelectMameExecutableClick}" Height="{Binding ActualHeight,ElementName=MamePath}" Margin="0,5,5,5">…</Button>
             </StackPanel>
         </StackPanel>
 

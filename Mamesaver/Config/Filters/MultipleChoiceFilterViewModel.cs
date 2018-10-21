@@ -2,26 +2,32 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Windows.Input;
-using Mamesaver.Annotations;
-using Mamesaver.Config.Models;
 using Mamesaver.Config.ViewModels;
-using Mamesaver.Models.Configuration;
+using Mamesaver.Config.ViewModels.GameListTab;
 using Prism.Commands;
 
 namespace Mamesaver.Config.Filters
 {
-    public class MultipleChoiceFilterViewModel : INotifyPropertyChanged
+    public class MultipleChoiceFilterViewModel : InitialisableViewModel
     {
-        private readonly ConfigFormViewModel _configFormViewModel;
+        private readonly GameListViewModel _gameList;
+        private bool _visible = true;
 
         public event EventHandler SelectionChanged;
 
-        public MultipleChoiceFilterViewModel(ConfigFormViewModel configFormViewModel)
+        public MultipleChoiceFilterViewModel(GameListViewModel gameList)
         {
-            _configFormViewModel = configFormViewModel;
-            _configFormViewModel.FiltersCleared += (sender, args) => SelectAll();
+            _gameList = gameList;
+        }
+
+        protected override void PerformInitialise()
+        {
+            _gameList.FiltersCleared += (sender, args) => SelectAll();
+            SelectableValues = new ObservableCollection<FilterItemViewModel>();
+
+            // Update filter values when game list is rebuilt
+            _gameList.GameListRebuilt += (sender, args) => BuildFilterValues();
         }
 
         /// <summary>
@@ -33,6 +39,18 @@ namespace Mamesaver.Config.Filters
         public ICommand SelectNoneClick => new DelegateCommand(SelectNone);
 
         public ObservableCollection<FilterItemViewModel> SelectableValues { get; set; }
+
+        public bool Visible
+        {
+            get => _visible;
+            set
+            {
+                if (value == _visible) return;
+                _visible = value;
+                OnPropertyChanged();
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         private void SelectAll()
@@ -42,7 +60,17 @@ namespace Mamesaver.Config.Filters
                 filterItem.Selected = true;
             }
 
-            SelectionChanged?.Invoke(this, new EventArgs());
+            SelectionChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        public void Select(string value, bool selected)
+        {
+            var selectableValue = SelectableValues.FirstOrDefault(v => v.Value == value);
+            if (selectableValue != null)
+            {
+                selectableValue.Selected = selected;
+                SelectionChanged?.Invoke(this, EventArgs.Empty);
+            }
         }
 
         private void SelectNone()
@@ -52,21 +80,7 @@ namespace Mamesaver.Config.Filters
                 filterItem.Selected = false;
             }
 
-            SelectionChanged?.Invoke(this, new EventArgs());
-        }
-
-        [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        public void Initialise()
-        {
-            SelectableValues = new ObservableCollection<FilterItemViewModel>();
-
-            // Update filter values when game list is rebuilt
-            _configFormViewModel.GameListRebuilt += (sender, args) => BuildFilterValues();
+            SelectionChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public void BuildFilterValues()
@@ -74,27 +88,17 @@ namespace Mamesaver.Config.Filters
             if (string.IsNullOrEmpty(FilterProperty)) return;
 
             SelectableValues.Clear();
-            SelectableValues.AddRange(_configFormViewModel.FilteredGames.Select(
+            SelectableValues.AddRange(_gameList.FilteredGames.Select(
                 game => (string) game
                     .GetType()
                     .GetProperty(FilterProperty)?.GetValue(game)
             ).Distinct().OrderBy(g => g).Select(g => new FilterItemViewModel { Selected = true, Value = g }));
 
-            // Inform listeners of selection changes
-            // FIXME does this work? Is it needed?
-            //foreach (var value in SelectableValues)
-            //{
-            //    value.PropertyChanged += (sender, args) =>
-            //    {
-            //        if (args.PropertyName == nameof(FilterItemViewModel.Selected)) SelectionChanged?.Invoke(this, new EventArgs());
-            //    };
-            //}
-
             OnPropertyChanged(nameof(SelectableValues));
         }
     }
 
-    public class FilterItemViewModel : INotifyPropertyChanged
+    public class FilterItemViewModel : ViewModel
     {
         private bool _selected;
 
@@ -109,14 +113,6 @@ namespace Mamesaver.Config.Filters
                 _selected = value;
                 OnPropertyChanged();
             }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

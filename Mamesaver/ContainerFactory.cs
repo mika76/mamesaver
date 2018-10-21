@@ -1,5 +1,10 @@
 using Mamesaver.Config.Filters;
 using Mamesaver.Config.ViewModels;
+using Mamesaver.Config.ViewModels.AdvancedTab;
+using Mamesaver.Config.ViewModels.GameListTab;
+using Mamesaver.Config.ViewModels.GeneralTab;
+using Mamesaver.Config.ViewModels.HotkeysTab;
+using Mamesaver.Config.ViewModels.LayoutTab;
 using Mamesaver.Hotkeys;
 using Mamesaver.Layout;
 using Mamesaver.Models.Configuration;
@@ -59,7 +64,13 @@ namespace Mamesaver
             container.Register<CategoryParser>(Lifestyle.Singleton);
 
             container.Register<Config.ConfigForm>(Lifestyle.Singleton);
-            container.Register<ConfigFormViewModel>(Lifestyle.Singleton);
+            container.Register<ConfigViewModel>(Lifestyle.Singleton);
+            container.Register<GameListViewModel>(Lifestyle.Singleton);
+            container.Register<LayoutViewModel>(Lifestyle.Singleton);
+            container.Register<GeneralViewModel>(Lifestyle.Singleton);
+            container.Register<AdvancedViewModel>(Lifestyle.Singleton);
+            container.Register<HotKeysViewModel>(Lifestyle.Singleton);
+
             container.Register<MultipleChoiceFilterViewModel>(Lifestyle.Transient);
 
             //container.Register<IActivityHook>(() => new UserActivityHook(typeof(Program).Assembly), Lifestyle.Singleton);

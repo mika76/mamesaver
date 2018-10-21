@@ -1,6 +1,6 @@
-﻿using System.Windows;
-using Mamesaver.Config.ViewModels;
-using Microsoft.Win32;
+﻿using System.ComponentModel;
+using Mamesaver.Config.ViewModels.GeneralTab;
+using Mamesaver.Services;
 
 namespace Mamesaver.Config
 {
@@ -8,17 +8,17 @@ namespace Mamesaver.Config
     {
         public GeneralTab() => InitializeComponent();
 
-        private void SelectMameExecutable(object sender, RoutedEventArgs e)
+        public override void BeginInit()
         {
-            var dialog = new OpenFileDialog
-            {
-                Filter = "Executables (*.exe)|*.exe|All files (*.*)|*.*",
-                Title = "Path to MAME executable"
-            };
+            base.BeginInit();
 
-            if (dialog.ShowDialog() == true) ViewModel.ExecutablePath = dialog.FileName;
+            var viewModel = ServiceResolver.GetInstance<GeneralViewModel>();
+            viewModel.Initialise();
+
+            DataContext = viewModel;
+
+            // Clear design-mode background
+            if (!DesignerProperties.GetIsInDesignMode(this)) ClearValue(BackgroundProperty);
         }
-
-        private ConfigFormViewModel ViewModel => (ConfigFormViewModel) DataContext;
     }
 }

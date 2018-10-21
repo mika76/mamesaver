@@ -1,23 +1,21 @@
-﻿using Mamesaver.Config.ViewModels;
+﻿using System.ComponentModel;
+using Mamesaver.Config.ViewModels;
+using Mamesaver.Services;
 
 namespace Mamesaver.Config
 {
     public partial class ConfigForm
     {
-        private readonly ConfigFormViewModel _viewModel;
-
-        public ConfigForm(ConfigFormViewModel viewModel)
-        {
-            _viewModel = viewModel;
-            InitializeComponent();
-        }
+        public ConfigForm() => InitializeComponent();
 
         public override void BeginInit()
         {
             base.BeginInit();
 
-            _viewModel.Initialise();
-            DataContext = _viewModel;
+            DataContext = ServiceResolver.GetInstance<ConfigViewModel>();
+
+            // Clear design-mode background
+            if (!DesignerProperties.GetIsInDesignMode(this)) ClearValue(BackgroundProperty);
         }
     }
 }

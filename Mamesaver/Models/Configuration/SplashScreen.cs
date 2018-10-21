@@ -19,10 +19,10 @@ namespace Mamesaver.Models.Configuration
         }
 
         /// <summary>
-        ///     The number of seconds that the game intro screen (the screen with MAME logo) is shown
+        ///     The number of seconds that the game intro screen (the screen with MAME logo) is shown.
         /// </summary>
         /// <remarks>
-        ///     Even if the splash screen is disabled, the MAME logo is displayed while MAME starts
+        ///     Even if the splash screen is disabled, the MAME logo is displayed while MAME starts.
         /// </remarks>
         [XmlElement("durationSeconds")]
         public int DurationSeconds { get; set; }

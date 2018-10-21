@@ -11,11 +11,12 @@ namespace Mamesaver.Services
         private Container Container { get; }
         private static ServiceResolver Resolver { get; set; }
 
-        public ServiceResolver(Container container)
-        {
-            Container = container;
-            Resolver = this;
-        }
+        public ServiceResolver(Container container) => Container = container;
+
+        /// <summary>
+        ///     Initialises the static resolver.
+        /// </summary>
+        public void Initialise() => Resolver = this;
 
         public static T GetInstance<T>()
         {

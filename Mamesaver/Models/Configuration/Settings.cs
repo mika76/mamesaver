@@ -22,19 +22,19 @@ namespace Mamesaver.Models.Configuration
         }
 
         /// <summary>
-        ///     The path to the MAME executable file - including the filename and extension. eg: <c>C:\MAME\MAME64.EXE</c>
+        ///     Path to the MAME executable file, including the filename and extension. eg: <c>C:\MAME\MAME64.EXE</c>
         /// </summary>
         [XmlElement("executablePath")]
         public string ExecutablePath { get; set; }
 
         /// <summary>
-        ///     The time to run each game.
+        ///     Time to run each game.
         /// </summary>
         [XmlElement("minutesPerGame")]
         public int MinutesPerGame { get; set; }
 
         /// <summary>
-        ///     The options to send to the command line when MAME runs the game.
+        ///     Options to send to the command line when MAME runs the game.
         /// </summary>
         [XmlElement("commandLineOptions")]
         public string CommandLineOptions { get; set; }

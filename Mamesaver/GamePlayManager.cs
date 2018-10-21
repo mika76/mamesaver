@@ -28,24 +28,20 @@ namespace Mamesaver
         private readonly PowerManager _powerManager;
         private readonly MameInvoker _invoker;
 
-        public delegate void PlayGameEventHandler(object sender, EventArgs e);
-        public delegate void StartGameEventHandler(object sender, EventArgs e);
-        public delegate void GameStartedEventHandler(object sender, EventArgs e);
-
         /// <summary>
         ///     Game has been started by MAME.
         /// </summary>
-        public event GameStartedEventHandler OnGameStarted;
+        public event EventHandler OnGameStarted;
 
         /// <summary>
         ///    Game is about to be run by MAME.
         /// </summary>
-        public event StartGameEventHandler OnStartGame;
+        public event EventHandler OnStartGame;
 
         /// <summary>
         ///     User has chosen to play the current game.
         /// </summary>
-        public event PlayGameEventHandler OnPlayGame;
+        public event EventHandler OnPlayGame;
 
         /// <summary>
         ///     MAME process running the current game, or <c>null</c> if not started.

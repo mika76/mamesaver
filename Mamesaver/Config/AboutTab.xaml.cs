@@ -1,19 +1,24 @@
-﻿using System.Diagnostics;
-using System.Windows.Navigation;
+﻿using System.ComponentModel;
+using Mamesaver.Config.ViewModels.AboutTab;
+using Mamesaver.Services;
 
 namespace Mamesaver.Config
 {
     public partial class AboutTab
     {
-        public AboutTab()
-        {
-            InitializeComponent();
-        }
+        public AboutTab() => InitializeComponent();
 
-        private void OpenProjectSite(object sender, RequestNavigateEventArgs e)
+        public override void BeginInit()
         {
-            Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
-            e.Handled = true;
-        }
-    }
+            base.BeginInit();
+
+            var viewModel = ServiceResolver.GetInstance<AboutViewModel>();
+            viewModel.Initialise();
+
+            DataContext = viewModel;
+
+            // Clear design-mode background
+            if (!DesignerProperties.GetIsInDesignMode(this)) ClearValue(BackgroundProperty);
+         }
+   }
 }

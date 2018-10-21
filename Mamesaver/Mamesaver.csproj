@@ -132,8 +132,8 @@
     <Compile Include="Config\GeneralTab.xaml.cs">
       <DependentUpon>GeneralTab.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Config\HotkeysTab.xaml.cs">
-      <DependentUpon>HotkeysTab.xaml</DependentUpon>
+    <Compile Include="Config\HotKeysTab.xaml.cs">
+      <DependentUpon>HotKeysTab.xaml</DependentUpon>
     </Compile>
     <Compile Include="Config\Infrastructure\BindingProxy.cs" />
     <Compile Include="Config\Infrastructure\DebugDummyConverter.cs" />
@@ -141,7 +141,18 @@
       <DependentUpon>LayoutTab.xaml</DependentUpon>
     </Compile>
     <Compile Include="Config\Models\GameViewModel.cs" />
-    <Compile Include="Config\ViewModels\ConfigFormViewModel.cs" />
+    <Compile Include="Config\ViewModels\AboutTab\AboutViewModel.cs" />
+    <Compile Include="Config\ViewModels\AdvancedTab\AdvancedViewModel.cs" />
+    <Compile Include="Config\ViewModels\ConfigViewModel.cs" />
+    <Compile Include="Config\ViewModels\GameListTab\FilterMode.cs" />
+    <Compile Include="Config\ViewModels\GameListTab\FilterOption.cs" />
+    <Compile Include="Config\ViewModels\GameListTab\GameListViewModel.cs" />
+    <Compile Include="Config\ViewModels\GameListTab\GlobalFilterEventArgs.cs" />
+    <Compile Include="Config\ViewModels\GeneralTab\GeneralViewModel.cs" />
+    <Compile Include="Config\ViewModels\HotKeysTab\HotkeysViewModel.cs" />
+    <Compile Include="Config\ViewModels\InitialisableViewModel.cs" />
+    <Compile Include="Config\ViewModels\LayoutTab\LayoutViewModel.cs" />
+    <Compile Include="Config\ViewModels\ViewModel.cs" />
     <Compile Include="ContainerFactory.cs" />
     <Compile Include="GamePlayManager.cs" />
     <Compile Include="Helper\StackHelper.cs" />
@@ -274,7 +285,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Config\HotkeysTab.xaml">
+    <Page Include="Config\HotKeysTab.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

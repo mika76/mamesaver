@@ -7,7 +7,6 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using DataGridExtensions;
 using Mamesaver.Services;
-using SystemColors = System.Windows.SystemColors;
 
 namespace Mamesaver.Config.Filters
 {
@@ -21,7 +20,6 @@ namespace Mamesaver.Config.Filters
         public MultipleChoiceFilter()
         {
             _viewModel = ServiceResolver.GetInstance<MultipleChoiceFilterViewModel>();
-
             InitializeComponent();
         }
 
@@ -34,7 +32,7 @@ namespace Mamesaver.Config.Filters
         }
 
         /// <summary>
-        ///     Identifies the <c>Filter</c> dependency property
+        ///     Registers the <c>Filter</c> dependency property
         /// </summary>
         public static readonly DependencyProperty FilterProperty =
             DependencyProperty.Register("Filter", typeof(MultipleChoiceContentFilter), typeof(MultipleChoiceFilter),
@@ -43,9 +41,14 @@ namespace Mamesaver.Config.Filters
                     (sender, e) => ((MultipleChoiceFilter)sender).FilterChanged()));
 
         /// <summary>
-        ///     Identifies the <c>Field</c> dependency property
+        ///     Registers the <c>Field</c> dependency property
         /// </summary>
         public static readonly DependencyProperty FieldProperty = DependencyProperty.Register("Field", typeof(string), typeof(MultipleChoiceFilter));
+
+        /// <summary>
+        ///     Registers the <c>Visible</c> dependency property
+        /// </summary>
+        public static readonly DependencyProperty VisibleProperty = DependencyProperty.Register("Visible", typeof(bool?), typeof(MultipleChoiceFilter));
 
         private ListView _listBox;
         private TextBlock _filterActiveMarker;
@@ -63,12 +66,20 @@ namespace Mamesaver.Config.Filters
             set => SetValue(FieldProperty, value);
         }
 
+        public bool Visible
+        {
+            get => (bool)(GetValue(VisibleProperty) ?? true);
+            set => SetValue(VisibleProperty, value);
+        } 
+
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
 
             var dataContext = (MultipleChoiceFilterViewModel)DataContext;
             dataContext.FilterProperty = Field;
+            dataContext.Visible = Visible;
+
             dataContext.BuildFilterValues();
 
             _listBox = (ListView)Template.FindName("FilterList", this);
@@ -128,7 +139,7 @@ namespace Mamesaver.Config.Filters
             }
         }
 
-        private void OnSelectionChanged()
+        public void OnSelectionChanged()
         {
             var excludedItems = Filter?.ExcludedItems ?? new string[0];
 
@@ -158,15 +169,13 @@ namespace Mamesaver.Config.Filters
     public class MultipleChoiceContentFilter : IContentFilter
     {
         // FIXME do we need this? We have a selection checkbox
-        public IList<string> ExcludedItems { get; }
+        public IList<string> ExcludedItems { get; set; }
 
         public MultipleChoiceContentFilter(IEnumerable<string> excludedItems) => ExcludedItems = excludedItems?.ToArray();
 
         public bool IsMatch(object rawValue)
         {
             if (!(rawValue is string)) return false;
-
-            // FIXME filter icon not changing
 
             // TODO comment and tidy plz
             var value = ((string)rawValue).Split(':').FirstOrDefault();
