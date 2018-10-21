@@ -119,6 +119,7 @@
     <Compile Include="Config\Converters\InvertedBooleanConverter.cs" />
     <Compile Include="Config\Converters\InvertedBooleanToVisibilityConverter.cs" />
     <Compile Include="Config\Extensions\DependencyObjectExtensions.cs" />
+    <Compile Include="Config\Extensions\FrameworkElementExtensions.cs" />
     <Compile Include="Config\Filters\MultipleChoiceFilter.xaml.cs">
       <DependentUpon>MultipleChoiceFilter.xaml</DependentUpon>
     </Compile>

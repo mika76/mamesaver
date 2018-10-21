@@ -44,12 +44,34 @@ namespace Mamesaver.Config.Models
         }
         public string Category => _game.Category;
 
+        /// <summary>
+        ///     Sort property for game manufacturer, performing a secondary sort on game description.
+        /// </summary>
         public string ManufacturerSort => $"{Manufacturer}:{Description}";
+
+        /// <summary>
+        ///     Sort property for game category, performing a secondary sort on game description.
+        /// </summary>
         public string CategorySort => $"{Category}:{Description}";
+
+        /// <summary>
+        ///     Sort property for game year, performing a secondary sort on game description.
+        /// </summary>
         public string YearSort => $"{Year}:{Description}";
+
+       /// <summary>
+        ///     Sort property for game rotation, performing a secondary sort on game description.
+        /// </summary>
         public string RotationSort => $"{Rotation}:{Description}";
 
+        /// <summary>
+        ///     Filter property for game selection.
+        /// </summary>
         public string SelectedFilter => $"{Selected}";
+
+        /// <summary>
+        ///     Filter property for game year, converting year into decade ranges.
+        /// </summary>
         public string YearFilter
         {
             get

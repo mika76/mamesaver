@@ -5,9 +5,9 @@ using Prism.Commands;
 
 namespace Mamesaver.Config.ViewModels.AboutTab
 {
-    public class AboutViewModel
+    public class AboutViewModel : InitialisableViewModel
     {
-        public void Initialise() => Version = GetVersion();
+        protected override void PerformInitialise() => Version = GetVersion();
 
         /// <summary>
         ///     Opens the Mamesaver project site in a browser.

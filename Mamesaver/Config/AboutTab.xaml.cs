@@ -1,6 +1,5 @@
-﻿using System.ComponentModel;
+﻿using Mamesaver.Config.Extensions;
 using Mamesaver.Config.ViewModels.AboutTab;
-using Mamesaver.Services;
 
 namespace Mamesaver.Config
 {
@@ -12,13 +11,8 @@ namespace Mamesaver.Config
         {
             base.BeginInit();
 
-            var viewModel = ServiceResolver.GetInstance<AboutViewModel>();
-            viewModel.Initialise();
-
-            DataContext = viewModel;
-
-            // Clear design-mode background
-            if (!DesignerProperties.GetIsInDesignMode(this)) ClearValue(BackgroundProperty);
-         }
-   }
+            this.InitViewModel<AboutViewModel>();
+            this.InitDesignMode();
+        }
+    }
 }

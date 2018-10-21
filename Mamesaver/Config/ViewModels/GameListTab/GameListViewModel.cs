@@ -4,14 +4,12 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using Mamesaver.Config.Models;
 using Mamesaver.Models.Configuration;
-using Mamesaver.Properties;
 using Mamesaver.Services.Configuration;
 using Mamesaver.Services.Mame;
 using Prism.Commands;
@@ -19,7 +17,7 @@ using Serilog;
 
 namespace Mamesaver.Config.ViewModels.GameListTab
 {
-    public class GameListViewModel : INotifyPropertyChanged
+    public class GameListViewModel : InitialisableViewModel
     {
         public delegate void GlobalFilterEventHandler(object sender, GlobalFilterEventArgs e);
 
@@ -53,8 +51,12 @@ namespace Mamesaver.Config.ViewModels.GameListTab
 
             _games = new ObservableCollection<GameViewModel>();
             _filteredGames = new ObservableCollection<GameViewModel>();
+        }
 
+        protected override void PerformInitialise()
+        {
             ConfigViewModel.Save += (sender, args) => Save();
+            LoadGames();
         }
 
         public bool? AllSelected
@@ -216,17 +218,11 @@ namespace Mamesaver.Config.ViewModels.GameListTab
             return Games.Where(game => game.Selected).ToList();
         }
 
-
         private void ClearFilters()
         {
             LoadGames();
             FiltersCleared?.Invoke(this, EventArgs.Empty);
             GlobalFilter = AllGamesFilter;
-        }
-
-        public void Initialise()
-        {
-            LoadGames();
         }
 
         private void SetGlobalSelectionState()
@@ -275,12 +271,6 @@ namespace Mamesaver.Config.ViewModels.GameListTab
         public void Save()
         {
             _gameListStore.Save(_gameList.Games);
-        }
- 
-        [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
    }
 }

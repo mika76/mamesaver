@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
@@ -9,7 +10,6 @@ using Mamesaver.Config.Extensions;
 using Mamesaver.Config.Filters;
 using Mamesaver.Config.Models;
 using Mamesaver.Config.ViewModels.GameListTab;
-using Mamesaver.Services;
 
 namespace Mamesaver.Config
 {
@@ -22,27 +22,23 @@ namespace Mamesaver.Config
 
         public GameListTab() => InitializeComponent();
 
+        protected override void OnInitialized(EventArgs e)
+        {
+            base.OnInitialized(e);
+
+            _view = CollectionViewSource.GetDefaultView(GameList.Items);
+            _view.CollectionChanged += OnCollectionChanged;
+
+            _viewModel.GlobalFilterChange += OnGlobalFilterChange;
+        }
+
         public override void BeginInit()
         {
             base.BeginInit();
 
-            _viewModel = ServiceResolver.GetInstance<GameListViewModel>();
-            _viewModel.Initialise();
-            DataContext = _viewModel;
-
-            DataContextChanged += OnDataContextChanged;
-
-            // Clear design-mode background
-            if (!DesignerProperties.GetIsInDesignMode(this)) ClearValue(BackgroundProperty);
+            _viewModel = this.InitViewModel<GameListViewModel>();
+            this.InitDesignMode();
          }
-
-        private void OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            _view = CollectionViewSource.GetDefaultView(GameList.Items);
-
-            _viewModel.GlobalFilterChange += OnGlobalFilterChange;
-            _view.CollectionChanged += OnCollectionChanged;
-        }
 
         private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
