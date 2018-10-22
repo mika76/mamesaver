@@ -16,7 +16,7 @@ namespace Mamesaver.Config.ViewModels.GeneralTab
 
         protected override void PerformInitialise()
         {
-            ConfigViewModel.ResetToDefaults += (sender, args) => ResetToDefaults();
+            ConfigViewModel.ResetToDefaults += (sender, args) => ResetToDefaults(args.Settings);
         }
 
         /// <summary>
@@ -38,12 +38,12 @@ namespace Mamesaver.Config.ViewModels.GeneralTab
         /// <summary>
         ///     Resets general settings to default values.
         /// </summary>
-        private void ResetToDefaults()
+        private void ResetToDefaults(Settings settings)
         {
             // Preserve MAME executable path
-            var executablePath = _settings.ExecutablePath;
+            settings.ExecutablePath = _settings.ExecutablePath;
+            _settings = settings;
 
-            _settings = new Settings { ExecutablePath = executablePath };
             OnAllPropertiesChanged();
         }
 

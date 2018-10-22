@@ -78,7 +78,7 @@
                 <ComboBox Width="150" Margin="0,0,0,0" ItemsSource="{Binding FilterOptions}" DisplayMemberPath="Text" SelectedValue="{Binding GlobalFilter}" />
                 <Button Content="Apply" Width="60" Command="{Binding ApplyGlobalFilterClick}" VerticalAlignment="Bottom" Margin="5,5,10,5" />
 
-                <Button Content="_Clear Filters" Width="90" Click="ClearFilters" Command="{Binding ClearFiltersClick}" VerticalAlignment="Bottom" Margin="5,5,0,5" />
+                <Button Content="_Clear Filters" Width="90" Command="{Binding ClearFiltersClick}" VerticalAlignment="Bottom" Margin="5,5,0,5" />
             </StackPanel>
         </DockPanel>
 

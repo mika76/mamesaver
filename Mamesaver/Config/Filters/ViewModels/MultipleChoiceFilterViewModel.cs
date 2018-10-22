@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
 using System.Windows.Input;
 using Mamesaver.Config.ViewModels;
 using Mamesaver.Config.ViewModels.GameListTab;
 using Prism.Commands;
 
-namespace Mamesaver.Config.Filters
+namespace Mamesaver.Config.Filters.ViewModels
 {
+    /// <summary>
+    ///     View model for column filters, displaying a checkbo list of filter options based on a single column.
+    /// </summary>
     public class MultipleChoiceFilterViewModel : InitialisableViewModel
     {
         private readonly GameListViewModel _gameList;
@@ -40,6 +42,9 @@ namespace Mamesaver.Config.Filters
 
         public ObservableCollection<FilterItemViewModel> SelectableValues { get; set; }
 
+        /// <summary>
+        ///     Whether the filter controls are visible. This is used to perform explicit filtering via external components.
+        /// </summary>
         public bool Visible
         {
             get => _visible;
@@ -51,35 +56,24 @@ namespace Mamesaver.Config.Filters
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
         private void SelectAll()
         {
-            foreach (var filterItem in SelectableValues)
-            {
-                filterItem.Selected = true;
-            }
+            foreach (var filterItem in SelectableValues) filterItem.Selected = true;
+            SelectionChanged?.Invoke(this, EventArgs.Empty);
+        }
 
+        private void SelectNone()
+        {
+            foreach (var filterItem in SelectableValues) filterItem.Selected = false;
             SelectionChanged?.Invoke(this, EventArgs.Empty);
         }
 
         public void Select(string value, bool selected)
         {
             var selectableValue = SelectableValues.FirstOrDefault(v => v.Value == value);
-            if (selectableValue != null)
-            {
-                selectableValue.Selected = selected;
-                SelectionChanged?.Invoke(this, EventArgs.Empty);
-            }
-        }
+            if (selectableValue == null) return;
 
-        private void SelectNone()
-        {
-            foreach (var filterItem in SelectableValues)
-            {
-                filterItem.Selected = false;
-            }
-
+            selectableValue.Selected = selected;
             SelectionChanged?.Invoke(this, EventArgs.Empty);
         }
 
@@ -87,32 +81,19 @@ namespace Mamesaver.Config.Filters
         {
             if (string.IsNullOrEmpty(FilterProperty)) return;
 
+            // Add filter values based on the selected property in the game view model, ordering alphabetically.
             SelectableValues.Clear();
-            SelectableValues.AddRange(_gameList.FilteredGames.Select(
-                game => (string) game
-                    .GetType()
-                    .GetProperty(FilterProperty)?.GetValue(game)
-            ).Distinct().OrderBy(g => g).Select(g => new FilterItemViewModel { Selected = true, Value = g }));
+            SelectableValues.AddRange(_gameList.FilteredGames
+                .Select(
+                    game => (string) game
+                        .GetType()
+                        .GetProperty(FilterProperty)?.GetValue(game)
+                )
+                .Distinct()
+                .OrderBy(value => value)
+                .Select(value => new FilterItemViewModel { Selected = true, Value = value }));
 
             OnPropertyChanged(nameof(SelectableValues));
-        }
-    }
-
-    public class FilterItemViewModel : ViewModel
-    {
-        private bool _selected;
-
-        public string Value { get; set; }
-
-        public bool Selected
-        {
-            get => _selected;
-            set
-            {
-                if (value == _selected) return;
-                _selected = value;
-                OnPropertyChanged();
-            }
         }
     }
 }

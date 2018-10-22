@@ -1,8 +1,13 @@
 ﻿using Mamesaver.Config.ViewModels;
 using Mamesaver.Models;
 
+using static Mamesaver.Config.Helpers.SortablePropertyHelper;
+
 namespace Mamesaver.Config.Models
 {
+    /// <summary>
+    ///     View model for a single game's metadata displayed in a <c>DataGrid</c>.
+    /// </summary>
     public class GameViewModel : ViewModel
     {
         private readonly SelectableGame _game;
@@ -47,22 +52,22 @@ namespace Mamesaver.Config.Models
         /// <summary>
         ///     Sort property for game manufacturer, performing a secondary sort on game description.
         /// </summary>
-        public string ManufacturerSort => $"{Manufacturer}:{Description}";
+        public string ManufacturerSort => ToSortableProperty(Manufacturer, Description);
 
         /// <summary>
         ///     Sort property for game category, performing a secondary sort on game description.
         /// </summary>
-        public string CategorySort => $"{Category}:{Description}";
+        public string CategorySort => ToSortableProperty(Category, Description);
 
         /// <summary>
         ///     Sort property for game year, performing a secondary sort on game description.
         /// </summary>
-        public string YearSort => $"{Year}:{Description}";
+        public string YearSort => ToSortableProperty(Year, Description);
 
-       /// <summary>
+        /// <summary>
         ///     Sort property for game rotation, performing a secondary sort on game description.
         /// </summary>
-        public string RotationSort => $"{Rotation}:{Description}";
+        public string RotationSort => ToSortableProperty(Rotation, Description);
 
         /// <summary>
         ///     Filter property for game selection.

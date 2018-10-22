@@ -120,10 +120,12 @@
     <Compile Include="Config\Converters\InvertedBooleanToVisibilityConverter.cs" />
     <Compile Include="Config\Extensions\DependencyObjectExtensions.cs" />
     <Compile Include="Config\Extensions\FrameworkElementExtensions.cs" />
+    <Compile Include="Config\Filters\ViewModels\FilterItemViewModel.cs" />
+    <Compile Include="Config\Filters\MultipleChoiceContentFilter.cs" />
     <Compile Include="Config\Filters\MultipleChoiceFilter.xaml.cs">
       <DependentUpon>MultipleChoiceFilter.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Config\Filters\MultipleChoiceFilterViewModel.cs" />
+    <Compile Include="Config\Filters\ViewModels\MultipleChoiceFilterViewModel.cs" />
     <Compile Include="Config\Filters\NullFilter.xaml.cs">
       <DependentUpon>NullFilter.xaml</DependentUpon>
     </Compile>
@@ -133,6 +135,7 @@
     <Compile Include="Config\GeneralTab.xaml.cs">
       <DependentUpon>GeneralTab.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Config\Helpers\SortablePropertyHelper.cs" />
     <Compile Include="Config\HotKeysTab.xaml.cs">
       <DependentUpon>HotKeysTab.xaml</DependentUpon>
     </Compile>
@@ -153,14 +156,15 @@
     <Compile Include="Config\ViewModels\HotKeysTab\HotkeysViewModel.cs" />
     <Compile Include="Config\ViewModels\InitialisableViewModel.cs" />
     <Compile Include="Config\ViewModels\LayoutTab\LayoutViewModel.cs" />
+    <Compile Include="Config\ViewModels\ResetToDefaultsEventArgs.cs" />
     <Compile Include="Config\ViewModels\ViewModel.cs" />
     <Compile Include="ContainerFactory.cs" />
     <Compile Include="GamePlayManager.cs" />
     <Compile Include="Helper\StackHelper.cs" />
-    <Compile Include="Hotkeys\HotKey.cs" />
-    <Compile Include="Hotkeys\HotKeyEventArgs.cs" />
-    <Compile Include="Hotkeys\HotKeyManager.cs" />
-    <Compile Include="MameErrorCodes.cs" />
+    <Compile Include="HotKeys\HotKey.cs" />
+    <Compile Include="HotKeys\HotKeyEventArgs.cs" />
+    <Compile Include="HotKeys\HotKeyManager.cs" />
+    <Compile Include="MameExitCodes.cs" />
     <Compile Include="MameScreen.cs" />
     <Compile Include="Models\Configuration\AdvancedSettings.cs" />
     <Compile Include="Models\Configuration\FontSettings.cs" />
@@ -299,9 +303,7 @@
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Config\Filters\ViewModels\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target AfterTargets="ILRepack" Name="ClearOutput" Condition="$(Configuration.Contains('Release'))">
     <Message Text="Clearing output" Importance="High" />

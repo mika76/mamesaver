@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Windows.Forms;
-using Mamesaver.Hotkeys;
+using Mamesaver.HotKeys;
 using Mamesaver.Services.Windows;
 using Serilog;
 

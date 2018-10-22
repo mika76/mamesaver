@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using DataGridExtensions;
+using Mamesaver.Config.Filters.ViewModels;
+using Mamesaver.Config.Models;
 using Mamesaver.Services;
 
 namespace Mamesaver.Config.Filters
@@ -32,7 +32,7 @@ namespace Mamesaver.Config.Filters
         }
 
         /// <summary>
-        ///     Registers the <c>Filter</c> dependency property
+        ///     Registers the <c>Filter</c> dependency property to indicate the associated filter class.
         /// </summary>
         public static readonly DependencyProperty FilterProperty =
             DependencyProperty.Register("Filter", typeof(MultipleChoiceContentFilter), typeof(MultipleChoiceFilter),
@@ -41,14 +41,17 @@ namespace Mamesaver.Config.Filters
                     (sender, e) => ((MultipleChoiceFilter)sender).FilterChanged()));
 
         /// <summary>
-        ///     Registers the <c>Field</c> dependency property
+        ///     Registers the <c>Field</c> dependency property to indicate which field in <see cref="GameViewModel"/> is being
+        ///     filtered on.
         /// </summary>
-        public static readonly DependencyProperty FieldProperty = DependencyProperty.Register("Field", typeof(string), typeof(MultipleChoiceFilter));
+        public static readonly DependencyProperty FieldProperty = 
+            DependencyProperty.Register("Field", typeof(string), typeof(MultipleChoiceFilter));
 
         /// <summary>
-        ///     Registers the <c>Visible</c> dependency property
+        ///     Registers the <c>Visible</c> dependency property to indicate whether the filter should be displayed.
         /// </summary>
-        public static readonly DependencyProperty VisibleProperty = DependencyProperty.Register("Visible", typeof(bool?), typeof(MultipleChoiceFilter));
+        public static readonly DependencyProperty VisibleProperty = 
+            DependencyProperty.Register("Visible", typeof(bool?), typeof(MultipleChoiceFilter));
 
         private ListView _listBox;
         private TextBlock _filterActiveMarker;
@@ -88,6 +91,7 @@ namespace Mamesaver.Config.Filters
 
             if (Filter?.ExcludedItems == null) _listBox?.SelectAll();
 
+
             if (!(_listBox?.Items is INotifyCollectionChanged items)) return;
             items.CollectionChanged += CollectionChanged;
             dataContext.SelectionChanged += ListBoxSelectionChanged;
@@ -95,6 +99,9 @@ namespace Mamesaver.Config.Filters
 
         private void CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) => SetIconState();
 
+        /// <summary>
+        ///     Sets the filter icon colour and marker, based on whether any filtering is applied.
+        /// </summary>
         private void SetIconState()
         {
             Brush iconBrush;
@@ -139,6 +146,9 @@ namespace Mamesaver.Config.Filters
             }
         }
 
+        /// <summary>
+        ///     Reconstructs filter based on filter item selection change.
+        /// </summary>
         public void OnSelectionChanged()
         {
             var excludedItems = Filter?.ExcludedItems ?? new string[0];
@@ -164,22 +174,5 @@ namespace Mamesaver.Config.Filters
 
         private void FilterItemSelectionChanged(object sender, RoutedEventArgs e) => OnSelectionChanged();
         private void ListBoxSelectionChanged(object sender, EventArgs e) => OnSelectionChanged();
-    }
-
-    public class MultipleChoiceContentFilter : IContentFilter
-    {
-        // FIXME do we need this? We have a selection checkbox
-        public IList<string> ExcludedItems { get; set; }
-
-        public MultipleChoiceContentFilter(IEnumerable<string> excludedItems) => ExcludedItems = excludedItems?.ToArray();
-
-        public bool IsMatch(object rawValue)
-        {
-            if (!(rawValue is string)) return false;
-
-            // TODO comment and tidy plz
-            var value = ((string)rawValue).Split(':').FirstOrDefault();
-            return ExcludedItems?.Contains(value) != true;
-        }
     }
 }

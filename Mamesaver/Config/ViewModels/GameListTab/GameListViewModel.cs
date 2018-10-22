@@ -22,9 +22,7 @@ namespace Mamesaver.Config.ViewModels.GameListTab
         public delegate void GlobalFilterEventHandler(object sender, GlobalFilterEventArgs e);
 
         private static readonly FilterOption AllGamesFilter = new FilterOption("All games", FilterMode.AllGames);
-
-        private static readonly FilterOption SelectedGamesFilter =
-            new FilterOption("Selected games", FilterMode.SelectedGames);
+        private static readonly FilterOption SelectedGamesFilter = new FilterOption("Selected games", FilterMode.SelectedGames);
 
         private readonly GameList _gameList;
         private readonly GameListBuilder _gameListBuilder;
@@ -38,7 +36,6 @@ namespace Mamesaver.Config.ViewModels.GameListTab
         private bool? _allSelected = true;
         private int _progress;
         private bool _rebuilding;
-
 
         public GameListViewModel(
             GameList gameList,
@@ -59,24 +56,26 @@ namespace Mamesaver.Config.ViewModels.GameListTab
             LoadGames();
         }
 
+        /// <summary>
+        ///     Indiciates the global selection state and selects all or no games.
+        /// </summary>
         public bool? AllSelected
         {
             get => _allSelected;
             set
             {
                 if (value != null)
-                    foreach (var game in FilteredGames)
-                        game.Selected = value.Value;
+                {
+                    foreach (var game in FilteredGames) game.Selected = value.Value;
+                }
 
                 _allSelected = value;
-
                 OnPropertyChanged();
             }
         }
 
         public ICommand ApplyGlobalFilterClick => new DelegateCommand(ApplyGlobalFilter);
         public ICommand ClearFiltersClick => new DelegateCommand(ClearFilters);
-
         public ICommand RebuildListClick => new DelegateCommand(async () => { await RebuildList(); });
 
         public ObservableCollection<FilterOption> FilterOptions { get; set; } = new ObservableCollection<FilterOption>
@@ -85,6 +84,9 @@ namespace Mamesaver.Config.ViewModels.GameListTab
             SelectedGamesFilter
         };
 
+        /// <summary>
+        ///     Global selection state.
+        /// </summary>
         public FilterOption GlobalFilter
         {
             get => _globalFilter;
@@ -101,7 +103,9 @@ namespace Mamesaver.Config.ViewModels.GameListTab
 
         public ICollectionView GamesView { get; set; }
 
-
+        /// <summary>
+        ///     Whether the game list is being rebuilt.
+        /// </summary>
         public bool Rebuilding
         {
             get => _rebuilding;
@@ -113,6 +117,9 @@ namespace Mamesaver.Config.ViewModels.GameListTab
             }
         }
 
+        /// <summary>
+        ///     Game list rebuilding percentage completion.
+        /// </summary>
         public int Progress
         {
             get => _progress;
@@ -124,6 +131,9 @@ namespace Mamesaver.Config.ViewModels.GameListTab
             }
         }
 
+        /// <summary>
+        ///     All available games.
+        /// </summary>
         public ObservableCollection<GameViewModel> Games
         {
             get => _games;
@@ -152,12 +162,14 @@ namespace Mamesaver.Config.ViewModels.GameListTab
 
         public ICommand GameSelectionClick => new DelegateCommand(SetGlobalSelectionState);
 
-        public event PropertyChangedEventHandler PropertyChanged;
         public event EventHandler GameListRebuilt;
         public event GlobalFilterEventHandler GlobalFilterChange;
         public event EventHandler FiltersCleared;
 
-        public async Task RebuildList()
+        /// <summary>
+        ///     Rebuilds the game list from ROMs on disk, displaying a progress bar to indicate processing state.
+        /// </summary>
+        private async Task RebuildList()
         {
             // Set UI state
             Progress = 0;
@@ -167,9 +179,9 @@ namespace Mamesaver.Config.ViewModels.GameListTab
             _selectedGames = GetSelectedGames();
             Games.Clear();
 
-            // Build game list
             try
             {
+                // Build game list
                 _gameList.Games = await Task.Run(() => _gameListBuilder
                     .GetGameList(progress => Progress = progress)
                     .ToList());
@@ -183,15 +195,13 @@ namespace Mamesaver.Config.ViewModels.GameListTab
             catch (FileNotFoundException fe)
             {
                 Rebuilding = false;
-                MessageBox.Show(@"Error running MAME; verify that the executable path is correct.", @"Error",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(@"Error running MAME; verify that the executable path is correct.", @"Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 Log.Error(fe, $"Unable to find MAME at {fe.FileName}");
             }
             catch (Exception ex)
             {
                 Rebuilding = false;
-                MessageBox.Show(@"Error running MAME; verify that the configuration is correct.", @"Error",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(@"Error running MAME; verify that the configuration is correct.", @"Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 Log.Error(ex, "Unable to construct game list");
             }
         }
@@ -218,6 +228,9 @@ namespace Mamesaver.Config.ViewModels.GameListTab
             return Games.Where(game => game.Selected).ToList();
         }
 
+        /// <summary>
+        ///     Clears all filters.
+        /// </summary>
         private void ClearFilters()
         {
             LoadGames();
@@ -225,6 +238,10 @@ namespace Mamesaver.Config.ViewModels.GameListTab
             GlobalFilter = AllGamesFilter;
         }
 
+        /// <summary>
+        ///     Set the state of the <see cref="AllSelected"/> flag based on whether all games, no
+        ///     games or some games are selected.
+        /// </summary>
         private void SetGlobalSelectionState()
         {
             var allSelected = FilteredGames.Any() && FilteredGames.All(g => g.Selected);
@@ -235,11 +252,11 @@ namespace Mamesaver.Config.ViewModels.GameListTab
             else AllSelected = null;
         }
 
+        /// <summary>
+        ///     Populate game list from the user's available games.
+        /// </summary>
         private void LoadGames()
         {
-            //// Clear existing game event handling
-            //GameSelectionEventRegistration(false);
-
             Games.Clear();
             Games.AddRange(_gameList.Games.Select(game => new GameViewModel(game)));
             GamesView = CollectionViewSource.GetDefaultView(Games);
@@ -251,9 +268,6 @@ namespace Mamesaver.Config.ViewModels.GameListTab
             FilteredGames.Clear();
             FilteredGames.AddRange(Games);
 
-            //// Register event to refresh filter state on game selection
-            //GameSelectionEventRegistration(true);
-
             // Select games based on any previous user selection
             ApplySelectionState(Games);
 
@@ -263,11 +277,17 @@ namespace Mamesaver.Config.ViewModels.GameListTab
             OnPropertyChanged(nameof(GameCount));
         }
 
+        /// <summary>
+        ///     Informs event consumers that the global selection filter has changed.
+        /// </summary>
         public void ApplyGlobalFilter()
         {
             GlobalFilterChange?.Invoke(this, new GlobalFilterEventArgs(_globalFilter.FilterMode));
         }
 
+        /// <summary>
+        ///     Saves game selection state to disk.
+        /// </summary>
         public void Save()
         {
             _gameListStore.Save(_gameList.Games);

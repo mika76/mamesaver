@@ -44,7 +44,6 @@ namespace Mamesaver
                     switch (arguments[0].Trim().Substring(0, 2).ToLower())
                     {
                         case "/c":
-                            //TODO: Catch display properties window handle and set it as parent
                             ShowConfig();
                             break;
 

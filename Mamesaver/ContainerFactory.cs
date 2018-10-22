@@ -1,11 +1,11 @@
-using Mamesaver.Config.Filters;
+using Mamesaver.Config.Filters.ViewModels;
 using Mamesaver.Config.ViewModels;
 using Mamesaver.Config.ViewModels.AdvancedTab;
 using Mamesaver.Config.ViewModels.GameListTab;
 using Mamesaver.Config.ViewModels.GeneralTab;
 using Mamesaver.Config.ViewModels.HotkeysTab;
 using Mamesaver.Config.ViewModels.LayoutTab;
-using Mamesaver.Hotkeys;
+using Mamesaver.HotKeys;
 using Mamesaver.Layout;
 using Mamesaver.Models.Configuration;
 using Mamesaver.Power;

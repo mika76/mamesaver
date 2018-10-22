@@ -15,15 +15,15 @@ namespace Mamesaver.Config.ViewModels.LayoutTab
         public LayoutViewModel(Settings settings)
         {
             _settings = settings.LayoutSettings;
-            ConfigViewModel.ResetToDefaults += (sender, args) => ResetToDefaults();
+            ConfigViewModel.ResetToDefaults += (sender, args) => ResetToDefaults(args.Settings);
         }
 
         /// <summary>
         ///     Resets layout settings to default values.
         /// </summary>
-        private void ResetToDefaults()
+        private void ResetToDefaults(Settings settings)
         {
-            _settings = new Settings().LayoutSettings;
+            _settings = settings.LayoutSettings;
             OnAllPropertiesChanged();
         }
         protected override void PerformInitialise() => LoadFonts();

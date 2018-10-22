@@ -13,16 +13,15 @@ namespace Mamesaver.Config.ViewModels.HotkeysTab
 
         protected override void PerformInitialise()
         {
-            ConfigViewModel.ResetToDefaults += (sender, args) => ResetToDefaults();
+            ConfigViewModel.ResetToDefaults += (sender, args) => ResetToDefaults(args.Settings);
         }
- 
+
         /// <summary>
         ///     Resets hotkey settings to default values.
         /// </summary>
-        private void ResetToDefaults()
+        private void ResetToDefaults(Settings settings)
         {
-            _settings = new Settings();
-            var arse = HotKeysEnabled;
+            _settings = settings;
             OnAllPropertiesChanged();
         }
 

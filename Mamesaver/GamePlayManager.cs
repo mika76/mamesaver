@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Windows.Forms;
-using Mamesaver.Hotkeys;
+using Mamesaver.HotKeys;
 using Mamesaver.Layout;
 using Mamesaver.Models;
 using Mamesaver.Models.Configuration;
@@ -12,6 +12,8 @@ using Mamesaver.Power;
 using Mamesaver.Services.Configuration;
 using Mamesaver.Services.Mame;
 using Serilog;
+
+using static Mamesaver.MameExitCodes;
 
 namespace Mamesaver
 {
@@ -219,15 +221,20 @@ namespace Mamesaver
             _mameProcess.Exited -= OnMameExited;
 
             var process = (Process)sender;
-            if (process.ExitCode == 0) return;
+            if (process.ExitCode == SuccessfulExit) return;
 
-            // If MAME exited with an error, deselect the current game
-            if (process.ExitCode.In(MameErrorCodes.RequireFilesMissing, MameErrorCodes.UnknownSystem))
+            var game = CurrentGame();
+            Log.Warning("MAME exited unexpectedly playing {game}; exit code {exitCode} ({exitDescription})", game.Name, process.ExitCode, MapCode(process.ExitCode));
+
+            // If MAME exited with an error relating to the selected , deselect the current game
+            if (process.ExitCode.In(RequiredFilesMissing, UnknownSystem))
             {
-                var game = CurrentGame();
-                Log.Warning("MAME exited unexpectedly playing {game}", game.Name);
-
                 DeselectGame(CurrentGame());
+            }
+            else
+            {
+                // Fatal error invoking MAME, so stop gameplay
+                _cancellationTokenSource.Cancel();
             }
         }
 

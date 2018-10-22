@@ -1,10 +1,7 @@
 ﻿using System;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
 using Mamesaver.Models.Configuration;
-using Mamesaver.Properties;
 using Mamesaver.Services.Configuration;
 using Prism.Commands;
 
@@ -12,11 +9,13 @@ namespace Mamesaver.Config.ViewModels
 {
     public class ConfigViewModel : ViewModel
     {
-        private readonly Settings _settings;
+        private Settings _settings;
         private readonly GeneralSettingsStore _generalSettingsStore;
 
-       public static event EventHandler ResetToDefaults;
+        public static event ResetToDefaultsEventHander ResetToDefaults;
         public static event EventHandler Save;
+
+        public delegate void ResetToDefaultsEventHander(object sender, ResetToDefaultsEventArgs e);
 
         public ConfigViewModel(
             Settings settings,
@@ -29,7 +28,11 @@ namespace Mamesaver.Config.ViewModels
         public ICommand OkClick => new DelegateCommand(SaveAndClose);
         public ICommand CancelClick => new DelegateCommand(Close);
 
-        public ICommand ResetToDefaultsClick => new DelegateCommand(() => ResetToDefaults?.Invoke(this, EventArgs.Empty));
+        public ICommand ResetToDefaultsClick => new DelegateCommand(() =>
+        {
+            _settings = new Settings();
+            ResetToDefaults?.Invoke(this, new ResetToDefaultsEventArgs(_settings));
+        });
 
         private void SaveAndClose()
         {

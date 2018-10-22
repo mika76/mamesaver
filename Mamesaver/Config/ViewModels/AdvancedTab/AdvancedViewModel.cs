@@ -13,15 +13,15 @@ namespace Mamesaver.Config.ViewModels.AdvancedTab
 
         protected override void PerformInitialise()
         {
-            ConfigViewModel.ResetToDefaults += (sender, args) => ResetToDefaults();
+            ConfigViewModel.ResetToDefaults += (sender, args) => ResetToDefaults(args.Settings);
         }
 
         /// <summary>
         ///     Resets advanced settings to default values.
         /// </summary>
-        private void ResetToDefaults()
+        private void ResetToDefaults(Settings settings)
         {
-            _advancedSettings = new AdvancedSettings();
+            _advancedSettings = settings.AdvancedSettings;
             OnAllPropertiesChanged();
         }
  

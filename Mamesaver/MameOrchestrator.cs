@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
-using Mamesaver.Hotkeys;
+using Mamesaver.HotKeys;
 using Mamesaver.Models.Configuration;
 using Mamesaver.Power;
 using Mamesaver.Services.Mame;

@@ -6,7 +6,7 @@ using Mamesaver.Power;
 using Mamesaver.Services.Windows;
 using Serilog;
 
-namespace Mamesaver.Hotkeys
+namespace Mamesaver.HotKeys
 {
     /// <summary>
     ///     Handles key down events, identifying hot keys and dispatching events for both handled
