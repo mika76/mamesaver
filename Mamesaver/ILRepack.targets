@@ -10,6 +10,7 @@
       DebugInfo="true"
       Union="true"
       Wildcards="true"
+      Internalize="true"
       CopyAttributes="true"
       AllowDuplicateResources="false"
       InputAssemblies="@(InputAssemblies)"

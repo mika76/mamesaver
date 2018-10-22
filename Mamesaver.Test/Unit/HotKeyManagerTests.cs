@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Windows.Forms;
 using FluentAssertions;
-using Mamesaver.Hotkeys;
+using Mamesaver.HotKeys;
 using Mamesaver.Models.Configuration;
 using Mamesaver.Power;
 using Mamesaver.Test.Integration;
