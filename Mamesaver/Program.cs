@@ -39,8 +39,6 @@ namespace Mamesaver
 
                 using (AsyncScopedLifestyle.BeginScope(_container))
                 {
-                    var orchestrator = _container.GetInstance<MameOrchestrator>();
-
                     switch (arguments[0].Trim().Substring(0, 2).ToLower())
                     {
                         case "/c":
@@ -48,7 +46,7 @@ namespace Mamesaver
                             break;
 
                         case "/s":
-                            orchestrator.Run();
+                            _container.GetInstance<MameOrchestrator>().Run();
                             break;
 
                         case "/p":
