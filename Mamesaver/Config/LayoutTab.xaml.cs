@@ -5,14 +5,12 @@ namespace Mamesaver.Config
 {
     public partial class LayoutTab
     {
-        public LayoutTab() => InitializeComponent();
-
-        public override void BeginInit()
+        public LayoutTab()
         {
-            base.BeginInit();
+            InitializeComponent();
 
             this.InitViewModel<LayoutViewModel>();
             this.InitDesignMode();
-         }
+        }
     }
 }

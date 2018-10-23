@@ -5,12 +5,10 @@ namespace Mamesaver.Config
 {
     public partial class AdvancedTab
     {
-        public AdvancedTab() => InitializeComponent();
-
-        public override void BeginInit()
+        public AdvancedTab()
         {
-            base.BeginInit();
-            
+            InitializeComponent();
+
             this.InitViewModel<AdvancedViewModel>();
             this.InitDesignMode();
         }

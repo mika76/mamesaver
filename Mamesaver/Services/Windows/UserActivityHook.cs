@@ -433,7 +433,7 @@ namespace Mamesaver.Services.Windows
 
         /// <summary>
         ///     Creates an instance of UserActivityHook object and installs both or one of mouse and/or keyboard hooks and starts
-        ///     rasing events
+        ///     raising events
         /// </summary>
         /// <param name="installMouseHook"><b>true</b> if mouse events must be monitored</param>
         /// <param name="installKeyboardHook"><b>true</b> if keyboard events must be monitored</param>

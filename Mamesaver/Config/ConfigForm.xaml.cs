@@ -5,11 +5,9 @@ namespace Mamesaver.Config
 {
     public partial class ConfigForm
     {
-        public ConfigForm() => InitializeComponent();
-
-        public override void BeginInit()
+        public ConfigForm()
         {
-            base.BeginInit();
+            InitializeComponent();
 
             this.InitViewModel<ConfigViewModel>();
             this.InitDesignMode();

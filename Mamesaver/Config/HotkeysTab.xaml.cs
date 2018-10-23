@@ -5,12 +5,10 @@ namespace Mamesaver.Config
 {
     public partial class HotKeysTab
     {
-        public HotKeysTab() => InitializeComponent();
-
-        public override void BeginInit()
+        public HotKeysTab()
         {
-            base.BeginInit();
-            
+            InitializeComponent();
+
             this.InitViewModel<HotKeysViewModel>();
             this.InitDesignMode();
         }

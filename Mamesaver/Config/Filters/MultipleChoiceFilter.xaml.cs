@@ -4,9 +4,8 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using Mamesaver.Config.Extensions;
 using Mamesaver.Config.Filters.ViewModels;
-using Mamesaver.Config.Models;
-using Mamesaver.Services;
 
 namespace Mamesaver.Config.Filters
 {
@@ -15,20 +14,15 @@ namespace Mamesaver.Config.Filters
         private static readonly SolidColorBrush ActiveBrush = SystemColors.HighlightBrush;
         private static readonly SolidColorBrush InactiveBrush = new SolidColorBrush(Colors.Gray);
 
-        private readonly MultipleChoiceFilterViewModel _viewModel;
-
         public MultipleChoiceFilter()
         {
-            _viewModel = ServiceResolver.GetInstance<MultipleChoiceFilterViewModel>();
             InitializeComponent();
         }
 
         public override void BeginInit()
         {
             base.BeginInit();
-
-            _viewModel.Initialise();
-            DataContext = _viewModel;
+            this.InitViewModel<MultipleChoiceFilterViewModel>();
         }
 
         /// <summary>
@@ -41,8 +35,8 @@ namespace Mamesaver.Config.Filters
                     (sender, e) => ((MultipleChoiceFilter)sender).FilterChanged()));
 
         /// <summary>
-        ///     Registers the <c>Field</c> dependency property to indicate which field in <see cref="GameViewModel"/> is being
-        ///     filtered on.
+        ///     Registers the <c>Field</c> dependency property to indicate which field in <see cref="Models.GameViewModel"/> 
+        ///     is being filtered on.
         /// </summary>
         public static readonly DependencyProperty FieldProperty = 
             DependencyProperty.Register("Field", typeof(string), typeof(MultipleChoiceFilter));
@@ -56,6 +50,8 @@ namespace Mamesaver.Config.Filters
         private ListView _listBox;
         private TextBlock _filterActiveMarker;
         private Control _filterSymbol;
+
+        private MultipleChoiceFilterViewModel ViewModel => (MultipleChoiceFilterViewModel) DataContext;
 
         public MultipleChoiceContentFilter Filter
         {
@@ -73,17 +69,16 @@ namespace Mamesaver.Config.Filters
         {
             get => (bool)(GetValue(VisibleProperty) ?? true);
             set => SetValue(VisibleProperty, value);
-        } 
+        }
 
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
 
-            var dataContext = (MultipleChoiceFilterViewModel)DataContext;
-            dataContext.FilterProperty = Field;
-            dataContext.Visible = Visible;
+            ViewModel.FilterProperty = Field;
+            ViewModel.Visible = Visible;
 
-            dataContext.BuildFilterValues();
+            ViewModel.BuildFilterValues();
 
             _listBox = (ListView)Template.FindName("FilterList", this);
             _filterActiveMarker = (TextBlock)Template.FindName("IsFilterActiveMarker", this);
@@ -91,10 +86,11 @@ namespace Mamesaver.Config.Filters
 
             if (Filter?.ExcludedItems == null) _listBox?.SelectAll();
 
-
             if (!(_listBox?.Items is INotifyCollectionChanged items)) return;
             items.CollectionChanged += CollectionChanged;
-            dataContext.SelectionChanged += ListBoxSelectionChanged;
+
+            // Handle select all / select none actions
+            ViewModel.SelectionChanged += ListBoxSelectionChanged; 
         }
 
         private void CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) => SetIconState();
@@ -140,7 +136,7 @@ namespace Mamesaver.Config.Filters
 
             if (_listBox?.SelectedItems.Count != 0) return;
 
-            foreach (var item in _listBox.Items.Cast<string>().Except(Filter.ExcludedItems))
+            foreach (var item in _listBox.Items.Cast<FilterItemViewModel>().Select(item => item.Value).Except(Filter.ExcludedItems))
             {
                 _listBox.SelectedItems.Add(item);
             }
@@ -170,6 +166,10 @@ namespace Mamesaver.Config.Filters
 
             Filter = new MultipleChoiceContentFilter(excludedItems);
             SetIconState();
+
+            // Maintain last filter field so we can apply checkbox filtering in a similar fashion to Excel, keeping
+            // deselected options visible for the last filter field.
+            MultipleChoiceFilterViewModel.LastFilterField = Field;
         }
 
         private void FilterItemSelectionChanged(object sender, RoutedEventArgs e) => OnSelectionChanged();

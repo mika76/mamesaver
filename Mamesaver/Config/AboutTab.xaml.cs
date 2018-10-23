@@ -5,11 +5,9 @@ namespace Mamesaver.Config
 {
     public partial class AboutTab
     {
-        public AboutTab() => InitializeComponent();
-
-        public override void BeginInit()
+        public AboutTab()
         {
-            base.BeginInit();
+            InitializeComponent();
 
             this.InitViewModel<AboutViewModel>();
             this.InitDesignMode();

@@ -149,7 +149,7 @@
                             <CheckBox HorizontalAlignment="Center"
                                       Command="{Binding Path=DataContext.GameSelectionClick,
                                             RelativeSource={RelativeSource FindAncestor,
-                                            AncestorType={x:Type Window}}}"
+                                            AncestorType={x:Type UserControl}}}"
                                       IsChecked="{Binding Path=Selected, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>

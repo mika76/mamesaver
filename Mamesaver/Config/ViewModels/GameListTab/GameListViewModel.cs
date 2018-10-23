@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -28,8 +27,8 @@ namespace Mamesaver.Config.ViewModels.GameListTab
         private readonly GameListBuilder _gameListBuilder;
         private readonly GameListStore _gameListStore;
 
-        private ObservableCollection<GameViewModel> _filteredGames;
-        private ObservableCollection<GameViewModel> _games;
+        private List<GameViewModel> _filteredGames;
+        private List<GameViewModel> _games;
         private List<GameViewModel> _selectedGames;
 
         private FilterOption _globalFilter = AllGamesFilter;
@@ -46,8 +45,8 @@ namespace Mamesaver.Config.ViewModels.GameListTab
             _gameListBuilder = gameListBuilder;
             _gameListStore = gameListStore;
 
-            _games = new ObservableCollection<GameViewModel>();
-            _filteredGames = new ObservableCollection<GameViewModel>();
+            _games = new List<GameViewModel>();
+            _filteredGames = new List<GameViewModel>();
         }
 
         protected override void PerformInitialise()
@@ -78,7 +77,7 @@ namespace Mamesaver.Config.ViewModels.GameListTab
         public ICommand ClearFiltersClick => new DelegateCommand(ClearFilters);
         public ICommand RebuildListClick => new DelegateCommand(async () => { await RebuildList(); });
 
-        public ObservableCollection<FilterOption> FilterOptions { get; set; } = new ObservableCollection<FilterOption>
+        public List<FilterOption> FilterOptions { get; set; } = new List<FilterOption>
         {
             AllGamesFilter,
             SelectedGamesFilter
@@ -134,7 +133,7 @@ namespace Mamesaver.Config.ViewModels.GameListTab
         /// <summary>
         ///     All available games.
         /// </summary>
-        public ObservableCollection<GameViewModel> Games
+        public List<GameViewModel> Games
         {
             get => _games;
             set
@@ -148,15 +147,17 @@ namespace Mamesaver.Config.ViewModels.GameListTab
         /// <summary>
         ///     Games which are displayed by the current filter.
         /// </summary>
-        public ObservableCollection<GameViewModel> FilteredGames
+        public List<GameViewModel> FilteredGames
         {
             get => _filteredGames;
             set
             {
                 if (Equals(value, _filteredGames)) return;
                 _filteredGames = value;
+
                 OnPropertyChanged();
                 SetGlobalSelectionState();
+                FilterChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -165,6 +166,7 @@ namespace Mamesaver.Config.ViewModels.GameListTab
         public event EventHandler GameListRebuilt;
         public event GlobalFilterEventHandler GlobalFilterChange;
         public event EventHandler FiltersCleared;
+        public event EventHandler FilterChanged;
 
         /// <summary>
         ///     Rebuilds the game list from ROMs on disk, displaying a progress bar to indicate processing state.
@@ -211,7 +213,7 @@ namespace Mamesaver.Config.ViewModels.GameListTab
         ///     after a rebuild.
         /// </summary>
         /// <param name="availableGames">all available games</param>
-        private void ApplySelectionState(ObservableCollection<GameViewModel> availableGames)
+        private void ApplySelectionState(List<GameViewModel> availableGames)
         {
             if (_selectedGames == null) return;
 
@@ -234,8 +236,9 @@ namespace Mamesaver.Config.ViewModels.GameListTab
         private void ClearFilters()
         {
             LoadGames();
-            FiltersCleared?.Invoke(this, EventArgs.Empty);
+
             GlobalFilter = AllGamesFilter;
+            FiltersCleared?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>
@@ -257,16 +260,11 @@ namespace Mamesaver.Config.ViewModels.GameListTab
         /// </summary>
         private void LoadGames()
         {
-            Games.Clear();
-            Games.AddRange(_gameList.Games.Select(game => new GameViewModel(game)));
+            Games = new List<GameViewModel>(_gameList.Games.Select(game => new GameViewModel(game)).ToList());
             GamesView = CollectionViewSource.GetDefaultView(Games);
 
-            //// TEMP performance testing
-            //for(var i = 0; i < 5; i++) Games.AddRange(_gameList.Games);
-
             // Maintain a separate list of games displayed by the current filter
-            FilteredGames.Clear();
-            FilteredGames.AddRange(Games);
+            FilteredGames = new List<GameViewModel>(Games);
 
             // Select games based on any previous user selection
             ApplySelectionState(Games);
