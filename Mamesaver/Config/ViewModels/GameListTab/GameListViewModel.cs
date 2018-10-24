@@ -72,6 +72,8 @@ namespace Mamesaver.Config.ViewModels.GameListTab
 
                 // Update selected game count label
                 OnPropertyChanged(nameof(GameCount));
+
+                OnPropertyChanged();
             }
         }
 
