@@ -188,7 +188,8 @@ namespace Mamesaver.Config.ViewModels.GameListTab
                     .GetGameList(progress => Progress = progress)
                     .ToList());
 
-                LoadGames();
+                // Clear filters and populate games list
+                ClearFilters();
                 OnPropertyChanged();
                 Rebuilding = false;
 
@@ -273,6 +274,7 @@ namespace Mamesaver.Config.ViewModels.GameListTab
             SetGlobalSelectionState();
 
             OnPropertyChanged(nameof(GameCount));
+            OnPropertyChanged(nameof(GamesView));
         }
 
         /// <summary>

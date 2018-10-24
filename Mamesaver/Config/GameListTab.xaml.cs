@@ -34,8 +34,12 @@ namespace Mamesaver.Config
             _view = CollectionViewSource.GetDefaultView(GameList.Items);
             _view.CollectionChanged += OnCollectionChanged;
             _viewModel.GlobalFilterChange += OnGlobalFilterChange;
+            _viewModel.FiltersCleared += OnFiltersCleared;
+        }
 
-            _viewModel.FiltersCleared += (sender, args) => { GameList.GetFilter().Clear(); };
+        private void OnFiltersCleared(object sender, EventArgs e)
+        {
+            GameList.GetFilter().Clear();
         }
 
         /// <summary>
@@ -65,7 +69,7 @@ namespace Mamesaver.Config
 
             var filterViewModel = (MultipleChoiceFilterViewModel)multipleChoiceFilter.DataContext;
 
-            // Explicitly toggle the deselected games option, based on the user's selected global flter mode
+            // Explicitly toggle the deselected games option, based on the user's selected global filter mode
             filterViewModel.Select(false.ToString(), e.FilterMode == FilterMode.AllGames);
             _view.Refresh();
         }
