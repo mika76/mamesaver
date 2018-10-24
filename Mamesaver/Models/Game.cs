@@ -23,5 +23,8 @@ namespace Mamesaver.Models
 
         [XmlAttribute("category")]
         public string Category { get; set; }
+
+        [XmlAttribute("subcategory")]
+        public string Subcategory { get; set; }
     }
 }

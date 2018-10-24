@@ -176,6 +176,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Services\Categories\CategoryDetail.cs" />
     <Compile Include="Services\Categories\CategoryParser.cs" />
     <Compile Include="Services\Configuration\GameListStore.cs" />
     <Compile Include="Services\Configuration\GeneralSettingsStore.cs" />

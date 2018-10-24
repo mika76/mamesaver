@@ -142,7 +142,7 @@ namespace Mamesaver.Services.Mame
                     var rotation = element.Element("display")?.Attribute("rotate")?.Value ?? "";
 
                     // Read category
-                    var category = _categoryParser.GetCategory(name);
+                    var categoryDetail = _categoryParser.GetCategory(name);
 
                     games.Add(new SelectableGame
                     {
@@ -151,7 +151,8 @@ namespace Mamesaver.Services.Mame
                         Year = year,
                         Manufacturer = manufacturer,
                         Rotation = rotation,
-                        Category = category,
+                        Category = categoryDetail.Category,
+                        Subcategory = categoryDetail.Subcategory,
                         Selected = false
                     });
                 }

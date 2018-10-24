@@ -54,6 +54,13 @@
                 RelativeSource={RelativeSource Mode=FindAncestor, 
                 AncestorType=dgx:DataGridFilterColumnControl}}"/>
             </ControlTemplate>
+        
+            <ControlTemplate x:Key="SubcategoryFilter">
+                <filters:MultipleChoiceFilter Field="Subcategory" Filter="{Binding Path=Filter, 
+                RelativeSource={RelativeSource Mode=FindAncestor, 
+                AncestorType=dgx:DataGridFilterColumnControl}}"/>
+            </ControlTemplate>
+ 
         </ResourceDictionary>
     </UserControl.Resources>
 
@@ -158,7 +165,8 @@
                 <DataGridTextColumn Binding="{Binding Description}" Header="Name" MinWidth="100" Width="200" SortDirection="Ascending" dgx:DataGridFilterColumn.Template="{StaticResource NullFilter}" />
                 <DataGridTextColumn Binding="{Binding Year}" Header="Year" Width="60" CanUserResize="False" SortMemberPath="YearFilter" dgx:DataGridFilterColumn.Template="{StaticResource YearFilter}"/>
                 <DataGridTextColumn Binding="{Binding Manufacturer}" Header="Manufacturer" MinWidth="100" SortMemberPath="ManufacturerSort" Width="200" dgx:DataGridFilterColumn.Template="{StaticResource ManufacturerFilter}" />
-                <DataGridTextColumn Binding="{Binding Category}" Header="Category" MinWidth="100" Width="200"  SortMemberPath="CategorySort" dgx:DataGridFilterColumn.Template="{StaticResource CategoryFilter}"/>
+                <DataGridTextColumn Binding="{Binding Category}" Header="Category" MinWidth="80" Width="100"  SortMemberPath="CategorySort" dgx:DataGridFilterColumn.Template="{StaticResource CategoryFilter}"/>
+                <DataGridTextColumn Binding="{Binding Subcategory}" Header="Subcategory" MinWidth="80" Width="110" SortMemberPath="SubcategorySort" dgx:DataGridFilterColumn.Template="{StaticResource SubcategoryFilter}"/>
                 <DataGridTextColumn Binding="{Binding Rotation}" Header="Rotation" Width="100" CanUserReorder="False" SortMemberPath="RotationSort" dgx:DataGridFilterColumn.Template="{StaticResource RotationFilter}"/>
             </DataGrid.Columns>
         </DataGrid>

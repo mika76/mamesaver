@@ -47,7 +47,9 @@ namespace Mamesaver.Config.Models
                 }
             }
         }
+
         public string Category => _game.Category;
+        public string Subcategory => _game.Subcategory;
 
         /// <summary>
         ///     Sort property for game manufacturer, performing a secondary sort on game description.
@@ -58,6 +60,13 @@ namespace Mamesaver.Config.Models
         ///     Sort property for game category, performing a secondary sort on game description.
         /// </summary>
         public string CategorySort => ToSortableProperty(Category, Description);
+
+        /// <summary>
+        ///     Sort property for game subcategory, performing a secondary sort on game description.
+        /// </summary>
+        public string SubcategorySort => ToSortableProperty(Subcategory, Description);
+
+
 
         /// <summary>
         ///     Sort property for game year, performing a secondary sort on game description.

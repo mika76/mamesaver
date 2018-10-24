@@ -13,16 +13,16 @@ namespace Mamesaver.Services.Categories
 
         private const string CategorySection = "Category";
 
-        private static readonly Dictionary<string, string> Categories = new Dictionary<string, string>();
+        private static readonly Dictionary<string, CategoryDetail> Categories = new Dictionary<string, CategoryDetail>();
 
-        public string GetCategory(string game)
+        public CategoryDetail GetCategory(string game)
         {
             if (!Categories.Any())
             {
                 Load();
             }
 
-            return Categories.ContainsKey(game) ? Categories[game] : "";
+            return Categories.ContainsKey(game) ? Categories[game] : new CategoryDetail("Unknown", "Unknown");
         }
 
         private static void Load()
@@ -55,7 +55,12 @@ namespace Mamesaver.Services.Categories
         private static void RegisterGame(string line)
         {
             var match = DetailRegex.Match(line);
-            Categories[match.Groups[1].Value] = match.Groups[2].Value;
+
+            var detail = match.Groups[2].Value.Split('/');
+            var category = detail[0].Trim();
+            var subcategory = detail.Length == 2 ? detail[1].Trim() : "";
+
+            Categories[match.Groups[1].Value] = new CategoryDetail(category, subcategory);
         }
 
         private static bool IsGameLine(string line) => DetailRegex.IsMatch(line);
