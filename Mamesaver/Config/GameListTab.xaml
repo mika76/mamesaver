@@ -94,6 +94,7 @@
                      Visibility="{Binding Rebuilding, Converter={StaticResource VisibilityConverter}}"/>
 
         <DataGrid x:Name="GameList" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" IsReadOnly="True"
+                  Background="White"
                   CanUserReorderColumns="False" CanUserResizeRows="False"
                   EnableRowVirtualization="True"
                   EnableColumnVirtualization="True"
