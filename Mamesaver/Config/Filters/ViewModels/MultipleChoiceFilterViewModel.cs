@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 using Mamesaver.Config.ViewModels;
 using Mamesaver.Config.ViewModels.GameListTab;
 using Prism.Commands;
@@ -23,6 +25,13 @@ namespace Mamesaver.Config.Filters.ViewModels
 
         public event EventHandler SelectionChanged;
 
+        /// <summary>
+        ///     Colour of the Select All / Select None links, depending on whether filter values are present.
+        /// </summary>
+        public Brush BulkFilterSelectColour => SelectableValues.Any()
+            ? SystemColors.MenuHighlightBrush
+            : SystemColors.ControlDarkBrush;
+
         public MultipleChoiceFilterViewModel(GameListViewModel gameList)
         {
             _gameList = gameList;
@@ -39,9 +48,13 @@ namespace Mamesaver.Config.Filters.ViewModels
             _gameList.FilterChanged += (sender, args) =>
             {
                 // After a filter has been applied, reconstruct filter options based on the currently-filtered values 
-                // for all filters apart from the last selected filter. This provides filtering in a similar fashion to Excel.
+                // for all filters apart from the last selected filter. This provides filtering in a similar fashion 
+                // to Excel.
                 if (FilterProperty != LastFilterField) BuildFilterValues();
             };
+
+            _gameList.FiltersCleared += (sender, args) => SelectAll();
+
         }
 
         /// <summary>
@@ -125,6 +138,7 @@ namespace Mamesaver.Config.Filters.ViewModels
                 .Select(value => new FilterItemViewModel { Selected = true, Value = value }));
 
             OnPropertyChanged(nameof(SelectableValues));
+            OnPropertyChanged(nameof(BulkFilterSelectColour));
         }
     }
 }

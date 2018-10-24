@@ -44,7 +44,7 @@
                                             AncestorType={x:Type Control}}}">
                                         <Button.Template>
                                             <ControlTemplate>
-                                                <TextBlock Text="Select All" Foreground="{DynamicResource {x:Static SystemColors.MenuHighlightBrushKey}}" Cursor="Hand" />
+                                                <TextBlock Text="Select All" Foreground="{Binding BulkFilterSelectColour}"  Cursor="Hand" />
                                             </ControlTemplate>
                                         </Button.Template>
                                     </Button>
@@ -56,7 +56,7 @@
                                             AncestorType={x:Type Control}}}">
                                         <Button.Template>
                                             <ControlTemplate>
-                                                <TextBlock Text="Select None" Foreground="{DynamicResource {x:Static SystemColors.MenuHighlightBrushKey}}" Cursor="Hand" />
+                                                <TextBlock Text="Select None" Foreground="{Binding BulkFilterSelectColour}" Cursor="Hand" />
                                             </ControlTemplate>
                                         </Button.Template>
                                     </Button>
