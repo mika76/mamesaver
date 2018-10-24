@@ -69,7 +69,9 @@ namespace Mamesaver.Config.ViewModels.GameListTab
                 }
 
                 _allSelected = value;
-                OnPropertyChanged();
+
+                // Update selected game count label
+                OnPropertyChanged(nameof(GameCount));
             }
         }
 
@@ -98,7 +100,7 @@ namespace Mamesaver.Config.ViewModels.GameListTab
             }
         }
 
-        public string GameCount => $"Num Games: {Games.Count}";
+        public string GameCount => $"No. games: {Games.Count} ({GetSelectedGames().Count} selected)";
 
         public ICollectionView GamesView { get; set; }
 
@@ -254,6 +256,8 @@ namespace Mamesaver.Config.ViewModels.GameListTab
             if (allSelected) AllSelected = true;
             else if (allDeselected) AllSelected = false;
             else AllSelected = null;
+
+            OnPropertyChanged(nameof(Games));
         }
 
         /// <summary>
