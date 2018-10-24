@@ -6,8 +6,6 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using Mamesaver.Config.Extensions;
 using Mamesaver.Config.Filters.ViewModels;
-using Mamesaver.Config.ViewModels.GameListTab;
-using Mamesaver.Services;
 
 namespace Mamesaver.Config.Filters
 {
