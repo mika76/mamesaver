@@ -56,7 +56,7 @@ namespace Mamesaver.Config.ViewModels.GameListTab
         }
 
         /// <summary>
-        ///     Indiciates the global selection state and selects all or no games.
+        ///     Indicates the global selection state and selects all or no games.
         /// </summary>
         public bool? AllSelected
         {

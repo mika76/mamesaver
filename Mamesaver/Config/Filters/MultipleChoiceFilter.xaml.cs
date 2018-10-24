@@ -6,6 +6,8 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using Mamesaver.Config.Extensions;
 using Mamesaver.Config.Filters.ViewModels;
+using Mamesaver.Config.ViewModels.GameListTab;
+using Mamesaver.Services;
 
 namespace Mamesaver.Config.Filters
 {
@@ -90,7 +92,7 @@ namespace Mamesaver.Config.Filters
             items.CollectionChanged += CollectionChanged;
 
             // Handle select all / select none actions
-            ViewModel.SelectionChanged += ListBoxSelectionChanged; 
+            ViewModel.SelectionChanged += ListBoxSelectionChanged;
         }
 
         private void CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) => SetIconState();
