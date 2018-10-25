@@ -168,7 +168,7 @@ namespace Mamesaver.Config.ViewModels.GameListTab
         public ICommand GameSelectionClick => new DelegateCommand(SetGlobalSelectionState);
 
         public event EventHandler GameListRebuilt;
-        public event GlobalFilterEventHandler GlobalFilterChange;
+        public event GlobalFilterEventHandler GlobalFilterChanged;
         public event EventHandler FiltersCleared;
         public event EventHandler FilterChanged;
 
@@ -288,7 +288,11 @@ namespace Mamesaver.Config.ViewModels.GameListTab
         /// </summary>
         public void ApplyGlobalFilter()
         {
-            GlobalFilterChange?.Invoke(this, new GlobalFilterEventArgs(_globalFilter.FilterMode));
+            // Ideally we would allow this filter to be applied in conjunction with other filters, however due to the
+            // bodge to work around DataGridFilterExtensions - namely, complexity with necessary code in the code behind, 
+            // this isn't current practical. For now, selecting all games clears existing filters.
+            if (_globalFilter.FilterMode == FilterMode.AllGames) ClearFilters();
+            else  GlobalFilterChanged?.Invoke(this, new GlobalFilterEventArgs(_globalFilter.FilterMode));
         }
 
         /// <summary>

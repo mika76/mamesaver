@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using Mamesaver.Config.Extensions;
 using Mamesaver.Config.Filters.ViewModels;
+using Mamesaver.Config.Models;
 
 namespace Mamesaver.Config.Filters
 {
@@ -78,18 +79,18 @@ namespace Mamesaver.Config.Filters
 
         private void FilterChanged()
         {
-            if (Filter?.ExcludedItems == null)
-            {
-                _listBox?.SelectAll();
-                return;
-            }
+            //if (Filter?.ExcludedItems == null)
+            //{
+            //    _listBox?.SelectAll();
+            //    return;
+            //}
 
-            if (_listBox?.SelectedItems.Count != 0) return;
+            //if (_listBox?.SelectedItems.Count != 0) return;
 
-            foreach (var item in _listBox.Items.Cast<FilterItemViewModel>().Select(item => item.Value).Except(Filter.ExcludedItems))
-            {
-                _listBox.SelectedItems.Add(item);
-            }
+            //foreach (var item in _listBox.Items.Cast<FilterItemViewModel>().Select(item => item.Value).Except(Filter.ExcludedItems))
+            //{
+            //    _listBox.SelectedItems.Add(item);
+            //}
         }
 
         /// <summary>
@@ -104,7 +105,10 @@ namespace Mamesaver.Config.Filters
 
             // Maintain last filter field so we can apply checkbox filtering in a similar fashion to Excel, keeping
             // deselected options visible for the last filter field.
-            MultipleChoiceFilterViewModel.LastFilterField = Field;
+
+            // FIXME kludge for misuse of filter - remove this check when DataGridFilterExtensions removed. This is because we are
+            // using the MultiChoiceFilter behind the scenes to apply global all/selected filter selection.
+            if (Field != nameof(GameViewModel.SelectedFilter)) MultipleChoiceFilterViewModel.LastFilterField = Field;
         }
 
         private void FilterItemSelectionChanged(object sender, RoutedEventArgs e) => OnSelectionChanged();

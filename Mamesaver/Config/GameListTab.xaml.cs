@@ -32,7 +32,7 @@ namespace Mamesaver.Config
 
             _view = CollectionViewSource.GetDefaultView(GameList.Items);
             _view.CollectionChanged += OnCollectionChanged;
-            _viewModel.GlobalFilterChange += OnGlobalFilterChange;
+            _viewModel.GlobalFilterChanged += OnGlobalFilterChanged;
             _viewModel.FiltersCleared += OnFiltersCleared;
         }
 
@@ -60,7 +60,7 @@ namespace Mamesaver.Config
         ///     provided by <c>DataGridExtensions</c> isn't exposed. As we are already bypassing much of this library,
         ///     it is recommended to remove it and rewrite the parts that are used.
         /// </remarks>
-        private void OnGlobalFilterChange(object sender, GlobalFilterEventArgs e)
+        private void OnGlobalFilterChanged(object sender, GlobalFilterEventArgs e)
         {
             // Retrieve filter associated with the selected game column
             var multipleChoiceFilter = GameList.FindVisualChild<MultipleChoiceFilter>(child => child.Field == nameof(GameViewModel.SelectedFilter));
@@ -70,7 +70,6 @@ namespace Mamesaver.Config
 
             // Explicitly toggle the deselected games option, based on the user's selected global filter mode
             filterViewModel.Select(false.ToString(), e.FilterMode == FilterMode.AllGames);
-            _view.Refresh();
         }
     }
 }

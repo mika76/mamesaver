@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using Mamesaver.Config.Models;
 using Mamesaver.Config.ViewModels;
 using Mamesaver.Config.ViewModels.GameListTab;
 using Prism.Commands;
@@ -48,26 +49,26 @@ namespace Mamesaver.Config.Filters.ViewModels
             // Update filter values when game list is rebuilt and when filter selection is changed. This allows
             // filter values to reflect the currently filtered games.
             _gameList.GameListRebuilt += (sender, args) => BuildFilterValues();
-
-            _gameList.FilterChanged += (sender, args) =>
-            {
-                if (FilterProperty == LastFilterField)
-                {
-                    // Change filter icon style for current filter
-                    SetIconState();
-                }
-                else
-                {
-                    // After a filter has been applied, reconstruct filter options based on the currently-filtered values 
-                    // for all filters apart from the last selected filter. This provides filtering in a similar fashion 
-                    // to Excel.
-                    BuildFilterValues();
-                }
-            };
-
+            _gameList.FilterChanged += (sender, args) =>  OnFilterChanged();
             _gameList.FiltersCleared += (sender, args) => SelectAll();
 
             SetIconState();
+        }
+
+        private void OnFilterChanged()
+        {
+            if (FilterProperty == LastFilterField)
+            {
+                // Change filter icon style for current filter
+                SetIconState();
+            }
+            else
+            {
+                // After a filter has been applied, reconstruct filter options based on the currently-filtered values 
+                // for all filters apart from the last selected filter. This provides filtering in a similar fashion 
+                // to Excel.
+                BuildFilterValues();
+            }
         }
 
         /// <summary>
@@ -183,18 +184,30 @@ namespace Mamesaver.Config.Filters.ViewModels
         {
             if (string.IsNullOrEmpty(FilterProperty)) return;
 
-            // Add filter values based on the selected property in the game view model, ordering alphabetically. Note
-            // that this is bypassing the out of the box functionality in DataGridExtensions, as this neither sorts
-            // filters nor provides custom property selection.
-            SelectableValues = new List<FilterItemViewModel>(_gameList.FilteredGames
-                .Select(
-                    game => (string)game
-                        .GetType()
-                        .GetProperty(FilterProperty)?.GetValue(game)
-                )
-                .Distinct()
-                .OrderBy(value => value)
-                .Select(value => new FilterItemViewModel { Selected = true, Value = value }));
+            // FIXME kludge for misuse of filter - remove this check when DataGridFilterExtensions removed. This is because we are
+            // using the MultiChoiceFilter behind the scenes to apply global all/selected filter selection.
+            if (FilterProperty == nameof(GameViewModel.SelectedFilter))
+            {
+                SelectableValues = new[] { true, false }
+                    .Select(value => new FilterItemViewModel { Value = value.ToString(), Selected = true}).ToList();
+            }
+            else
+            {
+
+                // Add filter values based on the selected property in the game view model, ordering alphabetically. Note
+                // that this is bypassing the out of the box functionality in DataGridExtensions, as this neither sorts
+                // filters nor provides custom property selection.
+                SelectableValues = _gameList.FilteredGames
+                    .Select(
+                        game => (string) game
+                            .GetType()
+                            .GetProperty(FilterProperty)?.GetValue(game)
+                    )
+                    .Distinct()
+                    .OrderBy(value => value)
+                    .Select(value => new FilterItemViewModel { Selected = true, Value = value })
+                    .ToList();
+            }
 
             OnPropertyChanged(nameof(SelectableValues));
             OnPropertyChanged(nameof(BulkFilterSelectColour));
