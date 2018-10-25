@@ -24,6 +24,11 @@ namespace Mamesaver.Config.Filters.ViewModels
 
         public event EventHandler SelectionChanged;
 
+        private static readonly SolidColorBrush ActiveBrush = SystemColors.HighlightBrush;
+        private static readonly SolidColorBrush InactiveBrush = new SolidColorBrush(Colors.Gray);
+        private bool _activeFilterMarkerVisible;
+        private Brush _iconBrush;
+
         /// <summary>
         ///     Colour of the Select All / Select None links, depending on whether filter values are present.
         /// </summary>
@@ -46,14 +51,52 @@ namespace Mamesaver.Config.Filters.ViewModels
 
             _gameList.FilterChanged += (sender, args) =>
             {
-                // After a filter has been applied, reconstruct filter options based on the currently-filtered values 
-                // for all filters apart from the last selected filter. This provides filtering in a similar fashion 
-                // to Excel.
-                if (FilterProperty != LastFilterField) BuildFilterValues();
+                if (FilterProperty == LastFilterField)
+                {
+                    // Change filter icon style for current filter
+                    SetIconState();
+                }
+                else
+                {
+                    // After a filter has been applied, reconstruct filter options based on the currently-filtered values 
+                    // for all filters apart from the last selected filter. This provides filtering in a similar fashion 
+                    // to Excel.
+                    BuildFilterValues();
+                }
             };
 
             _gameList.FiltersCleared += (sender, args) => SelectAll();
 
+            SetIconState();
+        }
+
+        /// <summary>
+        ///     Sets the filter icon colour and marker, based on whether any filtering is applied.
+        /// </summary>
+        public void SetIconState()
+        {
+            if (SelectableValues.All(value => value.Selected))
+            {
+                ActiveFilterMarkerVisible = false;
+                IconBrush = InactiveBrush;
+            }
+            else
+            {
+                ActiveFilterMarkerVisible = true;
+                IconBrush = ActiveBrush;
+            }
+        }
+
+        public bool ActiveFilterMarkerVisible
+        {
+            get => _activeFilterMarkerVisible;
+            set
+            {
+                if (value == _activeFilterMarkerVisible) return;
+
+                _activeFilterMarkerVisible = value;
+                OnPropertyChanged();
+            }
         }
 
         /// <summary>
@@ -70,6 +113,17 @@ namespace Mamesaver.Config.Filters.ViewModels
         public ICommand SelectNoneClick => new DelegateCommand(SelectNone);
 
         public List<FilterItemViewModel> SelectableValues { get; set; }
+
+        public Brush IconBrush
+        {
+            get => _iconBrush;
+            set
+            {
+                if (_iconBrush != null && _iconBrush.Equals(value)) return;
+                _iconBrush = value;
+                OnPropertyChanged();
+            }
+        }
 
         /// <summary>
         ///     Whether the filter controls are visible. This is used to perform explicit filtering via external components, and
@@ -92,7 +146,7 @@ namespace Mamesaver.Config.Filters.ViewModels
         private void SelectAll()
         {
             foreach (var filterItem in SelectableValues) filterItem.Selected = true;
-            SelectionChanged?.Invoke(this, EventArgs.Empty);
+            OnSelectionChanged();
         }
 
         /// <summary>
@@ -101,7 +155,7 @@ namespace Mamesaver.Config.Filters.ViewModels
         private void SelectNone()
         {
             foreach (var filterItem in SelectableValues) filterItem.Selected = false;
-            SelectionChanged?.Invoke(this, EventArgs.Empty);
+            OnSelectionChanged();
         }
 
         /// <summary>
@@ -116,7 +170,13 @@ namespace Mamesaver.Config.Filters.ViewModels
             if (selectableValue == null) return;
 
             selectableValue.Selected = selected;
+            OnSelectionChanged();
+        }
+
+        private void OnSelectionChanged()
+        {
             SelectionChanged?.Invoke(this, EventArgs.Empty);
+            SetIconState();
         }
 
         public void BuildFilterValues()
@@ -128,7 +188,7 @@ namespace Mamesaver.Config.Filters.ViewModels
             // filters nor provides custom property selection.
             SelectableValues = new List<FilterItemViewModel>(_gameList.FilteredGames
                 .Select(
-                    game => (string) game
+                    game => (string)game
                         .GetType()
                         .GetProperty(FilterProperty)?.GetValue(game)
                 )

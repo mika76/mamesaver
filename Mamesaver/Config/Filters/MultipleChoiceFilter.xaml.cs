@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Specialized;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 using Mamesaver.Config.Extensions;
 using Mamesaver.Config.Filters.ViewModels;
 
@@ -11,17 +9,9 @@ namespace Mamesaver.Config.Filters
 {
     public partial class MultipleChoiceFilter
     {
-        private static readonly SolidColorBrush ActiveBrush = SystemColors.HighlightBrush;
-        private static readonly SolidColorBrush InactiveBrush = new SolidColorBrush(Colors.Gray);
-
         public MultipleChoiceFilter()
         {
             InitializeComponent();
-        }
-
-        public override void BeginInit()
-        {
-            base.BeginInit();
             this.InitViewModel<MultipleChoiceFilterViewModel>();
         }
 
@@ -48,8 +38,6 @@ namespace Mamesaver.Config.Filters
             DependencyProperty.Register("Visible", typeof(bool?), typeof(MultipleChoiceFilter));
 
         private ListView _listBox;
-        private TextBlock _filterActiveMarker;
-        private Control _filterSymbol;
 
         private MultipleChoiceFilterViewModel ViewModel => (MultipleChoiceFilterViewModel) DataContext;
 
@@ -81,49 +69,11 @@ namespace Mamesaver.Config.Filters
             ViewModel.BuildFilterValues();
 
             _listBox = (ListView)Template.FindName("FilterList", this);
-            _filterActiveMarker = (TextBlock)Template.FindName("IsFilterActiveMarker", this);
-            _filterSymbol = (Control)Template.FindName("FilterSymbol", this);
 
             if (Filter?.ExcludedItems == null) _listBox?.SelectAll();
 
-            if (!(_listBox?.Items is INotifyCollectionChanged items)) return;
-            items.CollectionChanged += CollectionChanged;
-
             // Handle select all / select none actions
             ViewModel.SelectionChanged += ListBoxSelectionChanged;
-        }
-
-        private void CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) => SetIconState();
-
-        /// <summary>
-        ///     Sets the filter icon colour and marker, based on whether any filtering is applied.
-        /// </summary>
-        private void SetIconState()
-        {
-            Brush iconBrush;
-            if (Filter?.ExcludedItems == null || (bool)!Filter.ExcludedItems?.Any())
-            {
-                _listBox.SelectAll();
-                _filterActiveMarker.Visibility = Visibility.Hidden;
-
-                iconBrush = InactiveBrush;
-            }
-            else
-            {
-                var checkedItems = _listBox.Items
-                    .Cast<FilterItemViewModel>()
-                    .Select(f => f.Value).Except(Filter.ExcludedItems)
-                    .ToList();
-
-                foreach (var item in checkedItems) _listBox.SelectedItems.Add(item);
-
-                _filterActiveMarker.Visibility = Visibility.Visible;
-
-                iconBrush = ActiveBrush;
-            }
-
-            _filterActiveMarker.Foreground = iconBrush;
-            _filterSymbol.Foreground = iconBrush;
         }
 
         private void FilterChanged()
@@ -147,25 +97,10 @@ namespace Mamesaver.Config.Filters
         /// </summary>
         public void OnSelectionChanged()
         {
-            var excludedItems = Filter?.ExcludedItems ?? new string[0];
+            var selected = ViewModel.SelectableValues.Where(s => !s.Selected);
 
-            var selectedItems = _listBox.SelectedItems
-                .Cast<FilterItemViewModel>()
-                .Where(filter => filter.Selected)
-                .Select(filter => filter.Value)
-                .ToArray();
-
-            var unselectedItems = _listBox.Items
-                .Cast<FilterItemViewModel>()
-                .Where(filter => !filter.Selected)
-                .Select(filter => filter.Value)
-                .Except(selectedItems)
-                .ToArray();
-
-            excludedItems = excludedItems.Except(selectedItems).Concat(unselectedItems).Distinct().ToArray();
-
-            Filter = new MultipleChoiceContentFilter(excludedItems);
-            SetIconState();
+            Filter = new MultipleChoiceContentFilter(selected.Select(item => item.Value));
+            ViewModel.SetIconState();
 
             // Maintain last filter field so we can apply checkbox filtering in a similar fashion to Excel, keeping
             // deselected options visible for the last filter field.

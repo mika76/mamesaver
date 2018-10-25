@@ -4,9 +4,10 @@
          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
          xmlns:d="http://schemas.microsoft.com/expression/blend/2008" mc:Ignorable="d" d:DesignHeight="150" d:DesignWidth="150"
          xmlns:dgx="urn:tom-englert.de/DataGridExtensions"
+         xmlns:converters="clr-namespace:Mamesaver.Config.Converters"
          x:Name="Control">
     <Control.Resources>
-        <BooleanToVisibilityConverter x:Key="VisibilityConverter" />
+        <converters:BooleanToVisibilityConverter x:Key="VisibilityConverter" TrueValue="Visible" FalseValue="Hidden" />
     </Control.Resources>
     <Control.Template>
         <ControlTemplate>
@@ -15,9 +16,8 @@
             <StackPanel Orientation="Vertical" Visibility="{Binding Visible, Converter={StaticResource VisibilityConverter}}">
                 <ToggleButton x:Name="ToggleButton" BorderThickness="0" Background="Transparent">
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock x:Name="IsFilterActiveMarker" Text="." Margin="0,0,-4,0" 
-                                   Foreground="{Binding ElementName=FilterSymbol, Path=Foreground}" FontWeight="Bold" Visibility="Hidden" />
-                         <Control x:Name="FilterSymbol" Style="{DynamicResource {x:Static dgx:DataGridFilter.IconStyleKey}}" /> 
+                        <TextBlock Text="." Margin="0,0,-4,0" FontWeight="Bold" Visibility="{Binding ActiveFilterMarkerVisible, Converter={StaticResource VisibilityConverter}}" Foreground="{Binding IconBrush}"/>
+                        <Control Style="{DynamicResource {x:Static dgx:DataGridFilter.IconStyleKey}}" Foreground="{Binding IconBrush}"/> 
                     </StackPanel>
                 </ToggleButton>
                 
@@ -44,7 +44,7 @@
                                             AncestorType={x:Type Control}}}">
                                         <Button.Template>
                                             <ControlTemplate>
-                                                <TextBlock Text="Select All" Foreground="{Binding BulkFilterSelectColour}"  Cursor="Hand" />
+                                                <TextBlock Text="Select All" Foreground="{Binding BulkFilterSelectColour}" Cursor="Hand" />
                                             </ControlTemplate>
                                         </Button.Template>
                                     </Button>

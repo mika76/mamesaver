@@ -88,6 +88,7 @@
     <Compile Include="Config\ConfigForm.xaml.cs">
       <DependentUpon>ConfigForm.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Config\Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Config\Converters\InvertedBooleanConverter.cs" />
     <Compile Include="Config\Converters\InvertedBooleanToVisibilityConverter.cs" />
     <Compile Include="Config\Extensions\DependencyObjectExtensions.cs" />
