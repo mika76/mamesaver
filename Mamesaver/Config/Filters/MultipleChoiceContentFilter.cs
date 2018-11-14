@@ -1,19 +1,25 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using DataGridExtensions;
 using Mamesaver.Config.Helpers;
+using Mamesaver.Config.Models;
 
 namespace Mamesaver.Config.Filters
 {
-    public class MultipleChoiceContentFilter : IContentFilter
+    public class MultipleChoiceContentFilter  : IGameFilter
     {
+        private readonly string _filterProperty;
         public IList<string> ExcludedItems { get; set; }
 
-        public MultipleChoiceContentFilter(IEnumerable<string> excludedItems) => ExcludedItems = excludedItems?.ToArray();
-
-        public bool IsMatch(object rawValue)
+        public MultipleChoiceContentFilter(string filterProperty, IEnumerable<string> excludedItems)
         {
-            if (!(rawValue is string)) return false;
+            _filterProperty = filterProperty;
+            ExcludedItems = excludedItems?.ToArray();
+        }
+
+        public bool IsMatch(GameViewModel game)
+        {
+            var rawValue = typeof(GameViewModel)
+                .GetProperty(_filterProperty)?.GetValue(game);
 
             var value = SortablePropertyHelper.GetPrimarySort((string) rawValue);
             return ExcludedItems?.Contains(value) != true;

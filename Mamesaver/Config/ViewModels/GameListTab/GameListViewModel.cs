@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Input;
+using Mamesaver.Config.Filters;
 using Mamesaver.Config.Models;
 using Mamesaver.Models.Configuration;
 using Mamesaver.Services.Configuration;
@@ -20,8 +21,8 @@ namespace Mamesaver.Config.ViewModels.GameListTab
     {
         public delegate void GlobalFilterEventHandler(object sender, GlobalFilterEventArgs e);
 
-        private static readonly FilterOption AllGamesFilter = new FilterOption("All games", FilterMode.AllGames);
-        private static readonly FilterOption SelectedGamesFilter = new FilterOption("Selected games", FilterMode.SelectedGames);
+        public static readonly FilterOption AllGamesFilter = new FilterOption("All games", FilterMode.AllGames);
+        public static readonly FilterOption SelectedGamesFilter = new FilterOption("Selected games", FilterMode.SelectedGames);
 
         private readonly GameList _gameList;
         private readonly GameListBuilder _gameListBuilder;
@@ -52,6 +53,8 @@ namespace Mamesaver.Config.ViewModels.GameListTab
         protected override void PerformInitialise()
         {
             ConfigViewModel.Save += (sender, args) => Save();
+            RegisterFilter(this,new GlobalSelectionContentFilter(this));
+
             LoadGames();
         }
 
@@ -72,12 +75,11 @@ namespace Mamesaver.Config.ViewModels.GameListTab
 
                 // Update selected game count label
                 OnPropertyChanged(nameof(GameCount));
-
                 OnPropertyChanged();
             }
         }
 
-        public ICommand ApplyGlobalFilterClick => new DelegateCommand(ApplyGlobalFilter);
+        public ICommand ApplyGlobalFilterClick => new DelegateCommand(Filter);
         public ICommand ClearFiltersClick => new DelegateCommand(ClearFilters);
         public ICommand RebuildListClick => new DelegateCommand(async () => { await RebuildList(); });
 
@@ -97,9 +99,8 @@ namespace Mamesaver.Config.ViewModels.GameListTab
             {
                 if (Equals(value, _globalFilter)) return;
                 _globalFilter = value;
-
                 OnPropertyChanged();
-            }
+           }
         }
 
         public string GameCount => $"No. games: {Games.Count} ({GetSelectedGames().Count} selected)";
@@ -140,7 +141,7 @@ namespace Mamesaver.Config.ViewModels.GameListTab
         public List<GameViewModel> Games
         {
             get => _games;
-            set
+            private set
             {
                 if (Equals(value, _games)) return;
                 _games = value;
@@ -154,7 +155,7 @@ namespace Mamesaver.Config.ViewModels.GameListTab
         public List<GameViewModel> FilteredGames
         {
             get => _filteredGames;
-            set
+            private set
             {
                 if (Equals(value, _filteredGames)) return;
                 _filteredGames = value;
@@ -167,10 +168,9 @@ namespace Mamesaver.Config.ViewModels.GameListTab
 
         public ICommand GameSelectionClick => new DelegateCommand(SetGlobalSelectionState);
 
-        public event EventHandler GameListRebuilt;
-        public event GlobalFilterEventHandler GlobalFilterChanged;
         public event EventHandler FiltersCleared;
         public event EventHandler FilterChanged;
+        public event EventHandler GamesListRebuilt;
 
         /// <summary>
         ///     Rebuilds the game list from ROMs on disk, displaying a progress bar to indicate processing state.
@@ -195,9 +195,9 @@ namespace Mamesaver.Config.ViewModels.GameListTab
                 // Clear filters and populate games list
                 ClearFilters();
                 OnPropertyChanged();
-                Rebuilding = false;
 
-                GameListRebuilt?.Invoke(this, EventArgs.Empty);
+                GamesListRebuilt?.Invoke(this, EventArgs.Empty);
+                Rebuilding = false;
             }
             catch (FileNotFoundException fe)
             {
@@ -240,10 +240,10 @@ namespace Mamesaver.Config.ViewModels.GameListTab
         /// </summary>
         private void ClearFilters()
         {
+            FiltersCleared?.Invoke(this, EventArgs.Empty);
             LoadGames();
 
             GlobalFilter = AllGamesFilter;
-            FiltersCleared?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>
@@ -267,11 +267,15 @@ namespace Mamesaver.Config.ViewModels.GameListTab
         /// </summary>
         private void LoadGames()
         {
-            Games = new List<GameViewModel>(_gameList.Games.Select(game => new GameViewModel(game)).ToList());
-            GamesView = CollectionViewSource.GetDefaultView(Games);
+            // Master list of available games
+            Games.Clear();
+            Games.AddRange(_gameList.Games.Select(game => new GameViewModel(game)).ToList());
 
             // Maintain a separate list of games displayed by the current filter
             FilteredGames = new List<GameViewModel>(Games);
+
+            GamesView = CollectionViewSource.GetDefaultView(Games);
+            GamesView.Filter = game => FilteredGames.Contains(game);
 
             // Select games based on any previous user selection
             ApplySelectionState(Games);
@@ -279,20 +283,9 @@ namespace Mamesaver.Config.ViewModels.GameListTab
             // Set global selection state
             SetGlobalSelectionState();
 
+            OnPropertyChanged(nameof(Games));
             OnPropertyChanged(nameof(GameCount));
             OnPropertyChanged(nameof(GamesView));
-        }
-
-        /// <summary>
-        ///     Informs event consumers that the global selection filter has changed.
-        /// </summary>
-        public void ApplyGlobalFilter()
-        {
-            // Ideally we would allow this filter to be applied in conjunction with other filters, however due to the
-            // bodge to work around DataGridFilterExtensions - namely, complexity with necessary code in the code behind, 
-            // this isn't current practical. For now, selecting all games clears existing filters.
-            if (_globalFilter.FilterMode == FilterMode.AllGames) ClearFilters();
-            else  GlobalFilterChanged?.Invoke(this, new GlobalFilterEventArgs(_globalFilter.FilterMode));
         }
 
         /// <summary>
@@ -302,5 +295,35 @@ namespace Mamesaver.Config.ViewModels.GameListTab
         {
             _gameListStore.Save(_gameList.Games);
         }
-   }
+
+        private Dictionary<object, IGameFilter> Filters { get; } = new Dictionary<object, IGameFilter>();
+
+        internal void RegisterFilter(object source, IGameFilter filter) => Filters[source] = filter;
+
+        internal void Filter()
+        {
+            var filteredGames = new List<GameViewModel>();
+
+            // Evaluate filters against full game list
+            foreach (var game in Games)
+            {
+                var filterMatch = true;
+
+                // Evaluate each filter for each game
+                foreach (var filter in Filters.Values)
+                {
+                    if (!filter.IsMatch(game)) {
+                        filterMatch = false;
+                        break;
+                    }
+                }
+
+                if (filterMatch) filteredGames.Add(game);
+            }
+
+            // Reconstruct game list from filtered values
+            FilteredGames = filteredGames;
+            GamesView.Refresh();
+        }
+    }
 }

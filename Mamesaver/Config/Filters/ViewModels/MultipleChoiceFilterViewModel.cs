@@ -14,26 +14,23 @@ namespace Mamesaver.Config.Filters.ViewModels
     /// <summary>
     ///     View model for column filters, displaying a checkbox list of filter options based on a single column. 
     /// </summary>
-    /// <remarks>
-    ///     Much of the functionality in this view model and the associated code-behind is reimplementing code in 
-    ///     <c>DataGridExtensions</c>, which is still used in a limited fashion but should be removed.
-    /// </remarks>
     public class MultipleChoiceFilterViewModel : InitialisableViewModel
     {
         private readonly GameListViewModel _gameList;
         private bool _visible = true;
 
-        public event EventHandler SelectionChanged;
+        public ICommand SelectionChangedClick => new DelegateCommand(OnSelectionChanged);
 
-        private static readonly SolidColorBrush ActiveBrush = SystemColors.HighlightBrush;
-        private static readonly SolidColorBrush InactiveBrush = new SolidColorBrush(Colors.Gray);
+        public static readonly SolidColorBrush ActiveBrush = SystemColors.HighlightBrush;
+        public static readonly SolidColorBrush InactiveBrush = new SolidColorBrush(Colors.Gray);
+
         private bool _activeFilterMarkerVisible;
         private Brush _iconBrush;
 
         /// <summary>
         ///     Colour of the Select All / Select None links, depending on whether filter values are present.
         /// </summary>
-        public Brush BulkFilterSelectColour => SelectableValues.Any()
+        public Brush BulkFilterSelectColour => FilteredSelectableValues.Any()
             ? SystemColors.MenuHighlightBrush
             : SystemColors.ControlDarkBrush;
 
@@ -44,31 +41,26 @@ namespace Mamesaver.Config.Filters.ViewModels
 
         protected override void PerformInitialise()
         {
-            SelectableValues = new List<FilterItemViewModel>();
+            _selectableValues = new List<FilterItemViewModel>();
 
-            // Update filter values when game list is rebuilt and when filter selection is changed. This allows
-            // filter values to reflect the currently filtered games.
-            _gameList.GameListRebuilt += (sender, args) => BuildFilterValues();
-            _gameList.FilterChanged += (sender, args) =>  OnFilterChanged();
-            _gameList.FiltersCleared += (sender, args) => SelectAll();
+            _gameList.GamesListRebuilt += (sender, args) =>
+            {
+                LastFilterField = null;
+                RebuildFilterOptions();
+            };
+
+            // Update filter values for all filters if any filter has changed
+            _gameList.FilterChanged += (sender, args) => RebuildFilterOptions();
+            _gameList.FiltersCleared += (sender, args) =>
+            {
+                LastFilterField = null;
+
+                // Reset any filtered state
+                FilteredSelectableValues = SelectableValues;
+                SelectAll();
+            };
 
             SetIconState();
-        }
-
-        private void OnFilterChanged()
-        {
-            if (FilterProperty == LastFilterField)
-            {
-                // Change filter icon style for current filter
-                SetIconState();
-            }
-            else
-            {
-                // After a filter has been applied, reconstruct filter options based on the currently-filtered values 
-                // for all filters apart from the last selected filter. This provides filtering in a similar fashion 
-                // to Excel.
-                BuildFilterValues();
-            }
         }
 
         /// <summary>
@@ -100,20 +92,61 @@ namespace Mamesaver.Config.Filters.ViewModels
             }
         }
 
+        private string _filterProperty;
+
         /// <summary>
         ///     Name of property in game view model which the filter is applied to.
         /// </summary>
-        public string FilterProperty { get; set; }
+        public string FilterProperty
+        {
+            get => _filterProperty;
+            set
+            {
+                _filterProperty = value;
+                CreateGamePropertyAccessor();
+                RebuildFilterOptions();
+            }
+        }
 
         /// <summary>
         ///     Most recently-applied filter property
         /// </summary>
-        public static string LastFilterField { get; set; }
+        private static string LastFilterField { get; set; }
 
         public ICommand SelectAllClick => new DelegateCommand(SelectAll);
         public ICommand SelectNoneClick => new DelegateCommand(SelectNone);
 
-        public List<FilterItemViewModel> SelectableValues { get; set; }
+        public bool HasFilterableValues => FilteredSelectableValues?.Any() ?? false;
+
+        public List<FilterItemViewModel> FilteredSelectableValues
+        {
+            get => _filteredSelectableValues;
+            set
+            {
+                if (_filteredSelectableValues == value) return;
+                _filteredSelectableValues = value;
+
+                OnPropertyChanged(nameof(BulkFilterSelectColour));
+                OnPropertyChanged(nameof(HasFilterableValues));
+                OnPropertyChanged();
+            }
+        }
+
+        public List<FilterItemViewModel> SelectableValues
+        {
+            get => _selectableValues;
+            set
+            {
+                if (_selectableValues == value) return;
+                _selectableValues = value;
+
+                var filteredGameValues = _gameList.FilteredGames.Select(_gameValue);
+                FilteredSelectableValues = _selectableValues.Where(item => filteredGameValues.Contains(item.Value)).ToList();
+
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(BulkFilterSelectColour));
+            }
+        }
 
         public Brush IconBrush
         {
@@ -127,26 +160,14 @@ namespace Mamesaver.Config.Filters.ViewModels
         }
 
         /// <summary>
-        ///     Whether the filter controls are visible. This is used to perform explicit filtering via external components, and
-        ///     is a workaround for restrictions in explicit filter invocation in <c>DataGridExtensions</c>.
-        /// </summary>
-        public bool Visible
-        {
-            get => _visible;
-            set
-            {
-                if (value == _visible) return;
-                _visible = value;
-                OnPropertyChanged();
-            }
-        }
-
-        /// <summary>
         ///     Select all filter options for the associated column.
         /// </summary>
         private void SelectAll()
         {
-            foreach (var filterItem in SelectableValues) filterItem.Selected = true;
+            // Don't activate current filter if there are no items to update
+            if (!FilteredSelectableValues.Any()) return;
+
+            foreach (var filterItem in FilteredSelectableValues) filterItem.SetSelectionState(true);
             OnSelectionChanged();
         }
 
@@ -155,62 +176,60 @@ namespace Mamesaver.Config.Filters.ViewModels
         /// </summary>
         private void SelectNone()
         {
-            foreach (var filterItem in SelectableValues) filterItem.Selected = false;
+            // Don't activate current filter if there are no items to update
+           if (!FilteredSelectableValues.Any()) return;
+
+            foreach (var filterItem in FilteredSelectableValues) filterItem.SetSelectionState(false);
             OnSelectionChanged();
         }
 
-        /// <summary>
-        ///     Select a single filter option by name. 
-        /// </summary>
-        /// <remarks>
-        ///     This is used for programmatic filtering and should be removed once DataGridExtensions are removed and reimplemented.
-        /// </remarks>
-        public void Select(string value, bool selected)
+        internal void OnSelectionChanged()
         {
-            var selectableValue = SelectableValues.FirstOrDefault(v => v.Value == value);
-            if (selectableValue == null) return;
+            // Maintain last filter field so we can apply checkbox filtering in a similar fashion to Excel, keeping
+            // deselected options visible for the last filter field.
+            LastFilterField = FilterProperty;
 
-            selectableValue.Selected = selected;
-            OnSelectionChanged();
-        }
-
-        private void OnSelectionChanged()
-        {
-            SelectionChanged?.Invoke(this, EventArgs.Empty);
             SetIconState();
+            BuildFilter();
+            _gameList.Filter();
         }
 
-        public void BuildFilterValues()
+        private void BuildFilter()
         {
-            if (string.IsNullOrEmpty(FilterProperty)) return;
+            _gameList.RegisterFilter(this, new MultipleChoiceContentFilter(FilterProperty, GetDeselectedValues()));
+        }
 
-            // FIXME kludge for misuse of filter - remove this check when DataGridFilterExtensions removed. This is because we are
-            // using the MultiChoiceFilter behind the scenes to apply global all/selected filter selection.
-            if (FilterProperty == nameof(GameViewModel.SelectedFilter))
-            {
-                SelectableValues = new[] { true, false }
-                    .Select(value => new FilterItemViewModel { Value = value.ToString(), Selected = true}).ToList();
-            }
-            else
-            {
+        private List<string> GetDeselectedValues() => SelectableValues.Where(value => !value.Selected).Select(item => item.Value).ToList();
 
-                // Add filter values based on the selected property in the game view model, ordering alphabetically. Note
-                // that this is bypassing the out of the box functionality in DataGridExtensions, as this neither sorts
-                // filters nor provides custom property selection.
-                SelectableValues = _gameList.FilteredGames
-                    .Select(
-                        game => (string) game
-                            .GetType()
-                            .GetProperty(FilterProperty)?.GetValue(game)
-                    )
-                    .Distinct()
-                    .OrderBy(value => value)
-                    .Select(value => new FilterItemViewModel { Selected = true, Value = value })
-                    .ToList();
-            }
+        private void RebuildFilterOptions()
+        {
+            // Don't filter last active filter list
+            if (FilterProperty == LastFilterField) return;
 
-            OnPropertyChanged(nameof(SelectableValues));
-            OnPropertyChanged(nameof(BulkFilterSelectColour));
+            // Add filter values based on the selected property in the game view model, ordering alphabetically
+            //var games = FilterProperty == LastFilterField ? _gameList.Games : _gameList.FilteredGames;
+
+            SelectableValues = _gameList.Games.Select(_gameValue)
+                .Distinct()
+                .OrderBy(value => value)
+
+                // Maintain previous selection
+                .Select(value => new FilterItemViewModel(this, SelectableValues.FirstOrDefault(item => item.Value == value)?.Selected ?? true) { Value = value })
+                .ToList();
+
+            // Reconstruct filter
+            BuildFilter();
+        }
+
+        private Func<GameViewModel, string> _gameValue;
+        private List<FilterItemViewModel> _selectableValues, _filteredSelectableValues;
+
+        private void CreateGamePropertyAccessor()
+        {
+            if (FilterProperty == null) throw new InvalidOperationException($"{nameof(FilterProperty)} must be set.");
+
+            var method = typeof(GameViewModel).GetProperty(FilterProperty)?.GetGetMethod();
+            _gameValue = (Func<GameViewModel, string>) Delegate.CreateDelegate(typeof(Func<GameViewModel, string>), method ??  throw new InvalidOperationException());
         }
     }
 }

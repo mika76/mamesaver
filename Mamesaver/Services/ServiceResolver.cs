@@ -1,4 +1,4 @@
-﻿using System;
+﻿using Serilog;
 using SimpleInjector;
 
 namespace Mamesaver.Services
@@ -20,7 +20,12 @@ namespace Mamesaver.Services
 
         public static T GetInstance<T>()
         {
-            if (Resolver == null) throw new InvalidOperationException($"{nameof(ServiceResolver)} must be constructed prior to use.");
+            if (Resolver == null)
+            {
+                Log.Error($"Attempt to get instance of {typeof(T).FullName} before {nameof(ServiceResolver)} constructed.");
+                return default(T);
+            }
+
             return (T) Resolver.Container.GetInstance(typeof(T));
         }
     }

@@ -36,7 +36,23 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>Mamesaver.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Repack|AnyCPU'">
+    <OutputPath>bin\Repack\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
+    <Reference Include="PresentationCore" />
     <Reference Include="SimpleInjector, Version=4.3.0.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
       <HintPath>..\packages\SimpleInjector.4.3.0\lib\net45\SimpleInjector.dll</HintPath>
     </Reference>
@@ -46,8 +62,11 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Integration\Config\GameListViewModelTests.cs" />
+    <Compile Include="Integration\Config\TestData.cs" />
     <Compile Include="Integration\GameListStoreTests.cs" />
     <Compile Include="Integration\MamePathManagerTests.cs" />
     <Compile Include="Integration\PowerTests.cs" />
@@ -61,11 +80,13 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Unit\MamesaverTests.cs" />
+    <Compile Include="Integration\Config\MultipleChoiceFilterViewModelTests.cs" />
     <Compile Include="Unit\TitleFactoryTests.cs" />
     <Compile Include="Unit\LayoutFactoryTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="Mamesaver.snk" />
     <None Include="Resources\horizontal.lay">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

@@ -49,6 +49,15 @@
   <PropertyGroup>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Repack|AnyCPU'">
+    <OutputPath>bin\Repack\</OutputPath>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" CopyLocal="True" />
     <Reference Include="PresentationFramework" />
@@ -93,15 +102,15 @@
     <Compile Include="Config\Converters\InvertedBooleanToVisibilityConverter.cs" />
     <Compile Include="Config\Extensions\DependencyObjectExtensions.cs" />
     <Compile Include="Config\Extensions\FrameworkElementExtensions.cs" />
+    <Compile Include="Config\FilterStyles.cs" />
+    <Compile Include="Config\Filters\GlobalSelectionContentFilter.cs" />
+    <Compile Include="Config\Filters\IGameFilter.cs" />
     <Compile Include="Config\Filters\ViewModels\FilterItemViewModel.cs" />
     <Compile Include="Config\Filters\MultipleChoiceContentFilter.cs" />
     <Compile Include="Config\Filters\MultipleChoiceFilter.xaml.cs">
       <DependentUpon>MultipleChoiceFilter.xaml</DependentUpon>
     </Compile>
     <Compile Include="Config\Filters\ViewModels\MultipleChoiceFilterViewModel.cs" />
-    <Compile Include="Config\Filters\NullFilter.xaml.cs">
-      <DependentUpon>NullFilter.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Config\GameListTab.xaml.cs">
       <DependentUpon>GameListTab.xaml</DependentUpon>
     </Compile>
@@ -199,7 +208,9 @@
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="ILRepack.targets" />
+    <None Include="ILRepack.targets">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Resources\catver.ini" />
     <None Include="Services\Resources\catver.ini" />
   </ItemGroup>
@@ -249,10 +260,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Config\Filters\NullFilter.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Config\GameListTab.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -275,9 +282,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="DataGridExtensions">
-      <Version>1.0.39</Version>
-    </PackageReference>
     <PackageReference Include="ILRepack">
       <Version>2.0.16</Version>
     </PackageReference>
@@ -301,7 +305,7 @@
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <Target AfterTargets="ILRepack" Name="ClearOutput" Condition="$(Configuration.Contains('Release'))">
+  <Target AfterTargets="ILRepack" Name="ClearOutput" Condition="$(Configuration.Contains('Repack'))">
     <Message Text="Clearing output" Importance="High" />
     <Delete Files="@(ReferenceCopyLocalPaths->'$(OutDir)%(DestinationSubDirectory)%(Filename)%(Extension)')" />
     <ItemGroup>

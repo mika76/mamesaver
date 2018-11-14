@@ -3,7 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:dgx="urn:tom-englert.de/DataGridExtensions"
              xmlns:infrastructure="clr-namespace:Mamesaver.Config.Infrastructure"
              xmlns:filters="clr-namespace:Mamesaver.Config.Filters"
              xmlns:converters="clr-namespace:Mamesaver.Config.Converters"
@@ -17,48 +16,27 @@
                 <ResourceDictionary Source="Styles.xaml"/>
             </ResourceDictionary.MergedDictionaries>
 
-            <ControlTemplate x:Key="NullFilter">
-                <filters:NullFilter/>
-            </ControlTemplate>
-
             <BooleanToVisibilityConverter x:Key="VisibilityConverter"/>
             <converters:InvertedBooleanToVisibilityConverter x:Key="InvertedVisibilityConverter"/>
 
-            <ControlTemplate x:Key="SelectedFilter">
-                <filters:MultipleChoiceFilter Field="SelectedFilter" Visible="False" Filter="{Binding Path=Filter, 
-                RelativeSource={RelativeSource Mode=FindAncestor, 
-                AncestorType=dgx:DataGridFilterColumnControl}}"/>
-            </ControlTemplate>
-
-
             <ControlTemplate x:Key="ManufacturerFilter">
-                <filters:MultipleChoiceFilter Field="Manufacturer" Filter="{Binding Path=Filter, 
-                RelativeSource={RelativeSource Mode=FindAncestor, 
-                AncestorType=dgx:DataGridFilterColumnControl}}"/>
+                <filters:MultipleChoiceFilter Field="Manufacturer"/>
             </ControlTemplate>
 
             <ControlTemplate x:Key="RotationFilter">
-                <filters:MultipleChoiceFilter Field="Rotation" Filter="{Binding Path=Filter, 
-                RelativeSource={RelativeSource Mode=FindAncestor, 
-                AncestorType=dgx:DataGridFilterColumnControl}}"/>
+                <filters:MultipleChoiceFilter Field="Rotation" />
             </ControlTemplate>
 
             <ControlTemplate x:Key="YearFilter">
-                <filters:MultipleChoiceFilter Field="YearFilter" Filter="{Binding Path=Filter, 
-                RelativeSource={RelativeSource Mode=FindAncestor, 
-                AncestorType=dgx:DataGridFilterColumnControl}}"/>
+                <filters:MultipleChoiceFilter Field="YearFilter"/>
             </ControlTemplate>
 
             <ControlTemplate x:Key="CategoryFilter">
-                <filters:MultipleChoiceFilter Field="Category" Filter="{Binding Path=Filter, 
-                RelativeSource={RelativeSource Mode=FindAncestor, 
-                AncestorType=dgx:DataGridFilterColumnControl}}"/>
+                <filters:MultipleChoiceFilter Field="Category"/>
             </ControlTemplate>
         
             <ControlTemplate x:Key="SubcategoryFilter">
-                <filters:MultipleChoiceFilter Field="Subcategory" Filter="{Binding Path=Filter, 
-                RelativeSource={RelativeSource Mode=FindAncestor, 
-                AncestorType=dgx:DataGridFilterColumnControl}}"/>
+                <filters:MultipleChoiceFilter Field="Subcategory" />
             </ControlTemplate>
  
         </ResourceDictionary>
@@ -99,50 +77,20 @@
                   EnableRowVirtualization="True"
                   EnableColumnVirtualization="True"
                   GridLinesVisibility="None" AutoGenerateColumns="False"
+                  ColumnHeaderStyle="{StaticResource GamesHeader}"
+                  CellStyle="{StaticResource GamesCell}"
                   VirtualizingStackPanel.IsVirtualizing="True"
                   VirtualizingStackPanel.VirtualizationMode="Recycling"
-                  dgx:DataGridFilter.FilterEvaluationDelay="00:00:00"
-                  dgx:DataGridFilter.IsAutoFilterEnabled="True"
                   ItemsSource="{Binding GamesView}"
                   Visibility="{Binding Rebuilding, Converter={StaticResource InvertedVisibilityConverter}}">
 
             <DataGrid.Resources>
-
-                <!-- Sort on mouse press to increase responsiveness -->
-                <Style TargetType="DataGridColumnHeader">
-                    <Setter Property="ClickMode" Value="Press"/>
-                </Style>
-
                 <infrastructure:BindingProxy x:Key="Proxy" Data="{Binding}" />
             </DataGrid.Resources>
-
-            <DataGrid.CellStyle>
-
-                <!-- Disable highlighting -->
-                <Style TargetType="{x:Type DataGridCell}">
-                    <Setter Property="BorderBrush" Value="Transparent" />
-                    <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" />
-                    <Setter Property="Background" Value="Transparent" />
-
-                    <!-- Increase cell padding -->
-                    <Setter Property="Padding" Value="1,3,3,3" />
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate TargetType="{x:Type DataGridCell}">
-                                <Border Padding="{TemplateBinding Padding}" BorderBrush="{TemplateBinding BorderBrush}"
-                                        BorderThickness="{TemplateBinding BorderThickness}"
-                                        Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
-                                    <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                                </Border>
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
-                </Style>
-            </DataGrid.CellStyle>
-
             <DataGrid.Columns>
+
                 <!-- Game selection header -->
-                <DataGridTemplateColumn CanUserResize="False" SortMemberPath="SelectedFilter" Width="50" dgx:DataGridFilterColumn.Template="{StaticResource SelectedFilter}">
+                <DataGridTemplateColumn CanUserResize="False" SortMemberPath="SelectedFilter" Width="50">
                     <DataGridTemplateColumn.Header>
                         <CheckBox
                             HorizontalAlignment="Center"
@@ -163,12 +111,84 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTextColumn Binding="{Binding Description}" Header="Name" MinWidth="100" Width="200" SortDirection="Ascending" dgx:DataGridFilterColumn.Template="{StaticResource NullFilter}" />
-                <DataGridTextColumn Binding="{Binding Year}" Header="Year" Width="60" CanUserResize="False" SortMemberPath="YearFilter" dgx:DataGridFilterColumn.Template="{StaticResource YearFilter}"/>
-                <DataGridTextColumn Binding="{Binding Manufacturer}" Header="Manufacturer" MinWidth="100" SortMemberPath="ManufacturerSort" Width="200" dgx:DataGridFilterColumn.Template="{StaticResource ManufacturerFilter}" />
-                <DataGridTextColumn Binding="{Binding Category}" Header="Category" MinWidth="80" Width="100"  SortMemberPath="CategorySort" dgx:DataGridFilterColumn.Template="{StaticResource CategoryFilter}"/>
-                <DataGridTextColumn Binding="{Binding Subcategory}" Header="Subcategory" MinWidth="80" Width="110" SortMemberPath="SubcategorySort" dgx:DataGridFilterColumn.Template="{StaticResource SubcategoryFilter}"/>
-                <DataGridTextColumn Binding="{Binding Rotation}" Header="Rotation" Width="100" CanUserReorder="False" SortMemberPath="RotationSort" dgx:DataGridFilterColumn.Template="{StaticResource RotationFilter}"/>
+                <DataGridTextColumn Binding="{Binding Description}" Header="Name" MinWidth="100" Width="200" SortDirection="Ascending" />
+                
+                <!-- TODO template this -->
+                <!-- Year -->
+                <DataGridTemplateColumn Width="60" CanUserResize="False" SortMemberPath="YearFilter">
+                    <DataGridTemplateColumn.Header>
+                            <DockPanel LastChildFill="False">
+                                <TextBlock>Year</TextBlock>
+                                <Control DockPanel.Dock="Right" Template="{StaticResource YearFilter}"/>
+                            </DockPanel>
+                    </DataGridTemplateColumn.Header>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Year}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+
+                </DataGridTemplateColumn>
+
+                <!-- Manufacturer -->
+                <DataGridTemplateColumn MinWidth="100" Width="200" SortMemberPath="ManufacturerSort">
+                    <DataGridTemplateColumn.Header>
+                            <DockPanel LastChildFill="False">
+                                <TextBlock>Manufacturer</TextBlock>
+                                <Control DockPanel.Dock="Right" Template="{StaticResource ManufacturerFilter}"/>
+                            </DockPanel>
+                    </DataGridTemplateColumn.Header>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Manufacturer}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <!-- Category -->
+                <DataGridTemplateColumn MinWidth="80" Width="100"  SortMemberPath="CategorySort">
+                    <DataGridTemplateColumn.Header>
+                            <DockPanel LastChildFill="False">
+                                <TextBlock>Category</TextBlock>
+                                <Control DockPanel.Dock="Right" Template="{StaticResource CategoryFilter}"/>
+                            </DockPanel>
+                    </DataGridTemplateColumn.Header>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Category}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                 <!-- Subcategory --> 
+                <DataGridTemplateColumn MinWidth="80" Width="110" SortMemberPath="SubcategorySort">
+                    <DataGridTemplateColumn.Header>
+                        <DockPanel LastChildFill="False">
+                            <TextBlock>Subcategory</TextBlock>
+                            <Control DockPanel.Dock="Right" Template="{StaticResource SubcategoryFilter}"/>
+                        </DockPanel>
+                    </DataGridTemplateColumn.Header>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Subcategory}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <!-- Rotation -->
+                <DataGridTemplateColumn Width="100" CanUserReorder="False" SortMemberPath="RotationSort">
+                    <DataGridTemplateColumn.Header>
+                        <DockPanel LastChildFill="False">
+                            <TextBlock>Rotation</TextBlock>
+                            <Control DockPanel.Dock="Right" Template="{StaticResource RotationFilter}"/>
+                        </DockPanel>
+                    </DataGridTemplateColumn.Header>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Rotation}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>
