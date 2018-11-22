@@ -12,7 +12,7 @@
 - [Open source](#open-source)
 
 
-v2.0.1
+v3.0
 Licensed under The MIT License
 
 [![Build status](https://ci.appveyor.com/api/projects/status/2b8n7te1bq8rf1pp?svg=true)](https://ci.appveyor.com/project/mmihajlovic/mamesaver)
@@ -58,6 +58,12 @@ Other than those main settings, you can also:
 * Enable multi-monitor cloning
 * Include games with imperfect emulation
 * Enable in-game hotkeys
+
+### FILTERING
+
+Once the game list has been built, it can be filtered by year, manufacturer, category, subcategory and rotation. The purpose of filtering is to increase manageability of game selection, particularly for large collections. Filters are applied in an additive fashion, similar to Excel.
+
+Once filtering has been applied, the select all and select none controls via the game list header are applied to the filtered set only. At any stage, the game list view can be toggled between displaying all games and selected games.
 
 ### HOTKEYS
 
