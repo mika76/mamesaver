@@ -169,6 +169,7 @@ namespace Mamesaver.Power
         {
             if (!disposing) return;
             _sleepTimer?.Dispose();
+            _sleepTimer = null;
         }
 
         ~PowerManager() => Dispose(false);
