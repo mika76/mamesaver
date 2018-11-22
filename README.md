@@ -63,7 +63,7 @@ Other than those main settings, you can also:
 
 Once the game list has been built, it can be filtered by year, manufacturer, category, subcategory and rotation. The purpose of filtering is to increase manageability of game selection, particularly for large collections. Filters are applied in an additive fashion, similar to Excel.
 
-Once filtering has been applied, the select all and select none controls via the game list header are applied to the filtered set only. At any stage, the game list view can be toggled between displaying all games and selected games.
+Once filtering has been applied, the select all and select none controls via the game list header are applied to the filtered set only. At any stage, the filtered game list view can be toggled between displaying all games and selected games.
 
 ### HOTKEYS
 
