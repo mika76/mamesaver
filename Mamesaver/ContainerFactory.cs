@@ -1,9 +1,7 @@
 using Mamesaver.Config.Filters.ViewModels;
 using Mamesaver.Config.ViewModels;
-using Mamesaver.Config.ViewModels.AdvancedTab;
 using Mamesaver.Config.ViewModels.GameListTab;
 using Mamesaver.Config.ViewModels.GeneralTab;
-using Mamesaver.Config.ViewModels.HotkeysTab;
 using Mamesaver.Config.ViewModels.LayoutTab;
 using Mamesaver.HotKeys;
 using Mamesaver.Layout;
@@ -68,8 +66,6 @@ namespace Mamesaver
             container.Register<GameListViewModel>(Lifestyle.Singleton);
             container.Register<LayoutViewModel>(Lifestyle.Singleton);
             container.Register<GeneralViewModel>(Lifestyle.Singleton);
-            container.Register<AdvancedViewModel>(Lifestyle.Singleton);
-            container.Register<HotKeysViewModel>(Lifestyle.Singleton);
 
             container.Register<MultipleChoiceFilterViewModel>(Lifestyle.Transient);
 

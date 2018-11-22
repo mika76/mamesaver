@@ -8,15 +8,50 @@ namespace Mamesaver.Config.ViewModels.GeneralTab
     public class GeneralViewModel : InitialisableViewModel
     {
         private Settings _settings;
+        private AdvancedSettings _advancedSettings;
 
         public GeneralViewModel(Settings settings)
         {
             _settings = settings;
+            _advancedSettings = settings.AdvancedSettings;
         }
 
         protected override void PerformInitialise()
         {
             ConfigViewModel.ResetToDefaults += (sender, args) => ResetToDefaults(args.Settings);
+        }
+
+        public bool HotKeysEnabled
+        {
+            get => _settings.HotKeys;
+            set
+            {
+                if (value == _settings.HotKeys) return;
+                _settings.HotKeys = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool IncludeImperfectEmulation
+        {
+            get => _advancedSettings.IncludeImperfectEmulation;
+            set
+            {
+                if (value == _advancedSettings.IncludeImperfectEmulation) return;
+                _advancedSettings.IncludeImperfectEmulation = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool DebugLogging
+        {
+            get => _advancedSettings.DebugLogging;
+            set
+            {
+                if (value == _advancedSettings.DebugLogging) return;
+                _advancedSettings.DebugLogging = value;
+                OnPropertyChanged();
+            }
         }
 
         /// <summary>
@@ -43,6 +78,7 @@ namespace Mamesaver.Config.ViewModels.GeneralTab
             // Preserve MAME executable path
             settings.ExecutablePath = _settings.ExecutablePath;
             _settings = settings;
+            _advancedSettings = settings.AdvancedSettings;
 
             OnAllPropertiesChanged();
         }

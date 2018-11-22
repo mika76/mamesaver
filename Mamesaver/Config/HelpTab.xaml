@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="Mamesaver.Config.HotKeysTab"
+﻿<UserControl x:Class="Mamesaver.Config.HelpTab"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -15,24 +15,16 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <StackPanel Orientation="Horizontal">
-            <CheckBox IsChecked="{Binding HotKeysEnabled}" VerticalContentAlignment="Center">
-                <Label Style="{StaticResource Inline}">Enable hotkeys</Label>
-            </CheckBox>
-        </StackPanel>
-
-        <StackPanel Grid.Row="2" Margin="0,10,0,0">
+        <StackPanel Grid.Row="0" Margin="0,10,0,0">
             <DockPanel Height="Auto">
                 <Label Style="{StaticResource Divider}" DockPanel.Dock="Left" Content="Key bindings" />
                 <Separator/>
             </DockPanel>
         </StackPanel>
 
-        <Grid Grid.Row="3" Margin="10">
+        <Grid Grid.Row="1" Margin="10">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>

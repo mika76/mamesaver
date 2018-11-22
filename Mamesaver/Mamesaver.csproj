@@ -91,9 +91,6 @@
     <Compile Include="Config\AboutTab.xaml.cs">
       <DependentUpon>AboutTab.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Config\AdvancedTab.xaml.cs">
-      <DependentUpon>AdvancedTab.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Config\ConfigForm.xaml.cs">
       <DependentUpon>ConfigForm.xaml</DependentUpon>
     </Compile>
@@ -118,8 +115,8 @@
       <DependentUpon>GeneralTab.xaml</DependentUpon>
     </Compile>
     <Compile Include="Config\Helpers\SortablePropertyHelper.cs" />
-    <Compile Include="Config\HotKeysTab.xaml.cs">
-      <DependentUpon>HotKeysTab.xaml</DependentUpon>
+    <Compile Include="Config\HelpTab.xaml.cs">
+      <DependentUpon>HelpTab.xaml</DependentUpon>
     </Compile>
     <Compile Include="Config\Infrastructure\BindingProxy.cs" />
     <Compile Include="Config\Infrastructure\DebugDummyConverter.cs" />
@@ -128,14 +125,12 @@
     </Compile>
     <Compile Include="Config\Models\GameViewModel.cs" />
     <Compile Include="Config\ViewModels\AboutTab\AboutViewModel.cs" />
-    <Compile Include="Config\ViewModels\AdvancedTab\AdvancedViewModel.cs" />
     <Compile Include="Config\ViewModels\ConfigViewModel.cs" />
     <Compile Include="Config\ViewModels\GameListTab\FilterMode.cs" />
     <Compile Include="Config\ViewModels\GameListTab\FilterOption.cs" />
     <Compile Include="Config\ViewModels\GameListTab\GameListViewModel.cs" />
     <Compile Include="Config\ViewModels\GameListTab\GlobalFilterEventArgs.cs" />
     <Compile Include="Config\ViewModels\GeneralTab\GeneralViewModel.cs" />
-    <Compile Include="Config\ViewModels\HotKeysTab\HotkeysViewModel.cs" />
     <Compile Include="Config\ViewModels\InitialisableViewModel.cs" />
     <Compile Include="Config\ViewModels\LayoutTab\LayoutViewModel.cs" />
     <Compile Include="Config\ViewModels\ResetToDefaultsEventArgs.cs" />
@@ -248,10 +243,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Config\AdvancedTab.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Config\ConfigForm.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -268,7 +259,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Config\HotKeysTab.xaml">
+    <Page Include="Config\HelpTab.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -303,6 +294,9 @@
     <PackageReference Include="System.Xml.XDocument">
       <Version>4.3.0</Version>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Config\ViewModels\AdvancedTab\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target AfterTargets="ILRepack" Name="ClearOutput" Condition="$(Configuration.Contains('Repack'))">

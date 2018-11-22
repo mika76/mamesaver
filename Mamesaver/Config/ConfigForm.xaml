@@ -31,11 +31,8 @@
             <TabItem Header="Layout">
                 <config:LayoutTab/>
             </TabItem>
-            <TabItem Header="Hotkeys">
-                <config:HotKeysTab/>
-            </TabItem>
-            <TabItem Header="Advanced">
-                <config:AdvancedTab/>
+            <TabItem Header="Help">
+                <config:HelpTab/>
             </TabItem>
             <TabItem Header="About">
                 <config:AboutTab/>

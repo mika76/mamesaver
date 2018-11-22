@@ -1,15 +1,15 @@
 ﻿using Mamesaver.Config.Extensions;
-using Mamesaver.Config.ViewModels.AdvancedTab;
+using Mamesaver.Config.ViewModels.GeneralTab;
 
 namespace Mamesaver.Config
 {
-    public partial class AdvancedTab
+    public partial class HelpTab
     {
-        public AdvancedTab()
+        public HelpTab()
         {
             InitializeComponent();
 
-            this.InitViewModel<AdvancedViewModel>();
+            this.InitViewModel<GeneralViewModel>();
             this.InitDesignMode();
         }
     }
