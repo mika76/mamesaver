@@ -57,7 +57,7 @@
 
         <!-- Hoykeys -->
         <StackPanel Grid.Row="4" Orientation="Horizontal">
-            <CheckBox IsChecked="{Binding HotKeysEnabled}" VerticalContentAlignment="Center">
+            <CheckBox IsChecked="{Binding HotKeysEnabled}" VerticalContentAlignment="Center" Padding="0">
                 <Label Style="{StaticResource Inline}">Enable hotkeys</Label>
             </CheckBox>
         </StackPanel>
