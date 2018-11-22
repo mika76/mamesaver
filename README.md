@@ -5,6 +5,7 @@
 - [Installation](#installation)
 - [Usage](#usage)
 - [Configuration](#configuration)
+- [Filtering](#filtering)
 - [Hotkeys](#hotkeys)
 - [Comments](#comments)
 - [Logging](#logging)
