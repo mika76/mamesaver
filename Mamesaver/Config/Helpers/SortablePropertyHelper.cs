@@ -11,9 +11,9 @@ namespace Mamesaver.Config.Helpers
         public static string ToSortableProperty(string primary, string secondary) => $"{primary}:{secondary}";
 
         /// <summary>
-        ///     Returns the primary property from a combined sort propert created by <see cref="ToSortableProperty"/>,
+        ///     Returns the primary property from a combined sort property created by <see cref="ToSortableProperty"/>,
         ///     or <c>null</c> if not found.
         /// </summary>
-        public static string GetPrimarySort(string sortableProperty) => sortableProperty.Split(':').FirstOrDefault();
+        public static string GetPrimarySort(string sortableProperty) => sortableProperty?.Split(':').FirstOrDefault() ?? "";
     }
 }
