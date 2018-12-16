@@ -9,7 +9,8 @@
     mc:Ignorable="d"
     Title="Mamesaver Config" Icon="Resources/mame.ico" 
     MinWidth="915" MinHeight="650"
-    ResizeMode="CanResizeWithGrip" SizeToContent="WidthAndHeight">
+    Width="915" Height="650"
+    ResizeMode="CanResizeWithGrip">
 
     <Window.Resources>
         <ResourceDictionary>
