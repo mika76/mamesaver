@@ -234,7 +234,8 @@ namespace Mamesaver
             else
             {
                 // Fatal error invoking MAME, so stop gameplay
-                _cancellationTokenSource.Cancel();
+                if (!_cancellationTokenSource.IsCancellationRequested) _cancellationTokenSource.Cancel();
+
             }
         }
 

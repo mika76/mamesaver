@@ -91,7 +91,7 @@ namespace Mamesaver
         private void OnPlayGame(object sender, EventArgs args)
         {
             HideBackgroundForm();
-            _gameTimer.Stop();
+            _gameTimer?.Stop();
         }
 
         private void OnGameStarted(object sender, EventArgs args) => _gameTimer.Start();

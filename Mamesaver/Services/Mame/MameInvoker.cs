@@ -40,16 +40,15 @@ namespace Mamesaver.Services.Mame
                     {
                         Log.Warning("Timeout waiting for MAME to exit; killing MAME");
                         process.Kill();
-                        process.WaitForExit();
                     }
                 }
                 else
                 {
                     Log.Debug("Killing MAME as no window handle");
                     process.Kill();
-                    process.WaitForExit();
                 }
 
+                process.WaitForExit();
                 Log.Debug("MAME stopped; pid {pid}", process.Id);
             }
             catch (Exception e)
