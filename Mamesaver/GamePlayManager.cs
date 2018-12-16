@@ -20,7 +20,7 @@ namespace Mamesaver
     /// <summary>
     ///     Manages starting and stopping MAME and responding to hotkey events.
     /// </summary>
-    internal class GamePlayManager : IDisposable
+    internal class GamePlayManager
     {
         private readonly Settings _settings;
         private readonly LayoutBuilder _layoutBuilder;
@@ -290,28 +290,5 @@ namespace Mamesaver
                 throw;
             }
         }
-
-        public virtual void Dispose(bool disposing)
-        {
-            if (!disposing || !_initialised) return;
-
-            // Stop MAME and wait for it to terminate
-            try
-            {
-                if (_mameProcess != null && !_mameProcess.HasExited) _invoker.Stop(_mameProcess);
-            }
-            catch (InvalidOperationException)
-            {
-                Log.Warning("Unable to stop MAME; it may not have fully started.");
-            }
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        ~GamePlayManager() => Dispose(false);
     }
 }

@@ -208,7 +208,6 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Resources\catver.ini" />
-    <None Include="Services\Resources\catver.ini" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="BackgroundForm.resx">

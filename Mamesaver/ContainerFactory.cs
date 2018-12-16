@@ -69,7 +69,6 @@ namespace Mamesaver
 
             container.Register<MultipleChoiceFilterViewModel>(Lifestyle.Transient);
 
-            //container.Register<IActivityHook>(() => new UserActivityHook(typeof(Program).Assembly), Lifestyle.Singleton);
             container.Register<IActivityHook>(() => new UserActivityHook(), Lifestyle.Singleton);
             container.Register(() => new ServiceResolver(container), Lifestyle.Singleton);
 

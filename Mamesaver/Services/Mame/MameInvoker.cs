@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using Mamesaver.Models.Configuration;
@@ -10,9 +11,10 @@ namespace Mamesaver.Services.Mame
     /// <summary>
     ///     Invokes the MAME executable configured in <see cref="Settings"/>.
     /// </summary>
-    public class MameInvoker
+    public class MameInvoker : IDisposable
     {
         private readonly Settings _settings;
+        private readonly List<Process> _processes = new List<Process>();
 
         public MameInvoker(Settings settings) => _settings = settings;
 
@@ -93,6 +95,10 @@ namespace Mamesaver.Services.Mame
                 }
 
                 process.EnableRaisingEvents = true;
+
+                // Register process so we can terminate all processes when the container is disposed
+                Register(process);
+
                 return process;
             }
             catch (Exception e)
@@ -107,5 +113,45 @@ namespace Mamesaver.Services.Mame
         /// </summary>
         /// <param name="arguments">arguments to pass to MAME</param>
         public StreamReader GetOutput(params string[] arguments) => Run(arguments).StandardOutput;
+
+
+        /// <summary>
+        ///     Registers a MAME process for automatic termination on shutdown.
+        /// </summary>
+        /// <param name="process"></param>
+        public void Register(Process process) => _processes.Add(process);
+
+        public virtual void Dispose(bool disposing)
+        {
+            if (!disposing) return;
+            TryStopProcesses();
+        }
+
+        /// <summary>
+        ///     Tries to stop all registered MAME processes.
+        /// </summary>
+        private void TryStopProcesses()
+        {
+            _processes.ForEach(process =>
+            {
+                try
+                {
+                    // Stop MAME and wait for it to terminate
+                    Stop(process);
+                }
+                catch (InvalidOperationException)
+                {
+                    Log.Warning("Unable to stop MAME; it may not have fully started.");
+                }
+            });
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        ~MameInvoker() => Dispose(false);
     }
 }
