@@ -8,7 +8,8 @@
     x:Class="Mamesaver.Config.ConfigForm"
     mc:Ignorable="d"
     Title="Mamesaver Config" Icon="Resources/mame.ico" 
-    ResizeMode="NoResize" SizeToContent="WidthAndHeight">
+    MinWidth="915" MinHeight="650"
+    ResizeMode="CanResizeWithGrip" SizeToContent="WidthAndHeight">
 
     <Window.Resources>
         <ResourceDictionary>
@@ -20,8 +21,16 @@
         </ResourceDictionary>
     </Window.Resources>
 
-    <DockPanel LastChildFill="False" Margin="10">
-        <TabControl DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="0,0,0,10" HorizontalContentAlignment="Stretch" Width="880" Height="600">
+    <DockPanel Margin="10">
+        <DockPanel DockPanel.Dock="Bottom"  LastChildFill="False">
+            <Button Command="{Binding ResetToDefaultsClick}" DockPanel.Dock="Left" Width="120" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="0,5,5,0">_Reset to Defaults</Button>
+
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
+                <Button Command="{Binding OkClick}" Width="90" IsDefault="True" IsEnabled="{Binding Path=Rebuilding, Converter={StaticResource InvertedBooleanConverter}}" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="5,5,5,0">_OK</Button>
+                <Button Command="{Binding CancelClick}" Width="90" IsCancel="True" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="5,5,0,0">_Cancel</Button>
+            </StackPanel>
+        </DockPanel>
+        <TabControl DockPanel.Dock="Top" Margin="0,0,0,10">
             <TabItem Header="General">
                 <config:GeneralTab/>
             </TabItem>
@@ -38,11 +47,5 @@
                 <config:AboutTab/>
             </TabItem>
         </TabControl>
-        <Button Command="{Binding ResetToDefaultsClick}" DockPanel.Dock="Left" Width="120" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="0,5,5,0">_Reset to Defaults</Button>
-
-        <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
-            <Button Command="{Binding OkClick}" Width="90" IsDefault="True" IsEnabled="{Binding Path=Rebuilding, Converter={StaticResource InvertedBooleanConverter}}" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="5,5,5,0">_OK</Button>
-            <Button Command="{Binding CancelClick}" Width="90" IsCancel="True" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="5,5,0,0">_Cancel</Button>
-        </StackPanel>
     </DockPanel>
 </Window>

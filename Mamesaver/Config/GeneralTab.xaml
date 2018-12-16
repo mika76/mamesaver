@@ -21,6 +21,8 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+
         </Grid.RowDefinitions>
 
         <!-- Executable -->
