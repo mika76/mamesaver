@@ -38,13 +38,13 @@ namespace Mamesaver.Services.Windows
     /// <summary>
     ///     This class allows you to tap keyboard and mouse and / or to detect their activity even when an
     ///     application runes in background or does not have any user interface at all. This class raises
-    ///     common .NET events with KeyEventArgs and MouseEventArgs so you can easily retrive any information you need.
+    ///     common .NET events with KeyEventArgs and MouseEventArgs so you can easily retrieve any information you need.
     /// </summary>
     /// <remarks>
     ///     From http://www.codeproject.com/csharp/globalhook.asp
     ///     By George Mamaladze
     ///</remarks>
-    public class UserActivityHook : IActivityHook
+    public class UserActivityHook : IActivityHook, IDisposable
     {
         #region Windows structure definitions
 
@@ -449,11 +449,7 @@ namespace Mamesaver.Services.Windows
         /// <summary>
         ///     Destruction.
         /// </summary>
-        ~UserActivityHook()
-        {
-            //uninstall hooks and do not throw exceptions
-            Stop(true, true, false);
-        }
+        ~UserActivityHook() => Dispose(false);
 
         /// <summary>
         ///     Occurs when the user moves the mouse, presses any mouse button or scrolls the wheel
@@ -565,7 +561,7 @@ namespace Mamesaver.Services.Windows
         }
 
         /// <summary>
-        /// Stops monitoring both mouse and keyboard events and rasing events.
+        /// Stops monitoring both mouse and keyboard events and raising events.
         /// </summary>
         /// <exception cref="Win32Exception">Any windows problem.</exception>
         public void Stop()
@@ -778,6 +774,20 @@ namespace Mamesaver.Services.Windows
             if (handled)
                 return 1;
             return CallNextHookEx(_hKeyboardHook, nCode, wParam, lParam);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        public virtual void Dispose(bool disposing)
+        {
+            if (!disposing) return;
+
+            // Uninstall hooks and do not throw exceptions
+            Stop(true, true, false);
         }
     }
 }
