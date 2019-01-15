@@ -1,5 +1,5 @@
 ﻿using System.Windows.Forms;
-using Mamesaver.Windows;
+using Mamesaver.Services.Windows;
 
 namespace Mamesaver.Test.Integration
 {
@@ -12,6 +12,10 @@ namespace Mamesaver.Test.Integration
         public event KeyEventHandler KeyDown;
         public event KeyPressEventHandler KeyPress;
         public event KeyEventHandler KeyUp;
+
+        public void Start()
+        {
+        }
 
         public void SendKeyPress(char key) => KeyPress?.Invoke(this, new KeyPressEventArgs(key));
         public void SendKeyUp(Keys key) => KeyUp?.Invoke(this, new KeyEventArgs(key));

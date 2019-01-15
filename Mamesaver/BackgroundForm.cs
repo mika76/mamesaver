@@ -1,12 +1,7 @@
-/**
- * Licensed under The MIT License
- * Redistributions of files must retain the above copyright notice.
- */
-
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using LayoutSettings = Mamesaver.Configuration.Models.LayoutSettings;
+using LayoutSettings = Mamesaver.Models.Configuration.LayoutSettings;
 
 namespace Mamesaver
 {

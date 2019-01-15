@@ -19,24 +19,32 @@ Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
+		Repack|Any CPU = Repack|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{720F7E49-8C21-43F8-8946-8D16D68BF839}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{720F7E49-8C21-43F8-8946-8D16D68BF839}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{720F7E49-8C21-43F8-8946-8D16D68BF839}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{720F7E49-8C21-43F8-8946-8D16D68BF839}.Release|Any CPU.Build.0 = Release|Any CPU
+		{720F7E49-8C21-43F8-8946-8D16D68BF839}.Repack|Any CPU.ActiveCfg = Repack|Any CPU
+		{720F7E49-8C21-43F8-8946-8D16D68BF839}.Repack|Any CPU.Build.0 = Repack|Any CPU
 		{896ED757-66C2-4C7E-9323-FC5D9CC7B7D2}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{896ED757-66C2-4C7E-9323-FC5D9CC7B7D2}.Release|Any CPU.ActiveCfg = Release|x86
 		{896ED757-66C2-4C7E-9323-FC5D9CC7B7D2}.Release|Any CPU.Build.0 = Release|x86
+		{896ED757-66C2-4C7E-9323-FC5D9CC7B7D2}.Repack|Any CPU.ActiveCfg = Release|x86
 		{98F0D731-FC1C-4659-8EEB-7489331621D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{98F0D731-FC1C-4659-8EEB-7489331621D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{98F0D731-FC1C-4659-8EEB-7489331621D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{98F0D731-FC1C-4659-8EEB-7489331621D6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{98F0D731-FC1C-4659-8EEB-7489331621D6}.Repack|Any CPU.ActiveCfg = Repack|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F1BAA9BF-BAF0-43DE-8918-5F6AC93D0DBC}
+	EndGlobalSection
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
 	EndGlobalSection
 EndGlobal

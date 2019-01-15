@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using Mamesaver.Layout;
 using Mamesaver.Layout.Models;
+using Mamesaver.Models;
 using NUnit.Framework;
 
 namespace Mamesaver.Test.Unit

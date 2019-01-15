@@ -1,0 +1,89 @@
+﻿<UserControl x:Class="Mamesaver.Config.GeneralTab"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="550" d:DesignWidth="800"
+             Background="White">
+
+    <UserControl.Resources>
+        <ResourceDictionary Source="Styles.xaml"/>
+    </UserControl.Resources>
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+
+        </Grid.RowDefinitions>
+
+        <!-- Executable -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,10" HorizontalAlignment="Left">
+            <Label>Path to MAME executable:</Label>
+            <StackPanel Orientation="Horizontal">
+                <TextBox Name="MamePath" Text="{Binding ExecutablePath}" Width="500" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                <Button Width="30" Command="{Binding SelectMameExecutableClick}" Height="{Binding ActualHeight,ElementName=MamePath}" Margin="0,5,5,5">…</Button>
+            </StackPanel>
+        </StackPanel>
+
+        <!-- Options -->
+        <StackPanel Grid.Row="1" Margin="0,0,0,10">
+            <Label>Command line options:</Label>
+            <TextBox Text="{Binding CommandLineOptions}" Width="530" HorizontalAlignment="Left"/>
+        </StackPanel>
+
+        <!-- Interval -->
+        <StackPanel Grid.Row="2" Margin="0,0,0,10">
+            <Label>Interval:</Label>
+            <StackPanel Orientation="Horizontal">
+                <TextBox Text="{Binding MinutesPerGame}" Width="50" VerticalAlignment="Center" />
+                <Label  Style="{StaticResource Inline}">minutes</Label>
+            </StackPanel>
+        </StackPanel>
+
+        <!-- Options -->
+        <!-- Cloning -->
+        <StackPanel Grid.Row="3" Orientation="Horizontal">
+            <CheckBox IsChecked="{Binding CloneScreen}" VerticalContentAlignment="Center" Padding="0">
+                <Label Style="{StaticResource Inline}">Clone MAME to all monitors</Label>
+            </CheckBox>
+        </StackPanel>
+
+        <!-- Hoykeys -->
+        <StackPanel Grid.Row="4" Orientation="Horizontal">
+            <CheckBox IsChecked="{Binding HotKeysEnabled}" VerticalContentAlignment="Center" Padding="0">
+                <Label Style="{StaticResource Inline}">Enable hotkeys</Label>
+            </CheckBox>
+        </StackPanel>
+
+        <!-- Advanced -->
+        <StackPanel Grid.Row="5" Margin="0,10,0,0">
+            <DockPanel Height="Auto">
+                <Label Style="{StaticResource Divider}" DockPanel.Dock="Left" Content="Advanced" />
+                <Separator Background="{DynamicResource {x:Static SystemColors.ScrollBarBrushKey}}" />
+            </DockPanel>
+        </StackPanel>
+
+        <!-- Imperfect emulation -->
+        <StackPanel Grid.Row="6" Orientation="Horizontal">
+            <CheckBox IsChecked="{Binding IncludeImperfectEmulation}" VerticalContentAlignment="Center" Padding="0">
+                <Label Style="{StaticResource Inline}">Include games with imperfect emulation</Label>
+            </CheckBox>
+        </StackPanel>
+
+        <!-- Debug logging -->
+        <StackPanel Grid.Row="7" Orientation="Horizontal">
+            <CheckBox IsChecked="{Binding DebugLogging}" VerticalContentAlignment="Center" Padding="0">
+                <Label Style="{StaticResource Inline}">Debug logging</Label>
+            </CheckBox>
+        </StackPanel>
+    </Grid>
+</UserControl>

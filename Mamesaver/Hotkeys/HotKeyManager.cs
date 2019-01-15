@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using Mamesaver.Configuration.Models;
+using Mamesaver.Models.Configuration;
 using Mamesaver.Power;
-using Mamesaver.Windows;
+using Mamesaver.Services.Windows;
 using Serilog;
 
-namespace Mamesaver.Hotkeys
+namespace Mamesaver.HotKeys
 {
     /// <summary>
     ///     Handles key down events, identifying hot keys and dispatching events for both handled

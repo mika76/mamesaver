@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Mamesaver.Hotkeys
+namespace Mamesaver.HotKeys
 {
     /// <inheritdoc />
     /// <summary>

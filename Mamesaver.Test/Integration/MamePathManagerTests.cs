@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using FluentAssertions;
-using Mamesaver.Configuration.Models;
+using Mamesaver.Models.Configuration;
+using Mamesaver.Services.Mame;
 using Mamesaver.Test.Unit;
 using NUnit.Framework;
 

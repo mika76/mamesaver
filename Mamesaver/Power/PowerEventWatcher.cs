@@ -47,7 +47,7 @@ namespace Mamesaver.Power
             foreach (var propertyData in args.NewEvent.Properties)
             {
                 var id = propertyData?.Value as ushort?;
-                if (id == PowerStateChange) PowerStateChanged?.Invoke(this, new EventArgs());
+                if (id == PowerStateChange) PowerStateChanged?.Invoke(this, EventArgs.Empty);
             }
         }
 

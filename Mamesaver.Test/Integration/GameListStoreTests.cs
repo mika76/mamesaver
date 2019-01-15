@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
-using Mamesaver.Configuration;
+using Mamesaver.Models;
+using Mamesaver.Services.Configuration;
 using Mamesaver.Test.Unit;
 using NUnit.Framework;
 
@@ -87,9 +88,9 @@ namespace Mamesaver.Test.Integration
         {
             var newGames = new List<SelectableGame>
             {
-                new SelectableGame("first", "", "", "", "", true),
-                new SelectableGame("second", "", "", "", "", false),
-                new SelectableGame("third", "", "", "", "", true)
+                new SelectableGame{ Name = "first", Selected = true },
+                new SelectableGame{ Name = "second", Selected = false },
+                new SelectableGame{ Name = "third", Selected = true }
             };
             return newGames;
         }

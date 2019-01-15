@@ -1,4 +1,4 @@
-﻿namespace Mamesaver.Hotkeys
+﻿namespace Mamesaver.HotKeys
 {
     public enum HotKey
     {

@@ -1,16 +1,12 @@
-/**
- * Licensed under The MIT License
- * Redistributions of files must retain the above copyright notice.
- */
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
-using Mamesaver.Configuration.Models;
-using Mamesaver.Hotkeys;
+using Mamesaver.HotKeys;
+using Mamesaver.Models.Configuration;
 using Mamesaver.Power;
+using Mamesaver.Services.Mame;
 using Serilog;
 
 namespace Mamesaver
@@ -74,13 +70,6 @@ namespace Mamesaver
                     return;
                 }
 
-                // Start listening for user input events
-                _screenManager.Initialise(_cancellationTokenSource);
-                _hotKeyManager.Initialise();            
-
-                // Start power management timer
-                _powerManager.Initialise();
-
                 // Verify that MAME can be run so we can return immediately if there are errors
                 try
                 {
@@ -96,6 +85,14 @@ namespace Mamesaver
                 // Find the best primary screen for MAME. As games are largely vertical and screens are wide, select the one with the greatest Y axis
                 var bestPrimaryScreen = Screen.AllScreens.OrderByDescending(screen => screen.Bounds.Height).First();
 
+                _screenManager.Initialise(_cancellationTokenSource);
+
+                // Start listening for user input events
+                _hotKeyManager.Initialise();
+
+                // Start power management timer
+                _powerManager.Initialise();
+ 
                 // Initialise primary MAME screen
                 _gamePlayManager.Initialise(bestPrimaryScreen, _cancellationTokenSource);
                 _mameScreen.Initialise(bestPrimaryScreen);
@@ -145,7 +142,9 @@ namespace Mamesaver
             try
             {
                 Log.Information("Stopping screensaver");
-                Application.Exit();
+
+                if (Application.MessageLoop) Application.Exit();
+                else Environment.Exit(1);
             }
             catch (Exception e)
             {

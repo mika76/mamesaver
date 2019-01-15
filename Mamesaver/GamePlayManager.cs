@@ -3,20 +3,24 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Windows.Forms;
-using Mamesaver.Configuration;
-using Mamesaver.Configuration.Models;
-using Mamesaver.Extensions;
-using Mamesaver.Hotkeys;
+using Mamesaver.HotKeys;
 using Mamesaver.Layout;
+using Mamesaver.Models;
+using Mamesaver.Models.Configuration;
+using Mamesaver.Models.Extensions;
 using Mamesaver.Power;
+using Mamesaver.Services.Configuration;
+using Mamesaver.Services.Mame;
 using Serilog;
+
+using static Mamesaver.MameExitCodes;
 
 namespace Mamesaver
 {
     /// <summary>
     ///     Manages starting and stopping MAME and responding to hotkey events.
     /// </summary>
-    internal class GamePlayManager : IDisposable
+    internal class GamePlayManager
     {
         private readonly Settings _settings;
         private readonly LayoutBuilder _layoutBuilder;
@@ -26,24 +30,20 @@ namespace Mamesaver
         private readonly PowerManager _powerManager;
         private readonly MameInvoker _invoker;
 
-        public delegate void PlayGameEventHandler(object sender, EventArgs e);
-        public delegate void StartGameEventHandler(object sender, EventArgs e);
-        public delegate void GameStartedEventHandler(object sender, EventArgs e);
-
         /// <summary>
         ///     Game has been started by MAME.
         /// </summary>
-        public event GameStartedEventHandler OnGameStarted;
+        public event EventHandler OnGameStarted;
 
         /// <summary>
         ///    Game is about to be run by MAME.
         /// </summary>
-        public event StartGameEventHandler OnStartGame;
+        public event EventHandler OnStartGame;
 
         /// <summary>
         ///     User has chosen to play the current game.
         /// </summary>
-        public event PlayGameEventHandler OnPlayGame;
+        public event EventHandler OnPlayGame;
 
         /// <summary>
         ///     MAME process running the current game, or <c>null</c> if not started.
@@ -221,15 +221,21 @@ namespace Mamesaver
             _mameProcess.Exited -= OnMameExited;
 
             var process = (Process)sender;
-            if (process.ExitCode == 0) return;
+            if (process.ExitCode == SuccessfulExit) return;
 
-            // If MAME exited with an error, deselect the current game
-            if (process.ExitCode.In(MameErrorCodes.RequireFilesMissing, MameErrorCodes.UnknownSystem))
+            var game = CurrentGame();
+            Log.Warning("MAME exited unexpectedly playing {game}; exit code {exitCode} ({exitDescription})", game.Name, process.ExitCode, MapCode(process.ExitCode));
+
+            // If MAME exited with an error relating to the selected , deselect the current game
+            if (process.ExitCode.In(RequiredFilesMissing, UnknownSystem))
             {
-                var game = CurrentGame();
-                Log.Warning("MAME exited unexpectedly playing {game}", game.Name);
-
                 DeselectGame(CurrentGame());
+            }
+            else
+            {
+                // Fatal error invoking MAME, so stop gameplay
+                if (!_cancellationTokenSource.IsCancellationRequested) _cancellationTokenSource.Cancel();
+
             }
         }
 
@@ -285,28 +291,5 @@ namespace Mamesaver
                 throw;
             }
         }
-
-        public virtual void Dispose(bool disposing)
-        {
-            if (!disposing || !_initialised) return;
-
-            // Stop MAME and wait for it to terminate
-            try
-            {
-                if (_mameProcess != null && !_mameProcess.HasExited) _invoker.Stop(_mameProcess);
-            }
-            catch (InvalidOperationException)
-            {
-                Log.Warning("Unable to stop MAME; it may not have fully started.");
-            }
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        ~GamePlayManager() => Dispose(false);
     }
 }
