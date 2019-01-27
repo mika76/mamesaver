@@ -55,17 +55,17 @@
         <!-- Options -->
         <!-- Cloning -->
         <StackPanel Grid.Row="3" Orientation="Horizontal">
-            <CheckBox IsChecked="{Binding CloneScreen}" VerticalContentAlignment="Center" Padding="0">
-                <Label Style="{StaticResource Inline}">Clone MAME to all displays</Label>
-            </CheckBox>
+            <Label VerticalAlignment="Center">Start MAME on:</Label>
+            <ComboBox Width="150" ItemsSource="{Binding Source={extensions:Enumeration {x:Type models:MamePrimaryScreen}}}" 
+                      DisplayMemberPath="Description" 
+                      SelectedValue="{Binding PrimaryScreen}"  
+                      SelectedValuePath="Value"/>
         </StackPanel>
 
-        <StackPanel Grid.Row="4" Orientation="Horizontal">
-            <Label VerticalAlignment="Center">Run MAME on:</Label>
-            <ComboBox Width="150" ItemsSource="{Binding Source={extensions:Enumeration {x:Type models:MamePrimaryScreen}}}" 
-                  DisplayMemberPath="Description" 
-                  SelectedValue="{Binding PrimaryScreen}"  
-                  SelectedValuePath="Value"  />
+        <StackPanel Grid.Row="4" Orientation="Horizontal" ToolTip="For optimal streaming quality, MAME should start on the highest resolution monitor">
+            <CheckBox IsChecked="{Binding CloneScreen}" VerticalContentAlignment="Center" Padding="0">
+                <Label Style="{StaticResource Inline}">Stream MAME to other displays</Label>
+            </CheckBox>
         </StackPanel>
 
         <!-- Hoykeys -->
