@@ -56,7 +56,7 @@
         <!-- Cloning -->
         <StackPanel Grid.Row="3" Orientation="Horizontal">
             <Label VerticalAlignment="Center">Start MAME on:</Label>
-            <ComboBox Width="150" ItemsSource="{Binding Source={extensions:Enumeration {x:Type models:MamePrimaryScreen}}}" 
+            <ComboBox Width="200" ItemsSource="{Binding Source={extensions:Enumeration {x:Type models:MamePrimaryScreen}}}" 
                       DisplayMemberPath="Description" 
                       SelectedValue="{Binding PrimaryScreen}"  
                       SelectedValuePath="Value"/>
