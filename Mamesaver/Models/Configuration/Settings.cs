@@ -19,6 +19,7 @@ namespace Mamesaver.Models.Configuration
             HotKeys = true;
             LayoutSettings = new LayoutSettings();
             AdvancedSettings = new AdvancedSettings();
+            MamePrimaryScreen = MamePrimaryScreen.HighestResolution;
         }
 
         /// <summary>
@@ -44,6 +45,12 @@ namespace Mamesaver.Models.Configuration
         /// </summary>
         [XmlElement("cloneScreen")]
         public bool CloneScreen { get; set; }
+
+        /// <summary>
+        /// Which monitor should Mame run on
+        /// </summary>
+        [XmlElement("mameScreen")]
+        public MamePrimaryScreen MamePrimaryScreen { get; set; }
 
         /// <summary>
         ///     Whether hot keys should be enabled to interact with screensaver.

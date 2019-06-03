@@ -56,7 +56,8 @@ Other than those main settings, you can also:
 * Set the command line options which are sent to MAME. I recommend leaving the `-skip_gameinfo` option.
 * Enable and configure the splash screen with game information
 * Enable and configure in-game game information
-* Enable multi-monitor cloning
+* Choose which display to start MAME on
+* Enable streaming of MAME to other displays. For optimal streaming quality, MAME should start on the highest resolution monitor
 * Include games with imperfect emulation
 * Enable in-game hotkeys
 

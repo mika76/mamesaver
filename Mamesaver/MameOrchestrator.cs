@@ -82,8 +82,7 @@ namespace Mamesaver
                     return;
                 }
 
-                // Find the best primary screen for MAME. As games are largely vertical and screens are wide, select the one with the greatest Y axis
-                var bestPrimaryScreen = Screen.AllScreens.OrderByDescending(screen => screen.Bounds.Height).First();
+                var primaryScreen = GetPrimaryScreen();
 
                 _screenManager.Initialise(_cancellationTokenSource);
 
@@ -94,12 +93,12 @@ namespace Mamesaver
                 _powerManager.Initialise();
  
                 // Initialise primary MAME screen
-                _gamePlayManager.Initialise(bestPrimaryScreen, _cancellationTokenSource);
-                _mameScreen.Initialise(bestPrimaryScreen);
+                _gamePlayManager.Initialise(primaryScreen, _cancellationTokenSource);
+                _mameScreen.Initialise(primaryScreen);
 
                 // Initialise all other screens
                 var clonedScreens = new List<BlankScreen>();
-                foreach (var otherScreen in Screen.AllScreens.Where(screen => !Equals(screen, bestPrimaryScreen)))
+                foreach (var otherScreen in Screen.AllScreens.Where(screen => !Equals(screen, primaryScreen)))
                 {
                     var blankScreen = _screenFactory.Create();
                     _screenManager.RegisterScreen(blankScreen);
@@ -132,6 +131,21 @@ namespace Mamesaver
                 Log.Error(ex, "Failed to run screensaver");
                 throw;
             }
+        }
+
+        /// <summary>
+        /// Get the primary screen to run MAME on. 
+        /// </summary>
+        /// <returns></returns>
+        private Screen GetPrimaryScreen()
+        {
+            if (_settings.MamePrimaryScreen == MamePrimaryScreen.HighestResolution)
+            {
+                // Find the best primary screen for MAME.
+                // As games are largely vertical and screens are wide, select the one with the greatest Y axis
+                return Screen.AllScreens.OrderByDescending(screen => screen.Bounds.Height).First();
+            }
+            return Screen.PrimaryScreen;
         }
 
         /// <summary>

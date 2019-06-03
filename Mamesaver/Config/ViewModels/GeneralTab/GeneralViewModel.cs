@@ -125,6 +125,17 @@ namespace Mamesaver.Config.ViewModels.GeneralTab
             }
         }
 
+        public MamePrimaryScreen PrimaryScreen 
+        {
+            get => _settings.MamePrimaryScreen;
+            set
+            {
+                if (value == _settings.MamePrimaryScreen) return;
+                _settings.MamePrimaryScreen = value;
+                OnPropertyChanged();
+            }
+        }
+
         /// <summary>
         ///     Time to run each game.
         /// </summary>

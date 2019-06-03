@@ -145,6 +145,7 @@
     <Compile Include="MameExitCodes.cs" />
     <Compile Include="MameScreen.cs" />
     <Compile Include="Models\Configuration\AdvancedSettings.cs" />
+    <Compile Include="Models\Configuration\MamePrimaryScreen.cs" />
     <Compile Include="Models\Configuration\FontSettings.cs" />
     <Compile Include="Models\Configuration\GameList.cs" />
     <Compile Include="Models\Configuration\InGameTitles.cs" />
@@ -152,6 +153,7 @@
     <Compile Include="Models\Configuration\Settings.cs" />
     <Compile Include="Models\Configuration\SplashScreen.cs" />
     <Compile Include="Models\Extensions\EnumerableExtensions.cs" />
+    <Compile Include="Models\Extensions\EnumerationExtension.cs" />
     <Compile Include="Models\Extensions\ExceptionExtensions.cs" />
     <Compile Include="Models\Extensions\XmlExtensions.cs" />
     <Compile Include="Models\Game.cs" />
