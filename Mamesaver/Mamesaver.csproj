@@ -314,6 +314,7 @@
   </Target>
   <Target Name="CreateScreensaver" AfterTargets="CleanReferenceCopyLocalPaths">
     <Message Text="Creating screensaver" Importance="High" />
-    <Exec Command="copy $(TargetPath) $(TargetDir)\$(TargetName).scr" />
+    <Delete Files="$(TargetDir)$(TargetName).scr" />
+    <Copy SourceFiles="$(TargetDir)$(TargetName).exe" DestinationFiles="$(TargetDir)$(TargetName).scr" OverwriteReadOnlyFiles="true" />
   </Target>
 </Project>

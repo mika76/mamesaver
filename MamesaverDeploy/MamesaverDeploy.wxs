@@ -13,7 +13,7 @@
       <Directory Id="SystemFolder">
 
         <Component Id="ProductComponent" Guid="e7ac086a-a6bc-4115-af4c-0a7f1aa2bd0f">
-          <File Id="Mamesaver" Name="Mamesaver.scr" Source="..\..\..\Mamesaver\bin\Release\Mamesaver.scr" />
+          <File Id="Mamesaver" Name="$(var.Mamesaver.TargetName).scr" Source="$(var.Mamesaver.TargetDir)$(var.Mamesaver.TargetName).scr" DiskId="1" />
         </Component>
 
       </Directory>
