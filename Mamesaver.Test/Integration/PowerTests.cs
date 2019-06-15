@@ -1,4 +1,4 @@
-﻿using Mamesaver.Windows;
+﻿using Mamesaver.Services.Windows;
 using NUnit.Framework;
 
 namespace Mamesaver.Test.Integration

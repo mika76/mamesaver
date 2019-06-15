@@ -1,16 +1,12 @@
-/**
- * Licensed under The MIT License
- * Redistributions of files must retain the above copyright notice.
- */
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
-using Mamesaver.Configuration.Models;
-using Mamesaver.Hotkeys;
+using Mamesaver.HotKeys;
+using Mamesaver.Models.Configuration;
 using Mamesaver.Power;
+using Mamesaver.Services.Mame;
 using Serilog;
 
 namespace Mamesaver
@@ -74,26 +70,35 @@ namespace Mamesaver
                     return;
                 }
 
-                // Start listening for user input events
+                // Verify that MAME can be run so we can return immediately if there are errors
+                try
+                {
+                    _invoker.Run("-showconfig");
+                }
+                catch (Exception e)
+                {
+                    Log.Error(e, "Failure verifying MAME");
+                    MessageBox.Show(@"Error running screensaver. Verify that your MAME path and and arguments are correct.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                var primaryScreen = GetPrimaryScreen();
+
                 _screenManager.Initialise(_cancellationTokenSource);
-                _hotKeyManager.Initialise();            
+
+                // Start listening for user input events
+                _hotKeyManager.Initialise();
 
                 // Start power management timer
                 _powerManager.Initialise();
-
-                // Verify that MAME can be run so we can return immediately if there are errors
-                _invoker.Run("-showconfig");
-
-                // Find the best primary screen for MAME. As games are largely vertical and screens are wide, select the one with the greatest Y axis
-                var bestPrimaryScreen = Screen.AllScreens.OrderByDescending(screen => screen.Bounds.Height).First();
-
+ 
                 // Initialise primary MAME screen
-                _gamePlayManager.Initialise(bestPrimaryScreen, _cancellationTokenSource);
-                _mameScreen.Initialise(bestPrimaryScreen);
+                _gamePlayManager.Initialise(primaryScreen, _cancellationTokenSource);
+                _mameScreen.Initialise(primaryScreen);
 
                 // Initialise all other screens
                 var clonedScreens = new List<BlankScreen>();
-                foreach (var otherScreen in Screen.AllScreens.Where(screen => !Equals(screen, bestPrimaryScreen)))
+                foreach (var otherScreen in Screen.AllScreens.Where(screen => !Equals(screen, primaryScreen)))
                 {
                     var blankScreen = _screenFactory.Create();
                     _screenManager.RegisterScreen(blankScreen);
@@ -129,6 +134,21 @@ namespace Mamesaver
         }
 
         /// <summary>
+        /// Get the primary screen to run MAME on. 
+        /// </summary>
+        /// <returns></returns>
+        private Screen GetPrimaryScreen()
+        {
+            if (_settings.MamePrimaryScreen == MamePrimaryScreen.HighestResolution)
+            {
+                // Find the best primary screen for MAME.
+                // As games are largely vertical and screens are wide, select the one with the greatest Y axis
+                return Screen.AllScreens.OrderByDescending(screen => screen.Bounds.Height).First();
+            }
+            return Screen.PrimaryScreen;
+        }
+
+        /// <summary>
         ///     Stops the screensaver
         /// </summary>
         private void Stop()
@@ -136,7 +156,9 @@ namespace Mamesaver
             try
             {
                 Log.Information("Stopping screensaver");
-                Application.Exit();
+
+                if (Application.MessageLoop) Application.Exit();
+                else Environment.Exit(1);
             }
             catch (Exception e)
             {

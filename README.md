@@ -5,6 +5,7 @@
 - [Installation](#installation)
 - [Usage](#usage)
 - [Configuration](#configuration)
+- [Filtering](#filtering)
 - [Hotkeys](#hotkeys)
 - [Comments](#comments)
 - [Logging](#logging)
@@ -12,11 +13,14 @@
 - [Open source](#open-source)
 
 
-v2.0
+v3.0
 Licensed under The MIT License
 
 [![Build status](https://ci.appveyor.com/api/projects/status/2b8n7te1bq8rf1pp?svg=true)](https://ci.appveyor.com/project/mmihajlovic/mamesaver)
+[![Build Status](https://mmihajlovic.visualstudio.com/mamesaver/_apis/build/status/mika76.mamesaver)](https://mmihajlovic.visualstudio.com/mamesaver/_build/latest?definitionId=2) 
+[![Downloads](https://img.shields.io/github/downloads/mika76/mamesaver/total.svg?colorB=green)](https://github.com/mika76/mamesaver/releases)
 [![Gitter](https://badges.gitter.im/mika76/mamesaver.svg)](https://gitter.im/mika76/mamesaver?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 
 ### INTRODUCTION
 
@@ -52,9 +56,16 @@ Other than those main settings, you can also:
 * Set the command line options which are sent to MAME. I recommend leaving the `-skip_gameinfo` option.
 * Enable and configure the splash screen with game information
 * Enable and configure in-game game information
-* Enable multi-monitor cloning
+* Choose which display to start MAME on
+* Enable streaming of MAME to other displays. For optimal streaming quality, MAME should start on the highest resolution monitor
 * Include games with imperfect emulation
 * Enable in-game hotkeys
+
+### FILTERING
+
+Once the game list has been built, it can be filtered by year, manufacturer, category, subcategory and rotation. The purpose of filtering is to increase manageability of game selection, particularly for large collections. Filters are applied in an additive fashion, similar to Excel.
+
+Once filtering has been applied, the select all and select none controls via the game list header are applied to the filtered set only. At any stage, the filtered game list view can be toggled between displaying all games and selected games.
 
 ### HOTKEYS
 
@@ -74,7 +85,7 @@ When enabled, the following hotkeys are enabled in-game:
 If enabled, debug logging is written to `%TEMP%\MameSaver\Logs`. This can be useful to diagnose why Mamesaver may not be running as it should. 
 
 ### CONTRIBUTORS
-![](https://avatars2.githubusercontent.com/u/229311?s=44&v=4) Mladen Mihajlovic
+![](https://avatars2.githubusercontent.com/u/229311?s=44&v=4) Mladen Mihajlović
 
 ![](https://avatars2.githubusercontent.com/u/1732347?s=44&v=4) Matt Painter
 

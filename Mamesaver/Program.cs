@@ -1,14 +1,11 @@
-/**
- * Licensed under The MIT License
- * Redistributions of files must retain the above copyright notice.
- */
-
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
-using Mamesaver.Configuration.Models;
+using Mamesaver.Config;
+using Mamesaver.Models.Configuration;
+using Mamesaver.Services;
 using Serilog;
 using Serilog.Events;
 using SimpleInjector;
@@ -42,17 +39,14 @@ namespace Mamesaver
 
                 using (AsyncScopedLifestyle.BeginScope(_container))
                 {
-                    var orchestrator = _container.GetInstance<MameOrchestrator>();
-
                     switch (arguments[0].Trim().Substring(0, 2).ToLower())
                     {
                         case "/c":
-                            //TODO: Catch display properties window handle and set it as parent
                             ShowConfig();
                             break;
 
                         case "/s":
-                            orchestrator.Run();
+                            _container.GetInstance<MameOrchestrator>().Run();
                             break;
 
                         case "/p":
@@ -66,8 +60,7 @@ namespace Mamesaver
             }
             catch(Exception ex)
             {
-                Log.Error(ex, "Main");
-                DisplayError();
+                Log.Error(ex, "Unhandled exception");
             }
         }
 
@@ -94,11 +87,6 @@ namespace Mamesaver
         {
             Log.Error(e.Exception, "Thread exception");
             Environment.Exit(-1);
-        }
-
-        private static void DisplayError()
-        {
-            MessageBox.Show(@"Error running screensaver. Verify that your MAME path and and arguments are correct.", @"Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         /// <summary>
@@ -132,8 +120,10 @@ namespace Mamesaver
         /// </summary>
         public static void ShowConfig()
         {
-            Application.EnableVisualStyles();
-            Application.Run(_container.GetInstance<ConfigForm>());
+            // Initialise static service resolution in code behind
+            _container.GetInstance<ServiceResolver>().Initialise();
+
+            new App().Run(new ConfigForm());
         }
 
         [Conditional("DEBUG")]

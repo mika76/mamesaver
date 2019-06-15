@@ -61,6 +61,46 @@ namespace Mamesaver.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to [FOLDER_SETTINGS]
+        ///RootFolderIcon mame
+        ///SubFolderIcon folder
+        ///
+        ///;; CATVER.ini 0.201 / 31-aug-18 / MAME 0.201 ;;
+        ///
+        ///[ROOT_FOLDER]
+        ///
+        ///[Category]
+        ///005=Maze / Shooter Small
+        ///100lions=Slot Machine / Video Slot
+        ///10yard=Sports / Football
+        ///10yard85=Sports / Football
+        ///10yardj=Sports / Football
+        ///11beat=Sports / Soccer
+        ///1292apvs=Game Console / Home Videogame
+        ///136094_0072=System / Device
+        ///136095_0072=System / Device
+        ///1392apvs=Game Console / Home Videogame
+        ///18w=Electromechanical / Misc.
+        ///18w2=Electromechanical / Misc.
+        /// [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string catver {
+            get {
+                return ResourceManager.GetString("catver", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap mame_icon {
+            get {
+                object obj = ResourceManager.GetObject("mame_icon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap MAMELogoTM {

@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Windows.Forms;
-using Mamesaver.Hotkeys;
-using Mamesaver.Windows;
+using Mamesaver.HotKeys;
+using Mamesaver.Services.Windows;
 using Serilog;
 
 namespace Mamesaver
@@ -61,7 +61,15 @@ namespace Mamesaver
             _activityHook.OnMouseActivity -= OnMouseActivity;
 
             Log.Debug("Exiting due to mouse activity");
-            _cancellationTokenSource.Cancel();
+
+            try
+            {
+                _cancellationTokenSource.Cancel();
+            }
+            catch (ObjectDisposedException)
+            {
+                // Ignored
+            }
         }
 
         /// <summary>
@@ -72,7 +80,15 @@ namespace Mamesaver
             _hotKeyManager.UnhandledKeyPressed -= UnhandledKeyPressed;
 
             Log.Debug("Exiting due to unhandled keypress");
-            _cancellationTokenSource.Cancel();
+
+            try
+            {
+                _cancellationTokenSource.Cancel();
+            }
+            catch (ObjectDisposedException)
+            {
+                // Ignored
+            }
         }
 
         /// <summary>

@@ -1,6 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0">
-  <Import Project="..\packages\MSBuild.ILMerge.Task.1.0.5\build\MSBuild.ILMerge.Task.props" Condition="Exists('..\packages\MSBuild.ILMerge.Task.1.0.5\build\MSBuild.ILMerge.Task.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -14,7 +13,7 @@
     <StartupObject>Mamesaver.Program</StartupObject>
     <ApplicationIcon>Resources\mame.ico</ApplicationIcon>
     <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>key.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>Mamesaver.snk</AssemblyOriginatorKeyFile>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
@@ -35,6 +34,7 @@
     <WarningLevel>4</WarningLevel>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <Prefer32Bit>false</Prefer32Bit>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -47,21 +47,22 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Repack|AnyCPU'">
+    <OutputPath>bin\Repack\</OutputPath>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Serilog, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
-      <HintPath>..\packages\Serilog.2.5.0\lib\net46\Serilog.dll</HintPath>
-    </Reference>
-    <Reference Include="Serilog.Sinks.EventLog, Version=3.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
-      <HintPath>..\packages\Serilog.Sinks.EventLog.3.1.0\lib\net45\Serilog.Sinks.EventLog.dll</HintPath>
-    </Reference>
-    <Reference Include="Serilog.Sinks.File, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
-      <HintPath>..\packages\Serilog.Sinks.File.4.0.0\lib\net45\Serilog.Sinks.File.dll</HintPath>
-    </Reference>
+    <Reference Include="Microsoft.CSharp" CopyLocal="True" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="PresentationCore" />
-    <Reference Include="SimpleInjector, Version=4.3.0.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
-      <HintPath>..\packages\SimpleInjector.4.3.0\lib\net45\SimpleInjector.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.configuration" />
@@ -70,11 +71,15 @@
     <Reference Include="System.Management" />
     <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xaml" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
     <Compile Include="BackgroundForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -84,40 +89,84 @@
     <Compile Include="BlankScreen.cs" />
     <Compile Include="BlankScreenFactory.cs" />
     <Compile Include="CaptureScreen.cs" />
+    <Compile Include="Config\AboutTab.xaml.cs">
+      <DependentUpon>AboutTab.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Config\ConfigForm.xaml.cs">
+      <DependentUpon>ConfigForm.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Config\Converters\BooleanToVisibilityConverter.cs" />
+    <Compile Include="Config\Converters\InvertedBooleanConverter.cs" />
+    <Compile Include="Config\Converters\InvertedBooleanToVisibilityConverter.cs" />
+    <Compile Include="Config\Extensions\DependencyObjectExtensions.cs" />
+    <Compile Include="Config\Extensions\FrameworkElementExtensions.cs" />
+    <Compile Include="Config\FilterStyles.cs" />
+    <Compile Include="Config\Filters\GlobalSelectionContentFilter.cs" />
+    <Compile Include="Config\Filters\IGameFilter.cs" />
+    <Compile Include="Config\Filters\ViewModels\FilterItemViewModel.cs" />
+    <Compile Include="Config\Filters\MultipleChoiceContentFilter.cs" />
+    <Compile Include="Config\Filters\MultipleChoiceFilter.xaml.cs">
+      <DependentUpon>MultipleChoiceFilter.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Config\Filters\ViewModels\MultipleChoiceFilterViewModel.cs" />
+    <Compile Include="Config\GameListTab.xaml.cs">
+      <DependentUpon>GameListTab.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Config\GeneralTab.xaml.cs">
+      <DependentUpon>GeneralTab.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Config\Helpers\SortablePropertyHelper.cs" />
+    <Compile Include="Config\HelpTab.xaml.cs">
+      <DependentUpon>HelpTab.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Config\Infrastructure\BindingProxy.cs" />
+    <Compile Include="Config\Infrastructure\DebugDummyConverter.cs" />
+    <Compile Include="Config\LayoutTab.xaml.cs">
+      <DependentUpon>LayoutTab.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Config\Models\GameViewModel.cs" />
+    <Compile Include="Config\ViewModels\AboutTab\AboutViewModel.cs" />
+    <Compile Include="Config\ViewModels\ConfigViewModel.cs" />
+    <Compile Include="Config\ViewModels\GameListTab\FilterMode.cs" />
+    <Compile Include="Config\ViewModels\GameListTab\FilterOption.cs" />
+    <Compile Include="Config\ViewModels\GameListTab\GameListViewModel.cs" />
+    <Compile Include="Config\ViewModels\GameListTab\GlobalFilterEventArgs.cs" />
+    <Compile Include="Config\ViewModels\GeneralTab\GeneralViewModel.cs" />
+    <Compile Include="Config\ViewModels\InitialisableViewModel.cs" />
+    <Compile Include="Config\ViewModels\LayoutTab\LayoutViewModel.cs" />
+    <Compile Include="Config\ViewModels\ResetToDefaultsEventArgs.cs" />
+    <Compile Include="Config\ViewModels\ViewModel.cs" />
     <Compile Include="ContainerFactory.cs" />
-    <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="GamePlayManager.cs" />
     <Compile Include="Helper\StackHelper.cs" />
-    <Compile Include="Hotkeys\HotKey.cs" />
-    <Compile Include="Hotkeys\HotKeyEventArgs.cs" />
-    <Compile Include="Hotkeys\HotKeyManager.cs" />
-    <Compile Include="MameErrorCodes.cs" />
+    <Compile Include="HotKeys\HotKey.cs" />
+    <Compile Include="HotKeys\HotKeyEventArgs.cs" />
+    <Compile Include="HotKeys\HotKeyManager.cs" />
+    <Compile Include="MameExitCodes.cs" />
     <Compile Include="MameScreen.cs" />
-    <Compile Include="Configuration\Models\AdvancedSettings.cs" />
-    <Compile Include="Configuration\Models\FontSettings.cs" />
-    <Compile Include="Configuration\Models\GameList.cs" />
-    <Compile Include="Configuration\Models\InGameTitles.cs" />
-    <Compile Include="Configuration\Models\LayoutSettings.cs" />
-    <Compile Include="Configuration\Models\SplashScreen.cs" />
-    <Compile Include="Configuration\GameListStore.cs" />
+    <Compile Include="Models\Configuration\AdvancedSettings.cs" />
+    <Compile Include="Models\Configuration\MamePrimaryScreen.cs" />
+    <Compile Include="Models\Configuration\FontSettings.cs" />
+    <Compile Include="Models\Configuration\GameList.cs" />
+    <Compile Include="Models\Configuration\InGameTitles.cs" />
+    <Compile Include="Models\Configuration\LayoutSettings.cs" />
+    <Compile Include="Models\Configuration\Settings.cs" />
+    <Compile Include="Models\Configuration\SplashScreen.cs" />
+    <Compile Include="Models\Extensions\EnumerableExtensions.cs" />
+    <Compile Include="Models\Extensions\EnumerationExtension.cs" />
+    <Compile Include="Models\Extensions\ExceptionExtensions.cs" />
+    <Compile Include="Models\Extensions\XmlExtensions.cs" />
+    <Compile Include="Models\Game.cs" />
+    <Compile Include="Models\SelectableGame.cs" />
     <Compile Include="MultiFormApplicationContext.cs" />
     <Compile Include="Power\PowerEventWatcher.cs" />
     <Compile Include="Power\PowerManager.cs" />
+    <Compile Include="Properties\Annotations.cs" />
     <Compile Include="ScreenCloner.cs" />
-    <Compile Include="ConfigForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ConfigForm.Designer.cs">
-      <DependentUpon>ConfigForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Game.cs" />
     <Compile Include="Layout\LayoutBuilder.cs" />
     <Compile Include="Layout\LayoutConstants.cs" />
     <Compile Include="Layout\LayoutFactory.cs" />
     <Compile Include="Layout\TitleFactory.cs" />
-    <Compile Include="ListViewSorter.cs" />
-    <Compile Include="MameInvoker.cs" />
-    <Compile Include="GameListBuilder.cs" />
     <Compile Include="Layout\Models\Bezel.cs" />
     <Compile Include="Layout\Models\Bounds.cs" />
     <Compile Include="Layout\Models\Element.cs" />
@@ -125,10 +174,7 @@
     <Compile Include="Layout\Models\MameLayout.cs" />
     <Compile Include="Layout\Models\Screen.cs" />
     <Compile Include="Layout\Models\View.cs" />
-    <Compile Include="Configuration\GeneralSettingsStore.cs" />
-    <Compile Include="Configuration\SettingsStore.cs" />
     <Compile Include="ScreenManager.cs" />
-    <Compile Include="Windows\MonitorInterop.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="MameOrchestrator.cs">
@@ -138,33 +184,37 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="SelectableGame.cs" />
-    <Compile Include="Configuration\Models\Settings.cs" />
-    <Compile Include="Windows\PlatformInvokeGdi32.cs" />
-    <Compile Include="Windows\PlatformInvokePowrprof.cs" />
-    <Compile Include="Windows\PlatformInvokeKernel32.cs" />
-    <Compile Include="Windows\PlatformInvokeUser32.cs" />
-    <Compile Include="Windows\PowerInterop.cs" />
-    <Compile Include="Windows\UserActivityHook.cs" />
-    <Compile Include="Windows\WindowsInterop.cs" />
+    <Compile Include="Services\Categories\CategoryDetail.cs" />
+    <Compile Include="Services\Categories\CategoryParser.cs" />
+    <Compile Include="Services\Configuration\GameListStore.cs" />
+    <Compile Include="Services\Configuration\GeneralSettingsStore.cs" />
+    <Compile Include="Services\Configuration\SettingsStore.cs" />
+    <Compile Include="Services\Mame\GameListBuilder.cs" />
+    <Compile Include="Services\Mame\MameInvoker.cs" />
+    <Compile Include="Services\Mame\MamePathManager.cs" />
+    <Compile Include="Services\ServiceResolver.cs" />
+    <Compile Include="Services\Windows\MonitorInterop.cs" />
+    <Compile Include="Services\Windows\PlatformInvokeGDI32.cs" />
+    <Compile Include="Services\Windows\PlatformInvokeKernel32.cs" />
+    <Compile Include="Services\Windows\PlatformInvokePowrprof.cs" />
+    <Compile Include="Services\Windows\PlatformInvokeUSER32.cs" />
+    <Compile Include="Services\Windows\PowerInterop.cs" />
+    <Compile Include="Services\Windows\UserActivityHook.cs" />
+    <Compile Include="Services\Windows\WindowsInterop.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="ILMerge.props" />
-    <None Include="packages.config">
+    <None Include="ILRepack.targets">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Resources\catver.ini" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="BackgroundForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>BackgroundForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ConfigForm.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>ConfigForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <SubType>Designer</SubType>
@@ -173,32 +223,98 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="key.snk" />
+    <None Include="Mamesaver.snk" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
-    <Content Include="ILMergeOrder.txt" />
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Config\Resources\mame-icon.png" />
+    <Resource Include="Config\Resources\mame.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Content Include="Resources\mame-icon.png" />
     <Content Include="Resources\mame.ico" />
     <Content Include="Resources\MAMELogoTM.jpg" />
   </ItemGroup>
+  <ItemGroup>
+    <Page Include="Config\AboutTab.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Config\ConfigForm.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Config\Filters\MultipleChoiceFilter.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Config\GameListTab.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Config\GeneralTab.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Config\HelpTab.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Config\LayoutTab.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Config\Styles.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="ILRepack">
+      <Version>2.0.16</Version>
+    </PackageReference>
+    <PackageReference Include="ILRepack.Lib.MSBuild.Task">
+      <Version>2.0.16</Version>
+    </PackageReference>
+    <PackageReference Include="Prism.Wpf">
+      <Version>6.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="Serilog.Sinks.EventLog">
+      <Version>3.1.0</Version>
+    </PackageReference>
+    <PackageReference Include="Serilog.Sinks.File">
+      <Version>4.0.0</Version>
+    </PackageReference>
+    <PackageReference Include="SimpleInjector">
+      <Version>4.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Xml.XDocument">
+      <Version>4.3.0</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Config\ViewModels\AdvancedTab\" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
+  <Target AfterTargets="ILRepack" Name="ClearOutput" Condition="$(Configuration.Contains('Repack'))">
+    <Message Text="Clearing output" Importance="High" />
+    <Delete Files="@(ReferenceCopyLocalPaths->'$(OutDir)%(DestinationSubDirectory)%(Filename)%(Extension)')" />
+    <ItemGroup>
+      <Directories Include="$([System.IO.Directory]::GetDirectories('$(OutDir)%(DestinationSubDirectory)', '*', System.IO.SearchOption.AllDirectories))" />
+      <Directories>
+        <Files>$([System.IO.Directory]::GetFiles("%(Directories.Identity)", "*", System.IO.SearchOption.AllDirectories).get_Length())</Files>
+      </Directories>
+    </ItemGroup>
+    <RemoveDir Directories="@(Directories)" Condition="%(Files)=='0'" />
   </Target>
-  <Target Name="AfterBuild">
+  <Target Name="CreateScreensaver" AfterTargets="CleanReferenceCopyLocalPaths">
+    <Message Text="Creating screensaver" Importance="High" />
+    <Delete Files="$(TargetDir)$(TargetName).scr" />
+    <Copy SourceFiles="$(TargetDir)$(TargetName).exe" DestinationFiles="$(TargetDir)$(TargetName).scr" OverwriteReadOnlyFiles="true" />
   </Target>
-  -->
-  <PropertyGroup>
-    <PostBuildEvent>copy Mamesaver.exe Mamesaver.scr
-</PostBuildEvent>
-  </PropertyGroup>
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\MSBuild.ILMerge.Task.1.0.5\build\MSBuild.ILMerge.Task.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MSBuild.ILMerge.Task.1.0.5\build\MSBuild.ILMerge.Task.props'))" />
-    <Error Condition="!Exists('..\packages\MSBuild.ILMerge.Task.1.0.5\build\MSBuild.ILMerge.Task.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MSBuild.ILMerge.Task.1.0.5\build\MSBuild.ILMerge.Task.targets'))" />
-  </Target>
-  <Import Project="..\packages\MSBuild.ILMerge.Task.1.0.5\build\MSBuild.ILMerge.Task.targets" Condition="Exists('..\packages\MSBuild.ILMerge.Task.1.0.5\build\MSBuild.ILMerge.Task.targets')" />
 </Project>

@@ -1,9 +1,17 @@
-using Mamesaver.Configuration;
-using Mamesaver.Configuration.Models;
-using Mamesaver.Hotkeys;
+using Mamesaver.Config.Filters.ViewModels;
+using Mamesaver.Config.ViewModels;
+using Mamesaver.Config.ViewModels.GameListTab;
+using Mamesaver.Config.ViewModels.GeneralTab;
+using Mamesaver.Config.ViewModels.LayoutTab;
+using Mamesaver.HotKeys;
 using Mamesaver.Layout;
+using Mamesaver.Models.Configuration;
 using Mamesaver.Power;
-using Mamesaver.Windows;
+using Mamesaver.Services;
+using Mamesaver.Services.Categories;
+using Mamesaver.Services.Configuration;
+using Mamesaver.Services.Mame;
+using Mamesaver.Services.Windows;
 using SimpleInjector;
 using SimpleInjector.Lifestyles;
 
@@ -41,6 +49,8 @@ namespace Mamesaver
             container.Register<ScreenManager>(Lifestyle.Scoped);
             container.Register<PowerManager>(Lifestyle.Scoped);
             container.Register<HotKeyManager>(Lifestyle.Scoped);
+            container.Register<MameOrchestrator>(Lifestyle.Scoped);
+            container.Register<BlankScreenFactory>(Lifestyle.Scoped);
 
             container.Register<GameListBuilder>(Lifestyle.Singleton);
             container.Register<TitleFactory>(Lifestyle.Singleton);
@@ -48,8 +58,19 @@ namespace Mamesaver
             container.Register<LayoutFactory>(Lifestyle.Singleton);
             container.Register<MameInvoker>(Lifestyle.Singleton);
             container.Register<PowerEventWatcher>(Lifestyle.Singleton);
+            container.Register<MamePathManager>(Lifestyle.Singleton);
+            container.Register<CategoryParser>(Lifestyle.Singleton);
+
+            container.Register<Config.ConfigForm>(Lifestyle.Singleton);
+            container.Register<ConfigViewModel>(Lifestyle.Singleton);
+            container.Register<GameListViewModel>(Lifestyle.Singleton);
+            container.Register<LayoutViewModel>(Lifestyle.Singleton);
+            container.Register<GeneralViewModel>(Lifestyle.Singleton);
+
+            container.Register<MultipleChoiceFilterViewModel>(Lifestyle.Transient);
 
             container.Register<IActivityHook>(() => new UserActivityHook(), Lifestyle.Singleton);
+            container.Register(() => new ServiceResolver(container), Lifestyle.Singleton);
 
             return container;
         }

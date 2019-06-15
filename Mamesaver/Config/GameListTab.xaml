@@ -1,0 +1,194 @@
+﻿<UserControl x:Class="Mamesaver.Config.GameListTab"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:infrastructure="clr-namespace:Mamesaver.Config.Infrastructure"
+             xmlns:filters="clr-namespace:Mamesaver.Config.Filters"
+             xmlns:converters="clr-namespace:Mamesaver.Config.Converters"
+             mc:Ignorable="d"
+             d:DesignHeight="450" d:DesignWidth="800"
+             Background="White">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <BooleanToVisibilityConverter x:Key="VisibilityConverter"/>
+            <converters:InvertedBooleanToVisibilityConverter x:Key="InvertedVisibilityConverter"/>
+
+            <ControlTemplate x:Key="ManufacturerFilter">
+                <filters:MultipleChoiceFilter Field="Manufacturer"/>
+            </ControlTemplate>
+
+            <ControlTemplate x:Key="RotationFilter">
+                <filters:MultipleChoiceFilter Field="Rotation" />
+            </ControlTemplate>
+
+            <ControlTemplate x:Key="YearFilter">
+                <filters:MultipleChoiceFilter Field="YearFilter"/>
+            </ControlTemplate>
+
+            <ControlTemplate x:Key="CategoryFilter">
+                <filters:MultipleChoiceFilter Field="Category"/>
+            </ControlTemplate>
+        
+            <ControlTemplate x:Key="SubcategoryFilter">
+                <filters:MultipleChoiceFilter Field="Subcategory" />
+            </ControlTemplate>
+ 
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+
+        <DockPanel Margin="0,4" Grid.ColumnSpan="2" LastChildFill="False" Visibility="{Binding Rebuilding, Converter={StaticResource InvertedVisibilityConverter}}">
+            <Button Content="_Rebuild List" Width="90" Command="{Binding RebuildListClick}" x:Name="RebuildList"
+                     DockPanel.Dock="Left" Margin="0,5,5,5" />
+
+            <Label Content="{Binding GameCount}" DockPanel.Dock="Left" Style="{StaticResource Inline}"
+                   Visibility="{Binding Path=Rebuilding, Converter={StaticResource InvertedVisibilityConverter}}"/>
+
+            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                <ComboBox Width="150" Margin="0,0,0,0" ItemsSource="{Binding FilterOptions}" DisplayMemberPath="Text" SelectedValue="{Binding GlobalFilter}" />
+                <Button Content="Apply" Width="60" Command="{Binding ApplyGlobalFilterClick}" VerticalAlignment="Bottom" Margin="5,5,10,5" />
+                <Button Content="_Clear Filters" Width="90" Command="{Binding ClearFiltersClick}" VerticalAlignment="Bottom" Margin="5,5,0,5" />
+            </StackPanel>
+        </DockPanel>
+
+        <ProgressBar Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Height="20" Width="200" 
+                     Value="{Binding Progress}"
+                     Visibility="{Binding Rebuilding, Converter={StaticResource VisibilityConverter}}"/>
+
+        <DataGrid x:Name="GameList" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" IsReadOnly="True"
+                  Background="White"
+                  CanUserReorderColumns="False" CanUserResizeRows="False"
+                  EnableRowVirtualization="True"
+                  EnableColumnVirtualization="True"
+                  GridLinesVisibility="None" AutoGenerateColumns="False"
+                  ColumnHeaderStyle="{StaticResource GamesHeader}"
+                  CellStyle="{StaticResource GamesCell}"
+                  VirtualizingStackPanel.IsVirtualizing="True"
+                  VirtualizingStackPanel.VirtualizationMode="Recycling"
+                  ItemsSource="{Binding GamesView}"
+                  Visibility="{Binding Rebuilding, Converter={StaticResource InvertedVisibilityConverter}}">
+
+            <DataGrid.Resources>
+                <infrastructure:BindingProxy x:Key="Proxy" Data="{Binding}" />
+            </DataGrid.Resources>
+            <DataGrid.Columns>
+
+                <!-- Game selection header -->
+                <DataGridTemplateColumn CanUserResize="False" SortMemberPath="SelectedFilter" Width="50">
+                    <DataGridTemplateColumn.Header>
+                        <CheckBox
+                            HorizontalAlignment="Center"
+                            IsChecked="{Binding Path=Data.AllSelected,
+                                        UpdateSourceTrigger=PropertyChanged, Mode=TwoWay,
+                                        Source={StaticResource Proxy}}" />
+                    </DataGridTemplateColumn.Header>
+
+                    <!-- Game selection -->
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <CheckBox HorizontalAlignment="Center"
+                                      Command="{Binding Path=DataContext.GameSelectionClick,
+                                            RelativeSource={RelativeSource FindAncestor,
+                                            AncestorType={x:Type UserControl}}}"
+                                      IsChecked="{Binding Path=Selected, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTextColumn Binding="{Binding Description}" Header="Name" MinWidth="100" Width="200" SortDirection="Ascending" />
+                
+                <!-- TODO template this -->
+                <!-- Year -->
+                <DataGridTemplateColumn Width="60" CanUserResize="False" SortMemberPath="YearFilter">
+                    <DataGridTemplateColumn.Header>
+                            <DockPanel LastChildFill="False">
+                                <TextBlock>Year</TextBlock>
+                                <Control DockPanel.Dock="Right" Template="{StaticResource YearFilter}"/>
+                            </DockPanel>
+                    </DataGridTemplateColumn.Header>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Year}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+
+                </DataGridTemplateColumn>
+
+                <!-- Manufacturer -->
+                <DataGridTemplateColumn MinWidth="100" Width="200" SortMemberPath="ManufacturerSort">
+                    <DataGridTemplateColumn.Header>
+                            <DockPanel LastChildFill="False">
+                                <TextBlock>Manufacturer</TextBlock>
+                                <Control DockPanel.Dock="Right" Template="{StaticResource ManufacturerFilter}"/>
+                            </DockPanel>
+                    </DataGridTemplateColumn.Header>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Manufacturer}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <!-- Category -->
+                <DataGridTemplateColumn MinWidth="80" Width="100"  SortMemberPath="CategorySort">
+                    <DataGridTemplateColumn.Header>
+                            <DockPanel LastChildFill="False">
+                                <TextBlock>Category</TextBlock>
+                                <Control DockPanel.Dock="Right" Template="{StaticResource CategoryFilter}"/>
+                            </DockPanel>
+                    </DataGridTemplateColumn.Header>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Category}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                 <!-- Subcategory --> 
+                <DataGridTemplateColumn MinWidth="80" Width="110" SortMemberPath="SubcategorySort">
+                    <DataGridTemplateColumn.Header>
+                        <DockPanel LastChildFill="False">
+                            <TextBlock>Subcategory</TextBlock>
+                            <Control DockPanel.Dock="Right" Template="{StaticResource SubcategoryFilter}"/>
+                        </DockPanel>
+                    </DataGridTemplateColumn.Header>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Subcategory}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <!-- Rotation -->
+                <DataGridTemplateColumn Width="100" CanUserReorder="False" SortMemberPath="RotationSort">
+                    <DataGridTemplateColumn.Header>
+                        <DockPanel LastChildFill="False">
+                            <TextBlock>Rotation</TextBlock>
+                            <Control DockPanel.Dock="Right" Template="{StaticResource RotationFilter}"/>
+                        </DockPanel>
+                    </DataGridTemplateColumn.Header>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Rotation}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</UserControl>

@@ -1,0 +1,86 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:config="clr-namespace:Mamesaver.Config">
+
+    <Style TargetType="Separator">
+        <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ScrollBarBrushKey}}"/>
+    </Style>
+
+    <!-- Label -->
+    <Style TargetType="Label">
+        <Setter Property="Padding" Value="0,5,0,2" />
+    </Style>
+
+    <!-- Inline label -->
+    <Style TargetType="Label" x:Key="Inline">
+        <Setter Property="Padding" Value="5" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
+    <!-- Divider label -->
+    <Style TargetType="Label" x:Key="Divider">
+        <Setter Property="Padding" Value="0,0,7,5" />
+    </Style>
+
+    <!-- TextBox -->
+    <Style TargetType="TextBox">
+        <Setter Property="Padding" Value="2"/>
+    </Style>
+
+    <!-- Button -->
+    <Style TargetType="Button">
+        <Setter Property="Margin" Value="5"/>
+        <Setter Property="Padding" Value="2"/>
+        <Setter Property="Height" Value="25"/>
+    </Style>
+
+    <!-- ComboBox -->
+    <Style TargetType="ComboBox">
+        <Setter Property="Margin" Value="5"/>
+        <Setter Property="Height" Value="25"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+    </Style>
+
+    <!-- Reusable filter symbol -->
+    <ControlTemplate x:Key="{x:Static config:FilterStyles.IconTemplateKey}">
+        <Path Data="M0,0 L10,0 6,4 6,9 4,9 4,4 Z" Fill="{TemplateBinding Foreground}" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="2,0" />
+    </ControlTemplate>
+
+    <Style TargetType="Control" x:Key="{x:Static config:FilterStyles.IconStyleKey}">
+        <Setter Property="HorizontalAlignment" Value="Right" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Template" Value="{DynamicResource {x:Static config:FilterStyles.IconTemplateKey}}" />
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Foreground" Value="Gray" />
+    </Style>
+
+    <!-- Games list header -->
+    <Style TargetType="{x:Type DataGridColumnHeader}" x:Key="GamesHeader">
+        <Setter Property="ClickMode" Value="Press"/>
+
+        <!-- Sort on mouse press to increase responsiveness -->
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    </Style>
+
+    <!-- Disable highlighting -->
+    <Style TargetType="{x:Type DataGridCell}" x:Key="GamesCell">
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" />
+        <Setter Property="Background" Value="Transparent" />
+
+        <!-- Increase cell padding -->
+        <Setter Property="Padding" Value="1,3,3,3" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type DataGridCell}">
+                    <Border Padding="{TemplateBinding Padding}" BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                        Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+                        <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

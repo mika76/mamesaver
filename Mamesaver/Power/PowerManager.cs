@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Timers;
-using Mamesaver.Windows;
+using Mamesaver.Services.Windows;
 using Serilog;
 
 namespace Mamesaver.Power
@@ -157,7 +157,7 @@ namespace Mamesaver.Power
         /// <summary>
         ///     Publishes a <see cref="SleepTriggered"/> event when either the display or PC require sleeping.
         /// </summary>
-        private void SleepTimerTick(object sender, EventArgs e) => SleepTriggered?.Invoke(this, new EventArgs());
+        private void SleepTimerTick(object sender, EventArgs e) => SleepTriggered?.Invoke(this, EventArgs.Empty);
 
         public void Dispose()
         {
@@ -169,6 +169,7 @@ namespace Mamesaver.Power
         {
             if (!disposing) return;
             _sleepTimer?.Dispose();
+            _sleepTimer = null;
         }
 
         ~PowerManager() => Dispose(false);
