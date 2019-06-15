@@ -24,7 +24,7 @@ namespace Mamesaver.Services.Mame
         ///     Number of ROMs to process per batch. Rom files are batched when passing as arguments to Mame both 
         ///     to minimise processing time and to allow a visual indicator that games are being processed.
         /// </summary>
-        private const int RomsPerBatch = 50;
+        private const int DefaultRomsPerBatch = 50;
 
         /// <summary>
         ///     Settings for parsing MAME's listxml output
@@ -57,9 +57,22 @@ namespace Mamesaver.Services.Mame
             var games = new List<SelectableGame>();
 
             // Enrich game metadata for each verified game
-            var verifiedGames = GetVerifiedSets(progressCallback).Keys;
+            var verifiedGames = GetVerifiedSets(progressCallback).Keys.ToList();
             var romFiles = GetRomFiles();
 
+            try
+            {
+                return GetGameList(progressCallback, romFiles, verifiedGames, games, DefaultRomsPerBatch);
+            }
+            catch (XmlException)
+            {
+                // Fallback for old versions of MAME which don't support extracting game details for multiple games at a time
+                return GetGameList(progressCallback, romFiles, verifiedGames, games, 1);
+            }
+        }
+
+        private List<SelectableGame> GetGameList(Action<int> progressCallback, List<string> romFiles, List<string> verifiedGames, List<SelectableGame> games, int romsPerBatch)
+        {
             // Get details for each verified ROM
             var index = 0;
 
@@ -68,14 +81,14 @@ namespace Mamesaver.Services.Mame
             var romsProcessed = romFiles.Count + (romFiles.Count - verifiedGames.Count);
 
             List<string> romsToProcess;
-            while ((romsToProcess = verifiedGames.Skip(index).Take(RomsPerBatch).ToList()).Any())
+            while ((romsToProcess = verifiedGames.Skip(index).Take(romsPerBatch).ToList()).Any())
             {
                 using (var stream = GetGameDetails(romsToProcess))
                 {
                     games.AddRange(GetRomDetails(stream));
                 }
 
-                index += RomsPerBatch;
+                index += romsPerBatch;
                 romsProcessed += romsToProcess.Count;
 
                 // There are two distinct phases in the game list builder, so we are halving the processed count
@@ -202,6 +215,16 @@ namespace Mamesaver.Services.Mame
         /// </summary>
         private IDictionary<string, string> GetVerifiedSets(Action<int> progressCallback)
         {
+            var verifiedSets = GetVerifiedSets(progressCallback, DefaultRomsPerBatch);
+            if (verifiedSets.Any()) return verifiedSets;
+
+            // Cater for old versions of MAME which only support verifying a single ROM at a time
+            verifiedSets = GetVerifiedSets(progressCallback, 1);
+            return verifiedSets;
+        }
+
+        private IDictionary<string, string> GetVerifiedSets(Action<int> progressCallback, int romsPerBatch)
+        {
             var verifiedRoms = new Dictionary<string, string>();
             var regex = new Regex(@"romset (\w*)(?:\s\[(\w*)\])? is good"); //only accept the "good" ROMS
 
@@ -212,7 +235,7 @@ namespace Mamesaver.Services.Mame
             var filesProcessed = 0;
 
             List<string> filesToVerify;
-            while ((filesToVerify = romFiles.Skip(index).Take(RomsPerBatch).ToList()).Any())
+            while ((filesToVerify = romFiles.Skip(index).Take(romsPerBatch).ToList()).Any())
             {
                 var arguments = new List<string> { "-verifyroms" }.Concat(filesToVerify).ToArray();
                 using (var stream = _invoker.GetOutput(arguments))
@@ -227,7 +250,7 @@ namespace Mamesaver.Services.Mame
                     }
                 }
 
-                index += RomsPerBatch;
+                index += romsPerBatch;
                 filesProcessed += filesToVerify.Count;
 
                 // There are two distinct phases in the game list builder, so we are halving the processed count
