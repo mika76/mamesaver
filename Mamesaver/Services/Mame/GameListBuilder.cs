@@ -122,7 +122,7 @@ namespace Mamesaver.Services.Mame
                 reader.ReadStartElement("mame");
 
                 // Read each machine, enriching metadata for verified sets
-                while (reader.Read() && reader.Name == "machine")
+                while (reader.Read() && (reader.Name == "machine" || reader.Name == "game"))
                 {
                     // Read game metadata
                     var element = (XElement)XNode.ReadFrom(reader);
