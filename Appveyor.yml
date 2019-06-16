@@ -1,0 +1,19 @@
+version: 1.0.{build}
+image: Visual Studio 2017
+configuration:
+- Release
+- Repack
+platform: Any CPU
+before_build:
+- cmd: nuget restore
+build:
+  verbosity: minimal
+artifacts:
+- path: MamesaverDeploy\bin\Repack\Mamesaver.msi
+  name: Mamesaver.msi
+- path: Mamesaver\bin\Repack\Mamesaver.scr
+  name: Mamesaver.scr
+- path: Mamesaver\bin\Repack\*.dll
+  name: dlls
+- path: Mamesaver\bin\Repack\Mamesaver.exe
+  name: repack exe

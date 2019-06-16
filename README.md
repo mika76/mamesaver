@@ -13,7 +13,7 @@
 - [Open source](#open-source)
 
 
-v3.0
+v3.0.1
 Licensed under The MIT License
 
 [![Build status](https://ci.appveyor.com/api/projects/status/2b8n7te1bq8rf1pp?svg=true)](https://ci.appveyor.com/project/mmihajlovic/mamesaver)
@@ -33,7 +33,7 @@ Mamesaver is a Windows screen saver that runs MAME with a random game for specif
 
 ### REQUIREMENTS
 * Microsoft .NET 4.6
-* A working installation of MAME. I used 0.200 but older ones will probably work too.
+* A working installation of MAME. Versions from 0.155 have been tested, but earlier versions may also work.
 * Some working ROMS which can run in MAME successfully.
 * Each ROM that is installed should have been run at least once to remove the initial disclaimer screen as this is the last thing you want to see when the screen saver is running.
 

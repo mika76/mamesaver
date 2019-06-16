@@ -120,9 +120,9 @@ namespace Mamesaver.Services.Mame
         ///     Registers a MAME process for automatic termination on shutdown.
         /// </summary>
         /// <param name="process"></param>
-        public void Register(Process process) => _processes.Add(process);
+        private void Register(Process process) => _processes.Add(process);
 
-        public virtual void Dispose(bool disposing)
+        protected virtual void Dispose(bool disposing)
         {
             if (!disposing) return;
             TryStopProcesses();
